@@ -1,0 +1,91 @@
+{
+  "version": "1.0.0",
+  "startingAnimation": "idle",
+  "name": "QT (vs. QT)",
+  "renderType": "multisparrow",
+  "assetPath": "characters/qt-port/qt",
+  "offsets": [
+    0,
+    -40
+  ],
+  "cameraOffsets": [
+    -130,
+    10
+  ],
+  "scale": 1,
+  "singTime": 6.0,
+  "isPixel": false,
+  "flipX": false,
+  "healthIcon": {
+    "id": "qt_qt",
+    "isPixel": false,
+    "flipX": false,
+    "scale": 1,
+    "offsets": [
+      0,
+      0
+    ]
+  },
+  "animations": [
+    {
+      "name": "singLEFT",
+      "prefix": "Final_Left",
+      "offsets": [
+        -51,
+        -78
+      ],
+      "frameRate": 24,
+      "looped": false,
+      "flipX": false,
+      "flipY": false
+    },
+    {
+      "name": "singRIGHT",
+      "prefix": "Final_Right",
+      "offsets": [
+        12,
+        -56
+      ],
+      "frameRate": 24,
+      "looped": false,
+      "flipX": false,
+      "flipY": false
+    },
+    {
+      "name": "singDOWN",
+      "prefix": "Final_Down",
+      "offsets": [
+        60,
+        -19
+      ],
+      "frameRate": 24,
+      "looped": false,
+      "flipX": false,
+      "flipY": false
+    },
+    {
+      "name": "idle",
+      "prefix": "Final_Idle",
+      "offsets": [
+        24,
+        -93
+      ],
+      "frameRate": 24,
+      "looped": false,
+      "flipX": false,
+      "flipY": false
+    },
+    {
+      "name": "singUP",
+      "prefix": "Final_Up",
+      "offsets": [
+        41,
+        -55
+      ],
+      "frameRate": 24,
+      "looped": false,
+      "flipX": false,
+      "flipY": false
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+    "props": [
+        {
+            "danceEvery": 0,
+            "name": "BG",
+            "zIndex": 30,
+            "assetPath": "hazardStuff/qt-port/stage/streetBackCute",
+            "position": [-1000, -855],
+            "scroll": [0.95, 0.95],
+            "scale": [1, 1]
+        },
+        {
+            "danceEvery": 0,
+            "name": "FG",
+            "zIndex": 40,
+            "assetPath": "hazardStuff/qt-port/stage/streetFrontCute",
+            "position": [-1070, 0],
+            "scroll": [0.95, 0.95],
+            "scale": [1.15, 1.15]
+        },
+        {
+            "danceEvery": 0,
+            "name": "TV",
+            "zIndex": 60,
+            "assetPath": "hazardStuff/qt-port/stage/TV_V2_off",
+            "position": [-250, -130],
+            "scroll": [0.9, 0.9],
+            "scale": [1.2, 1.2]
+        }
+    ],
+    "cameraZoom": 0.92125,
+    "version": "1.0.0",
+    "characters": {
+        "bf": {
+            "zIndex": 400,
+            "position": [835, 210],
+            "cameraOffsets": [-120, -130]
+        },
+        "gf": {
+            "zIndex": 300,
+            "position": [480, 50],
+            "cameraOffsets": [0, -40]
+        },
+        "dad": {
+            "zIndex": 350,
+            "position": [140, 200],
+            "cameraOffsets": [200, -130]
+        }
+    },
+    "name": "QT Street (Cute)",
+    "directory": ""
+}

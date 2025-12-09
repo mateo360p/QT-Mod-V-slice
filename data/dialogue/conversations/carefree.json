@@ -1,0 +1,79 @@
+{
+    "version": "1.0.0",
+
+    "backdrop": {
+        "type": "solid",
+        "fadeTime": 2.0,
+        "color": "#BFB3DFD8"
+    },
+
+    "music": {
+        "asset": "carefree-dialogue-loop",
+        "fadeTime": 1.0,
+        "looped": true
+    },
+
+    "outro": {
+        "type": "fade",
+        "fadeTime": 1.0
+    },
+
+    "dialogue": [
+        {
+            "speaker": "qt_qt",
+            "speakerAnimation": "excited",
+            "box": "qt",
+            "boxAnimation": "left",
+
+            "text": ["Oh hey cutie!"]
+        },
+        {
+            "speaker": "qt_qt",
+            "speakerAnimation": "talk",
+            "box": "qt",
+            "boxAnimation": "left",
+
+            "text": ["I was looking for you!"]
+        },
+        {
+            "speaker": "qt_bf",
+            "speakerAnimation": "talk",
+            "box": "qt",
+            "boxAnimation": "right",
+
+            "text": ["Beep?"]
+        },
+        {
+            "speaker": "qt_qt",
+            "speakerAnimation": "talk",
+            "box": "qt",
+            "boxAnimation": "left",
+
+            "text": ["I heard you're pretty hot stuff, so I want to challenge you!"]
+        },
+        {
+            "speaker": "qt_bf",
+            "speakerAnimation": "excited",
+            "box": "qt",
+            "boxAnimation": "right",
+
+            "text": ["Beep!"]
+        },
+        {
+            "speaker": "qt_qt",
+            "speakerAnimation": "talk",
+            "box": "qt",
+            "boxAnimation": "left",
+
+            "text": ["Hey, if I win... could we hang out some more?"]
+        },
+        {
+            "speaker": "qt_bf",
+            "speakerAnimation": "talk",
+            "box": "qt",
+            "boxAnimation": "right",
+
+            "text": ["Bop beep skdoo."]
+        }
+    ]
+}

@@ -1,0 +1,39 @@
+{
+    "version": "1.0.0",
+    "name": "Girlfriend (QT Week)",
+    "assetPath": "dialogue/qtDialogue/GF_Dialogue",
+    "flipX": false,
+    "isPixel": false,
+    "scale": 1,
+    "offsets": [20, -40],
+    "animations": [
+        {
+            "name": "talk",
+            "prefix": "GF0",
+            "offsets": [-3, -6],
+            "looped": true,
+            "frameRate": 24
+        },
+        {
+            "name": "shocked",
+            "prefix": "GF SHOCK0",
+            "offsets": [70, -11],
+            "looped": true,
+            "frameRate": 24
+        },
+        {
+            "name": "confused",
+            "prefix": "GF CONFUSED0",
+            "offsets": [-3, -6],
+            "looped": true,
+            "frameRate": 24
+        },
+        {
+            "name": "demon",
+            "prefix": "GF DEMON0",
+            "offsets": [-3, -6],
+            "looped": true,
+            "frameRate": 24
+        }
+    ]
+}

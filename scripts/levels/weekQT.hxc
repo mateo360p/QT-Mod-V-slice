@@ -1,0 +1,35 @@
+import funkin.ui.story.Level;
+import funkin.save.Save;
+import flixel.FlxG;
+import funkin.ui.story.StoryMenuState;
+
+class WeekQTLevel extends Level
+{
+  function new()
+  {
+    super('weekQT');
+  }
+
+  override public function getSongs():Array<String>
+  {
+    var daSongs:Array<String> = super.getSongs().copy();
+
+    if (Std.isOfType(FlxG.state, StoryMenuState)) { // In storymode returns terminate
+      daSongs.push("terminate");
+    } /*else if (Save.instance.hasBeatenLevel('weekQT')) {
+      daSongs.push("carefree"); // if passed the week, and freeplay, adds Termination, anytime-
+    }*/
+
+    return daSongs; // If hasn't passed the week
+  }
+
+  override public function getSongDisplayNames(difficulty:String):Array<String>
+  {
+    var songList:Array<String> = getSongs() ?? [];
+    songList.remove("terminate"); // fkin bait song
+    var songNameList:Array<String> = songList.map(function(songId:String) {
+      return Level.getSongDisplayName(songId, difficulty);
+    });
+    return songNameList;
+  }
+}

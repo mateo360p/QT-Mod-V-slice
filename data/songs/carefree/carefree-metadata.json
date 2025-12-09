@@ -1,0 +1,50 @@
+{
+	"timeFormat": "ms",
+	"artist": "Hazard24",
+	"charter": "Unknown",
+	"divisions": 96,
+	"looped": false,
+	"offsets": {
+		"instrumental": 0,
+		"altInstrumentals": {    },
+		"vocals": {    },
+		"altVocals": {    }
+	},
+	"playData": {
+		"songVariations": [],
+		"difficulties": [
+			"easy",
+			"normal",
+			"hard"
+		],
+		"characters": {
+			"player": "qt_bf",
+			"girlfriend": "gf",
+			"opponent": "qt_qt",
+			"instrumental": "",
+			"altInstrumentals": [      ],
+			"opponentVocals": [
+				"qt_qt"
+			],
+			"playerVocals": [
+				"qt_bf"
+			]
+		},
+		"stage": "qtCuteStreet",
+		"noteStyle": "funkin",
+		"ratings": {
+		"hard": 3,
+		"normal": 2,
+		"easy": 1
+		},
+		"album": "vsQTmod",
+		"previewStart": 0,
+		"previewEnd": 15000
+	},
+	"songName": "Carefree",
+	"timeChanges": [
+		{"t": 0, "bpm": 128}
+	],
+	"generatedBy": "Psych Engine v1.0.3 - Chart Editor V-Slice Exporter",
+	"version": "2.2.3"
+}

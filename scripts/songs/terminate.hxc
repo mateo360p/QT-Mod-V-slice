@@ -1,0 +1,83 @@
+import flixel.FlxG;
+import funkin.graphics.FunkinSprite;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
+import flixel.util.FlxTimer;
+import funkin.audio.FunkinSound;
+import funkin.play.PlayState;
+import funkin.play.PlayStatePlaylist;
+import funkin.play.song.Song;
+
+class QTTerminateSong extends Song {
+    var hasPlayedCutscene:Bool;
+    var hasPlayedEndCutscene:Bool;
+    public function new() {
+        super('terminate');
+    }
+
+    function onCreate(event:ScriptEvent):Void {
+        super.onCreate(event);
+
+        hasPlayedCutscene = false;
+        hasPlayedEndCutscene = false;
+    }
+
+    function onSongRetry(event:ScriptEvent) {
+        super.onSongRetry(event);
+
+        hasPlayedCutscene = true;
+    }
+
+    public function onCountdownStart(event:CountdownScriptEvent):Void {
+        super.onCountdownStart(event);
+        if (PlayState.instance == null) return;
+
+        PlayState.instance.currentStage.getDad().scriptCall("setDrain", [0, 0]);
+
+        if (!(PlayStatePlaylist.isStoryMode) || PlayState.instance.isChartingMode || hasPlayedCutscene) {
+            return;
+        }
+
+        hasPlayedCutscene = true;
+        event.cancel();
+        startDialogue();
+    }
+
+    function startDialogue() {
+        PlayState.instance.startConversation('terminate');
+    }
+
+    function startEndDialogue() {
+        PlayState.instance.startConversation('terminate-end');
+    }
+
+    public override function onDialogueEnd(event:DialogueScriptEvent):Void {
+        if (!hasPlayedCutscene) {
+            Countdown.performCountdown();
+        }
+    }
+
+    public function onBeatHit(event:SongTimeScriptEvent):Void {
+        super.onBeatHit(event);
+
+        if (event.beat == 32) {
+            var kb = PlayState.instance.currentStage.getDad();
+            if (kb != null) {
+                PlayState.instance.currentStage.getNamedProp("TV").playAnimation("error", true);
+            }
+            PlayState.instance.mayPauseGame = false;
+            new FlxTimer().start(0.021, function(tmr:FlxTimer) // Slight delay
+            {
+                kb.active = false;
+                FlxG.sound.music.pause();
+                PlayState.instance.isInCutscene = true;
+                PlayState.instance.currentStage.getDad().playAnimation("singLEFT", true);
+                PlayState.instance.currentStage.getDad().singTimeSteps = 99999;
+                new FlxTimer().start(1.65, function(tmr:FlxTimer) // End Dialogue
+                {
+                    startEndDialogue();
+                });
+            });
+        }
+    }
+}

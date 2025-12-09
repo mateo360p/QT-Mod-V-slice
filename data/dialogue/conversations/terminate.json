@@ -1,0 +1,55 @@
+{
+    "version": "1.0.0",
+
+    "backdrop": {
+        "type": "solid",
+        "fadeTime": 2.0,
+        "color": "#BFB3DFD8"
+    },
+
+    "music": {
+        "asset": "",
+        "fadeTime": 0,
+        "looped": false
+    },
+
+    "outro": {
+        "type": "fade",
+        "fadeTime": 1.0
+    },
+
+    "dialogue": [
+        {
+            "speaker": "qt_kb",
+            "speakerAnimation": "talk",
+            "box": "qt",
+            "boxAnimation": "left",
+
+            "text": ["..."]
+        },
+        {
+            "speaker": "qt_kb",
+            "speakerAnimation": "talk",
+            "box": "qt",
+            "boxAnimation": "left",
+
+            "text": ["You're too stubborn for your own good kid."]
+        },
+        {
+            "speaker": "qt_kb",
+            "speakerAnimation": "talk",
+            "box": "qt",
+            "boxAnimation": "left",
+
+            "text": ["I've grown tired of you and your annoying chipmunk voice."]
+        },
+        {
+            "speaker": "qt_kb",
+            "speakerAnimation": "talk",
+            "box": "qt",
+            "boxAnimation": "left",
+
+            "text": ["Prepare yourself, for I won't show any mercy for you..."]
+        }
+    ]
+}

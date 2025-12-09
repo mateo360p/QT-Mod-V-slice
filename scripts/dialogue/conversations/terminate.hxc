@@ -1,0 +1,19 @@
+import funkin.play.cutscene.dialogue.Conversation;
+import flixel.sound.FlxSound;
+import funkin.play.PlayState;
+import flixel.FlxG;
+
+class TerminateEndingConversation extends Conversation
+{
+    function new()
+    {
+        super('terminate-end');
+    }
+
+    override public function onDialogueEnd(event:DialogueScriptEvent):Void {
+        super.onDialogueEnd(event);
+        // This songs crashes the game in freeplay
+        // idk exactly why, but I'm lucky this shi isn't an actual song
+        PlayState.instance.endSong();
+    }
+}

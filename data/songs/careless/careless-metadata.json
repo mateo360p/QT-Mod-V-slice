@@ -1,0 +1,50 @@
+{
+	"timeFormat": "ms",
+	"artist": "Hazard24",
+	"charter": "Unknown",
+	"divisions": 96,
+	"looped": false,
+	"offsets": {
+		"instrumental": 0,
+		"altInstrumentals": {    },
+		"vocals": {    },
+		"altVocals": {    }
+	},
+	"playData": {
+		"songVariations": [],
+		"difficulties": [
+			"easy",
+			"normal",
+			"hard"
+		],
+		"characters": {
+			"player": "qt_bf",
+			"girlfriend": "gf",
+			"opponent": "qt_qt-nervous",
+			"instrumental": "",
+			"altInstrumentals": [      ],
+			"opponentVocals": [
+				"qt_qt-nervous"
+			],
+			"playerVocals": [
+				"qt_bf"
+			]
+		},
+		"stage": "qtRealStreet",
+		"noteStyle": "funkin",
+		"ratings": {
+		"hard": 5,
+		"normal": 3,
+		"easy": 2
+		},
+		"album": "vsQTmod",
+		"previewStart": 0,
+		"previewEnd": 15000
+	},
+	"songName": "Careless",
+	"timeChanges": [
+		{"t": 0, "bpm": 110}
+	],
+	"generatedBy": "Psych Engine v1.0.3 - Chart Editor V-Slice Exporter",
+	"version": "2.2.3"
+}

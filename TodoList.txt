@@ -1,0 +1,8 @@
+To-Do List for this port! :D
+- fix QT animations (loops)
+- add QT sawblades event
+X add gas event
+- add Termination Song
+X add 404 errors
+X add health drain
+X add qt weak idle anim

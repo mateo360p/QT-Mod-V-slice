@@ -1,0 +1,224 @@
+{
+  "version": "1.0.0",
+  "danceEvery": 1,
+  "startingAnimation": "idle",
+  "name": "QT and KB (vs. QT)",
+  "renderType": "multisparrow",
+  "assetPath": "characters/qt-port/qt-kbV2",
+  "offsets": [
+    30,
+    60
+  ],
+  "cameraOffsets": [
+    -185,
+    -50
+  ],
+  "scale": 1,
+  "singTime": 4,
+  "isPixel": false,
+  "flipX": false,
+  "healthIcon": {
+    "id": "qt_qtkb",
+    "isPixel": false,
+    "flipX": false,
+    "scale": 1,
+    "offsets": [
+      0,
+      0
+    ]
+  },
+  "animations": [
+    {
+      "name": "singLEFT-alt",
+      "prefix": "singLeftKB",
+      "offsets": [
+        224,
+        268
+      ],
+      "frameRate": 24,
+      "looped": false,
+      "flipX": false,
+      "flipY": false
+    },
+    {
+      "name": "singLEFT",
+      "prefix": "singLeftQT",
+      "offsets": [
+        148,
+        172
+      ],
+      "frameRate": 24,
+      "looped": false,
+      "flipX": false,
+      "flipY": false
+    },
+    {
+      "name": "singUP",
+      "prefix": "singUpQT",
+      "offsets": [
+        181,
+        183
+      ],
+      "frameRate": 24,
+      "looped": false,
+      "flipX": false,
+      "flipY": false
+    },
+    {
+      "name": "danceLeft",
+      "prefix": "danceLeftNormal",
+      "offsets": [
+        171,
+        139
+      ],
+      "frameRate": 24,
+      "looped": false,
+      "flipX": false,
+      "flipY": false
+    },
+    {
+      "name": "danceRight",
+      "prefix": "danceRightNormal",
+      "offsets": [
+        130,
+        148
+      ],
+      "frameRate": 24,
+      "looped": false,
+      "flipX": false,
+      "flipY": false
+    },
+    {
+      "name": "singDOWN",
+      "prefix": "singDownQT",
+      "offsets": [
+        104,
+        73
+      ],
+      "frameRate": 24,
+      "looped": false,
+      "flipX": false,
+      "flipY": false
+    },
+    {
+      "name": "singRIGHT",
+      "prefix": "singRightQT",
+      "offsets": [
+        22,
+        114
+      ],
+      "frameRate": 24,
+      "looped": false,
+      "flipX": false,
+      "flipY": false
+    },
+    {
+      "name": "danceLeft-alt",
+      "prefix": "danceLeftKB",
+      "offsets": [
+        121,
+        127
+      ],
+      "frameRate": 24,
+      "looped": false,
+      "flipX": false,
+      "flipY": false
+    },
+    {
+      "name": "danceRight-alt",
+      "prefix": "danceRightKB",
+      "offsets": [
+        80,
+        136
+      ],
+      "frameRate": 24,
+      "looped": false,
+      "flipX": false,
+      "flipY": false
+    },
+    {
+      "name": "singUP-alt",
+      "prefix": "singUpKB",
+      "offsets": [
+        138,
+        283
+      ],
+      "frameRate": 24,
+      "looped": false,
+      "flipX": false,
+      "flipY": false
+    },
+    {
+      "name": "singUP-together",
+      "prefix": "singUpTogether",
+      "offsets": [
+        166,
+        298
+      ],
+      "frameRate": 24,
+      "looped": false,
+      "flipX": false,
+      "flipY": false
+    },
+    {
+      "name": "singRIGHT-alt",
+      "prefix": "singRightKB",
+      "offsets": [
+        -151,
+        70
+      ],
+      "frameRate": 24,
+      "looped": false,
+      "flipX": false,
+      "flipY": false
+    },
+    {
+      "name": "singRIGHT-together",
+      "prefix": "singRightTogether",
+      "offsets": [
+        -153,
+        72
+      ],
+      "frameRate": 24,
+      "looped": false,
+      "flipX": false,
+      "flipY": false
+    },
+    {
+      "name": "singLEFT-together",
+      "prefix": "singLeftTogether",
+      "offsets": [
+        224,
+        268
+      ],
+      "frameRate": 24,
+      "looped": false,
+      "flipX": false,
+      "flipY": false
+    },
+    {
+      "name": "singDOWN-alt",
+      "prefix": "singDownKB",
+      "offsets": [
+        149,
+        47
+      ],
+      "frameRate": 24,
+      "looped": false,
+      "flipX": false,
+      "flipY": false
+    },
+    {
+      "name": "singDOWN-together",
+      "prefix": "singDownTogether",
+      "offsets": [
+        149,
+        47
+      ],
+      "frameRate": 24,
+      "looped": false,
+      "flipX": false,
+      "flipY": false
+    }
+  ]
+}
