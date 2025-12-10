@@ -1,0 +1,113 @@
+import flixel.FlxG;
+import funkin.Paths;
+import flixel.util.FlxTimer;
+import funkin.play.PlayState;
+import funkin.Conductor;
+import funkin.play.scoring.Scoring;
+import funkin.graphics.FunkinSprite;
+import funkin.modding.module.Module;
+import funkin.Preferences;
+import haxe.Log;
+import funkin.play.event.SongEvent;
+import funkin.audio.FunkinSound;
+import funkin.play.GameOverSubState;
+import flixel.FlxSprite;
+
+class QTBFdodge extends Module {
+	public var qt_dodgeTime:Float = null;
+	var qt_bfDodgeWindow:Float = 180;
+	var qt_bfDodgeCooldown:Float = 40; // really fkin nerfed
+	var dedByGlam_nono_byasawblade:Bool = false;
+
+	public function new() {
+		super('QTBFdodge', 99999);
+	}
+
+	function onCreate(event:ScriptEvent) {
+        super.onCreate(event);
+
+		dedByGlam_nono_byasawblade = false;
+	}
+
+	function onSubStateOpenEnd(event:SubStateScriptEvent) {
+		super.onSubStateOpenEnd(event);
+		if (!(Std.isOfType(event.targetState, GameOverSubState)) || !dedByGlam_nono_byasawblade) return;
+
+		var dummyKiller:FlxSprite = new FlxSprite();
+		dummyKiller.frames = Paths.getSparrowAtlas('hazardStuff/qt-port/sawkillanimation2');
+		//dummyKiller.animation.addByPrefix('normal', 'kb_attack_animation_kill_idle', 24, true);
+		dummyKiller.animation.addByPrefix('animate', 'kb_attack_animation_kill_moving', 24, true);
+		dummyKiller.x = GameOverSubState.instance.boyfriend.x - 1175; //negative = left
+		dummyKiller.y = GameOverSubState.instance.boyfriend.y + 100; //positive = down
+		dummyKiller.animation.play("animate");
+		GameOverSubState.instance.add(dummyKiller);
+	}
+
+	function onStateChangeEnd(event:StateChangeScriptEvent) {
+		super.onStateChangeEnd(event);
+		qt_dodgeTime = null;
+	}
+
+	function onSongRetry(event:ScriptEvent) {
+		super.onSongRetry(event);
+		qt_dodgeTime = null;
+		dedByGlam_nono_byasawblade = false;
+	}
+
+	function qtbfDodge() {
+		qt_dodgeTime = Conductor.instance.songPosition;
+		var bf = PlayState.instance.currentStage.getBoyfriend();
+
+		if (PlayState.instance == null || PlayState.instance.currentStage == null || bf == null)
+			return;
+
+		bf.playAnimation('dodge', true);
+		bf.scriptSet("isDodging", true);
+		FunkinSound.playOnce(Paths.sound("hazard/dodge01"));
+	}
+
+	function setBFdodging(value:Bool) {
+		bf.scriptSet("isDodging", value);
+	}
+
+	/**
+	 * Okay, soooo this takes the SPACE time and compares it to the death time (event 3rd beat) - the dodge window
+	 * @param eventTime The event time
+	 */
+	public function evalQTDodge(eventTime:Float):Bool {
+		if (qt_dodgeTime == null) return true;
+		return (eventTime - qt_bfDodgeWindow) > qt_dodgeTime;
+	}
+
+	/**
+	 * This just verifies that the dodge delay has passed, without timers
+	 * obviously, if the dodgetime is null, it hasn't even dodged yet
+	 * Soo if that's null, just returns true
+	 */
+	function canBFDodge(curTime:Float):Bool {
+		if (qt_dodgeTime == null) return true;
+		return curTime >= qt_dodgeTime + qt_bfDodgeWindow + qt_bfDodgeCooldown;
+	}
+
+	override function onUpdate(elapsed:Float):Void {
+		super.onUpdate(elapsed);
+		if (PlayState.instance == null || PlayState.instance.currentSong.id != "termination" || Conductor.instance == null) return;
+
+		var curTime = Conductor.instance.songPosition;
+
+		if (canBFDodge(curTime)) {
+			if (FlxG.keys.justPressed.SPACE && !PlayState.instance.isBotPlayMode) qtbfDodge();
+		}
+
+		if (qt_dodgeTime != null && curTime >= qt_dodgeTime + qt_bfDodgeWindow) {
+			var bf = PlayState.instance.currentStage.getBoyfriend();
+
+			if (bf != null) {
+				bf.scriptSet("isDodging", false);
+				bf.dance();
+			}
+
+			if (canBFDodge(curTime)) qt_dodgeTime = null;
+		}
+	}
+}

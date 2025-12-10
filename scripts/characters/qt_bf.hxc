@@ -13,16 +13,28 @@ using StringTools;
 class VsQTBoyfriendCharacter extends MultiSparrowCharacter
 {
   var heySound:FunkinSound;
+  var isDodging:Bool = false;
   function new()
   {
     super('qt_bf');
+  }
+
+  function onSongRetry(event:ScriptEvent) {
+    isDodging = false;
+    super.onSongRetry(event);
   }
 
   function onCreate(event:ScriptEvent)
   {
     super.onCreate(event);
     this.ignoreExclusionPref.push("hey");
+    this.ignoreExclusionPref.push("dodge");
     heySound = FunkinSound.load(Paths.sound('qt_mdfkinbeautifulhey'), 1.0, false, false, false);
+  }
+
+  public function onGameOver(event:ScriptEvent) {
+    isDodging = false;
+    super.onGameOver(event);
   }
 
   function onAnimationFrame(name:String, frameNumber:Int, frameIndex:Int)
@@ -49,6 +61,9 @@ class VsQTBoyfriendCharacter extends MultiSparrowCharacter
     if (name == "fakeoutDeath" && !this.debug)
     {
       doFakeoutDeath();
+    }
+    else if (isDodging && !name.startsWith("dodge")) {
+      return;
     }
     else
     {
@@ -107,9 +122,30 @@ class VsQTBoyfriendCharacter extends MultiSparrowCharacter
   }
 
   function doHey() { // fkin best idea ever
-    this.playAnimation("hey", true, true);
+    this.playAnimation("hey", true);
     if (heySound != null) heySound.play(true);
     holdTimer = 0;
+  }
+
+  override function dance(force:Bool = false):Void {
+    // Prevent default dancing behavior.
+    if (isDead) return;
+
+    if (!force)
+    {
+      // Prevent dancing while a singing animation is playing.
+      //if (isSinging()) return;
+
+      // Prevent dancing while a non-idle special animation is playing.
+      var currentAnimation:String = getCurrentAnimation();
+      if (!currentAnimation.startsWith('dance') && !currentAnimation.startsWith('idle')
+        && !currentAnimation.startsWith('dodge') && !isAnimationFinished()) return;
+    }
+
+    if (!force) force = getCurrentAnimation().startsWith('dodge');
+
+    // Otherwise, fallback to the super dance() method, which handles playing the idle animation.
+    super.dance(force);
   }
 
   override function onUpdate(elapsed:Float):Void {
@@ -117,7 +153,7 @@ class VsQTBoyfriendCharacter extends MultiSparrowCharacter
 
     if (PlayState.instance == null) return;
 
-      if (FlxG.keys.justPressed.SHIFT && !PlayState.instance.disableKeys && !PlayState.instance.isInCutscene && !this.isHoldingNote() && this.getCurrentAnimation() != "hey" && !this.getCurrentAnimation().endsWith("miss"))
+      if (FlxG.keys.justPressed.SHIFT && !isDodging && !PlayState.instance.disableKeys && !PlayState.instance.isInCutscene && !this.isHoldingNote() && this.getCurrentAnimation() != "hey" && !this.getCurrentAnimation().endsWith("miss"))
         doHey();
   }
 }

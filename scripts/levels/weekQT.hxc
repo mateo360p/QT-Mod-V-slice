@@ -16,9 +16,9 @@ class WeekQTLevel extends Level
 
     if (Std.isOfType(FlxG.state, StoryMenuState)) { // In storymode returns terminate
       daSongs.push("terminate");
-    } /*else if (Save.instance.hasBeatenLevel('weekQT')) {
-      daSongs.push("carefree"); // if passed the week, and freeplay, adds Termination, anytime-
-    }*/
+    } else if (Save.instance.hasBeatenLevel('weekQT')) {
+      daSongs.push("termination"); // if passed the week, and freeplay, adds Termination, anytime-
+    }
 
     return daSongs; // If hasn't passed the week
   }

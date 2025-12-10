@@ -1,0 +1,137 @@
+import flixel.FlxG;
+import funkin.Paths;
+import funkin.Conductor;
+import flixel.util.FlxTimer;
+import funkin.play.PlayState;
+import funkin.util.Constants;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
+import funkin.audio.FunkinSound;
+import funkin.play.event.SongEvent;
+import funkin.graphics.FunkinSprite;
+import funkin.play.GameOverSubState;
+import funkin.modding.module.ModuleHandler;
+import funkin.graphics.adobeanimate.FlxAtlasSprite;
+import funkin.play.scoring.Scoring;
+import funkin.data.event.SongEventSchema;
+import flixel.util.FlxColor;
+import flixel.FlxCamera;
+
+class QTAlarmGradientEvent extends SongEvent {
+    var alarmLeft:FunkinSprite;
+    var alarmRight:FunkinSprite;
+    var doAssetsExist:Bool = false;
+    var camAlarm:FlxCamera; // fkin rotating HUD in termination makes this look weird, soo let's make another camera-
+    public function new() {
+        super('Alarm Gradient');
+    }
+
+    function initAssets() {
+        doAssetsExist = (alarmLeft != null && alarmRight != null) &&
+            PlayState.instance.currentStage.members.contains(alarmLeft) && PlayState.instance.currentStage.members.contains(alarmRight);
+        if (doAssetsExist) return;
+
+        if (camAlarm == null || !FlxG.cameras.list.contains(camAlarm)) {
+            camAlarm = new FlxCamera();
+            camAlarm.bgColor = 0x00000000;
+            FlxG.cameras.add(camAlarm, false);
+        }
+
+        // Left Alarm
+        if (PlayState.instance.currentStage.getNamedProp("qt_gradientAlarmLeft") != null) {
+            alarmLeft = PlayState.instance.currentStage.getNamedProp("qt_gradientAlarmLeft"); // Avoiding lag
+        } else {
+            alarmLeft = new FunkinSprite(-600, -480).loadTexture('hazardStuff/inhuman-port/back-Gradient');
+            alarmLeft.scrollFactor.set(0.5, 0.5);
+            alarmLeft.setGraphicSize(Std.int(alarmLeft.width * 1.1));
+            alarmLeft.updateHitbox();
+            alarmLeft.flipX = false;
+            alarmLeft.alpha = 0;
+            PlayState.instance.currentStage.add(alarmLeft);
+        }
+
+        // Right Alarm
+        if (PlayState.instance.currentStage.getNamedProp("qt_gradientAlarmRight") != null) {
+            alarmRight = PlayState.instance.currentStage.getNamedProp("qt_gradientAlarmRight");
+        } else {
+            alarmRight = new FunkinSprite(-600, -480).loadTexture('hazardStuff/inhuman-port/back-Gradient');
+            alarmRight.scrollFactor.set(0.5, 0.5);
+            alarmRight.setGraphicSize(Std.int(alarmRight.width * 1.1));
+            alarmRight.updateHitbox();
+            alarmRight.flipX = true;
+            alarmRight.alpha = 0;
+            PlayState.instance.currentStage.add(alarmRight);
+        }
+
+        alarmLeft.cameras = [camAlarm];
+        alarmLeft.x -= 85;
+        alarmRight.cameras = [camAlarm];
+        alarmRight.x -= 85;
+        alarmLeft.zIndex = 1000;
+        alarmRight.zIndex = 1001;
+        alarmLeft.color = FlxColor.RED;
+        alarmRight.color = FlxColor.RED;
+    }
+
+    public override function handleEvent(data:SongEventData) {
+        initAssets();
+
+        //Value 1  = which side
+        //Value 2 = alpha to fade to
+        var daValue1:String = Std.string(data.value.value1); // Just in case-
+        var targetAlpha:Float = Std.parseFloat(data.value.value2);
+        if(Math.isNaN(targetAlpha)) targetAlpha = 0;
+
+        var dummyAlarm = null;
+
+        if(daValue1.toLowerCase() == "left") {
+            dummyAlarm = alarmLeft;
+        } else if(daValue1.toLowerCase() == "right") {
+            dummyAlarm = alarmRight;
+        } else {
+            trace('QT Alarm Gradient: Value 1 for alarm has to either be "right" or "left"');
+            return;
+        }
+
+        if (dummyAlarm == null) return;
+
+        FlxTween.tween(dummyAlarm, {alpha: targetAlpha}, 0.25, {
+            ease: FlxEase.quartOut,
+            onComplete: function(twn:FlxTween)
+            {
+                FlxTween.tween(dummyAlarm, {alpha: 0}, 0.36, {ease: FlxEase.cubeOut});
+            }
+        });
+        //FunkinSound.playOnce(Paths.sound("qt_mdfkinbeautifulhey"), 1.0); testing
+    }
+
+    public override function getTitle():String
+    {
+        return "Alarm Gradient Event (QT)";
+    }
+
+    public override function getEventSchema()
+    {
+        return [
+            {
+                name: 'value1',
+                title: 'Alarm Side',
+                type: "enum",
+                defaultValue: 'left',
+                keys: [
+                    'Left Side' => 'left',
+                    'Right Side' => 'right'
+                ]
+            },
+            {
+                name: 'value2',
+                title: 'Alpha',
+                type: "float",
+                defaultValue: 0.5,
+                min: 0.0,
+                step: 0.05,
+                max: 1.0
+            },
+        ];
+    }
+}

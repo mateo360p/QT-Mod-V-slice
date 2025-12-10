@@ -1,8 +1,15 @@
 To-Do List for this port! :D
 - fix QT animations (loops)
-- add QT sawblades event
+X add QT sawblades event
 X add gas event
-- add Termination Song
+X add Termination Song
 X add 404 errors
 X add health drain
 X add qt weak idle anim
+X add qt angry idle anim
+X add qt camera rotation
+[not possible] add note movements (termination)
+X add shader 404 thing
+- add Cessation
+- add ??? (not confirmed)
+- re organize all the fkin code :'D

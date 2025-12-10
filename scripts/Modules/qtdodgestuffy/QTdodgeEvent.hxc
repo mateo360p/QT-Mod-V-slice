@@ -1,0 +1,98 @@
+import flixel.FlxG;
+import funkin.Paths;
+import funkin.Conductor;
+import flixel.util.FlxTimer;
+import funkin.play.PlayState;
+import funkin.util.Constants;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
+import funkin.audio.FunkinSound;
+import funkin.play.event.SongEvent;
+import funkin.graphics.FunkinSprite;
+import funkin.play.GameOverSubState;
+import funkin.modding.module.ModuleHandler;
+import funkin.graphics.adobeanimate.FlxAtlasSprite;
+import funkin.play.scoring.Scoring;
+import funkin.data.event.SongEventSchema;
+import flixel.util.FlxColor;
+import funkin.play.stage.Bopper;
+
+class QTdodgeEvent extends SongEvent {
+    var qtSawblade:Bopper;
+    public function new() {
+        super('KB_AttackFire');
+    }
+
+    function initSawAssets() {
+        if (qtSawblade == null || !PlayState.instance.currentStage.members.contains(qtSawblade)) {
+            if (PlayState.instance.currentStage.getNamedProp("qt_sawblade") != null) {
+                qtSawblade = PlayState.instance.currentStage.getNamedProp("qt_sawblade"); // Avoiding lag part 3
+            } else {
+                qtSawblade = FunkinSprite.createSparrow(0, 0, 'hazardStuff/qt-port/attackv6');
+                qtSawblade.animation.addByPrefix('fire', 'kb_attack_animation_fire', 24, false);
+                qtSawblade.setAnimationOffsets("fire", 3000, 0);
+                qtSawblade.animation.addByPrefix('prepare', 'kb_attack_animation_prepare', 24, false);
+                qtSawblade.setAnimationOffsets("prepare", 1300, 0);
+                qtSawblade.setGraphicSize(Std.int(qtSawblade.width * 1.15));
+                PlayState.instance.currentStage.addBopper(qtSawblade, "qt_sawblade");
+            }
+        }
+
+        var bfX = PlayState.instance.currentStage.getBoyfriend().x;
+        var bfy = PlayState.instance.currentStage.getBoyfriend().y;
+
+        qtSawblade.x = bfX - 200;
+        qtSawblade.y = bfy + 50;
+
+        qtSawblade.zIndex = 1101;
+        qtSawblade.alpha = 1;
+    }
+
+    public override function handleEvent(data:SongEventData) {
+        initSawAssets();
+        PlayState.instance.mayPauseGame = false;
+        qtSawblade.playAnimation("fire", true);
+        var daSound:String = "";
+        switch(data.value.snd) {
+            case 2:
+                daSound = "-double";
+            case 3:
+                daSound = "-triple";
+            case 4:
+                daSound = "-quadruple";
+            default:
+                daSound = "";
+        }
+        FunkinSound.playOnce(Paths.sound("hazard/attack" + daSound), 0.85);
+        new FlxTimer().start(0.09, function(_) {
+            if (Conductor.instance != null) {
+                PlayState.instance.mayPauseGame = true;
+                var wulDai:Bool = ModuleHandler.getModule("QTBFdodge").scriptCall("evalQTDodge", [Conductor.instance.songPosition]);
+                if (PlayState.instance.isBotPlayMode) ModuleHandler.getModule("QTBFdodge").scriptCall("qtbfDodge", []);
+                else if (wulDai) {
+                    ModuleHandler.getModule("QTBFdodge").scriptSet("dedByGlam_nono_byasawblade", true);
+                    PlayState.instance.health = -40404; // funnyNumber
+                }
+            }
+        });
+    }
+
+    public override function getTitle():String
+    {
+        return "Dodge Sawblade Event (QT)";
+    }
+
+    public override function getEventSchema()
+    {
+        return [            {
+                name: 'snd',
+                title: 'Sound Number',
+                defaultValue: 1,
+                min: 1,
+                max: 4,
+                step: 1,
+                type: "integer"
+            },
+        ];
+    }
+}

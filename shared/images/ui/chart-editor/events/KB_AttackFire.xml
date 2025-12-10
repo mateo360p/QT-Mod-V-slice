@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-16"?>
+<TextureAtlas imagePath="KB_AttackFire.png">
+	<SubTexture name="KB_AttackFire0000" x="0" y="0" width="320" height="320"/>
+</TextureAtlas>

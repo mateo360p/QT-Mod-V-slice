@@ -1,0 +1,46 @@
+{
+	"timeFormat": "ms",
+	"artist": "Hazard24",
+	"charter": "Unknown",
+	"divisions": 96,
+	"looped": false,
+	"offsets": {
+		"instrumental": 0,
+		"altInstrumentals": {    },
+		"vocals": {    },
+		"altVocals": {    }
+	},
+	"playData": {
+		"songVariations": ["double"],
+		"difficulties": [
+			"normal"
+		],
+		"characters": {
+			"player": "qt_bf",
+			"girlfriend": "gf",
+			"opponent": "qt_kb",
+			"instrumental": "",
+			"altInstrumentals": [      ],
+			"opponentVocals": [
+				"qt_kb"
+			],
+			"playerVocals": [
+				"qt_bf"
+			]
+		},
+		"stage": "qtKBStreet",
+		"noteStyle": "funkin",
+		"ratings": {
+			"normal": 12
+		},
+		"album": "vsQTmod",
+		"previewStart": 0,
+		"previewEnd": 15000
+	},
+	"songName": "Termination",
+	"timeChanges": [
+		{"t": 0, "bpm": 222}
+	],
+	"generatedBy": "Psych Engine v1.0.3 - Chart Editor V-Slice Exporter",
+	"version": "2.2.3"
+}

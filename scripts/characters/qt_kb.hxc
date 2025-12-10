@@ -36,6 +36,8 @@ class VsQTKillerBotCharacter extends MultiSparrowCharacter
     super.onSongRetry(event);
 
     setDrain(0.01185, 1.0);
+    this.idleSuffix = '';
+    this.shouldAlternate = true;
   }
 
   function onNoteHit(event:HitNoteScriptEvent) {

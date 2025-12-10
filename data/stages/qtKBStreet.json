@@ -122,6 +122,36 @@
                 { "name": "burstALT", "prefix": "Gas_Release", "frameRate": 49, "looped": false, "offsets": [0, 0] },
                 { "name": "burstFAST", "prefix": "Gas_Release", "frameRate": 76, "looped": false, "offsets": [0, 0] }
             ]
+        },
+        {
+            "danceEvery": 1,
+            "name": "qt_alert",
+            "zIndex": 1100,
+            "assetPath": "hazardStuff/qt-port/attack_alert_NEW",
+            "position": [0, 0],
+            "scroll": [1, 1],
+            "scale": [1.5, 1.5],
+            "alpha": 0,
+            "animations": [
+                { "name": "alert", "prefix": "kb_attack_animation_alert-single", "frameRate": 24, "looped": false, "offsets": [0, 0] },
+                { "name": "alertDOUBLE", "prefix": "kb_attack_animation_alert-double", "frameRate": 24, "looped": false, "offsets": [60, 5] },
+                { "name": "alertTRIPLE", "prefix": "kb_attack_animation_alert-triple", "frameRate": 24, "looped": false, "offsets": [84, 30] },
+                { "name": "alertQUAD", "prefix": "kb_attack_animation_alert-quad", "frameRate": 24, "looped": false, "offsets": [67, 20] }
+            ]
+        },
+        {
+            "danceEvery": 1,
+            "name": "qt_sawblade",
+            "zIndex": 1101,
+            "assetPath": "hazardStuff/qt-port/attackv6",
+            "position": [0, 0],
+            "scroll": [1, 1],
+            "scale": [1.15, 1.15],
+            "alpha": 0,
+            "animations": [
+                { "name": "fire", "prefix": "kb_attack_animation_fire", "frameRate": 24, "looped": false, "offsets": [3000, 0] },
+                { "name": "prepare", "prefix": "kb_attack_animation_prepare", "frameRate": 24, "looped": false, "offsets": [1300, 0] }
+            ]
         }
     ],
     "cameraZoom": 0.8125,

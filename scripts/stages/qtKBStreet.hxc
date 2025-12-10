@@ -6,24 +6,79 @@ import flixel.math.FlxMath;
 import flixel.tweens.misc.VarTween;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
+import funkin.graphics.shaders.DropShadowShader;
+import funkin.play.character.CharacterType;
 
 class QTKBStreetStage extends Stage
 {
+    var errorColor:FlxColor = 0xFF338fd6;
+    var errorShaders:Array<DropShadowShader> = [];
     function new() {
         super('qtKBStreet');
+    }
+
+    inline function canDodgeSong():Bool {
+        return PlayState.instance.currentSong.id == "termination";
     }
 
     override function onCreate(event:ScriptEvent):Void {
         super.onCreate(event);
 
         PlayState.instance.currentStage.getNamedProp('TV').danceEvery = 0.0; // fkin code
+        PlayState.instance.currentStage.getNamedProp('qt_alert').danceEvery = 0.0;
+        PlayState.instance.currentStage.getNamedProp('qt_sawblade').danceEvery = 0.0;
+        PlayState.instance.currentStage.getNamedProp('qt_alert').alpha = 0.0;
+        PlayState.instance.currentStage.getNamedProp('qt_sawblade').alpha = 0.0;
 
         prepareGas();
         revealError(0);
     }
 
-    function buildStage() {
-        super.buildStage();
+    public function onGameOver(event:ScriptEvent) {
+        for (i in 0...errorShaders.length) errorShaders[i].color = 0x00000000;
+        super.onGameOver(event);
+    }
+
+    override function addCharacter(character:BaseCharacter, charType:CharacterType):Void
+    {
+        // Apply the shader automatically to each character as it gets added.
+        super.addCharacter(character, charType);
+        trace('Applied stage shader to ' + character.characterName);
+
+        var rim = new DropShadowShader();
+        rim.color = 0x00000000;
+        character.shader = rim;
+        rim.attachedSprite = character;
+        errorShaders.push(rim);
+        rim.angle = 90;
+        rim.distance = 20;
+
+        switch (charType) {
+            case CharacterType.BF:
+                rim.angle = 67.75;
+
+                character.animation.onFrameChange.add(function() {
+                    if (getBoyfriend() != null) rim.updateFrameInfo(getBoyfriend().frame);
+                });
+
+            case CharacterType.GF:
+                rim.angle = 90;
+                rim.distance = 34;
+
+                character.animation.onFrameChange.add(function() {
+                    rim.updateFrameInfo(getGirlfriend().frame);
+                });
+
+            case CharacterType.DAD:
+                rim.angle = 112.25;
+                //rim.threshold = 0.3;
+
+                character.animation.onFrameChange.add(function() {
+                    rim.updateFrameInfo(getDad().frame);
+                });
+
+            default:
+        }
     }
 
     function onSongRetry(event:ScriptEvent) {
@@ -31,6 +86,10 @@ class QTKBStreetStage extends Stage
 
         PlayState.instance.currentStage.getNamedProp('TV').danceEvery = 0.0; // idk just in case
         PlayState.instance.currentStage.getNamedProp("TV").playAnimation("idle", true);
+        PlayState.instance.currentStage.getNamedProp('qt_alert').danceEvery = 0.0;
+        PlayState.instance.currentStage.getNamedProp('qt_sawblade').danceEvery = 0.0;
+        PlayState.instance.currentStage.getNamedProp('qt_alert').alpha = 0.0;
+        PlayState.instance.currentStage.getNamedProp('qt_sawblade').alpha = 0.0;
 
         prepareGas();
         revealError(0);
@@ -54,6 +113,7 @@ class QTKBStreetStage extends Stage
     public function revealError(daCase:Int):Void {
         switch(daCase) {
             case 1:// 1 to set error
+                for (i in 0...errorShaders.length) errorShaders[i].color = errorColor;
                 PlayState.instance.currentStage.getNamedProp('BG-error').visible = true;
                 PlayState.instance.currentStage.getNamedProp('FG-error').visible = true;
                 PlayState.instance.currentStage.getNamedProp('BG-pre').visible = false;
@@ -65,7 +125,9 @@ class QTKBStreetStage extends Stage
                 PlayState.instance.currentStage.getNamedProp('BG-pre').visible = true;
                 PlayState.instance.currentStage.getNamedProp('BG').visible = false;
                 PlayState.instance.currentStage.getNamedProp('FG').visible = true;
+                FlxG.camera.shake(0.0078, 0.675);
             default: // anything else to set it to normal
+                for (i in 0...errorShaders.length) errorShaders[i].color = 0x00000000;
                 PlayState.instance.currentStage.getNamedProp('BG-error').visible = false;
                 PlayState.instance.currentStage.getNamedProp('FG-error').visible = false;
                 PlayState.instance.currentStage.getNamedProp('BG-pre').visible = false;
