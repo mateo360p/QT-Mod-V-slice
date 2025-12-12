@@ -10,6 +10,6 @@ X add qt angry idle anim
 X add qt camera rotation
 [not possible] add note movements (termination)
 X add shader 404 thing
-- add Cessation
+X add Cessation
 - add ??? (not confirmed)
 - re organize all the fkin code :'D

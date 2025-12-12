@@ -26,7 +26,7 @@ class QTCarelessSong extends Song {
         super.onSongRetry(event);
 
         hasPlayedCutscene = true;
-        hasPlayedEndCutscene = true;
+        hasPlayedEndCutscene = false;
     }
 
     public function onCountdownStart(event:CountdownScriptEvent):Void {

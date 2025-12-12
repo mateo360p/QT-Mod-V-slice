@@ -18,6 +18,10 @@ class WeekQTLevel extends Level
       daSongs.push("terminate");
     } else if (Save.instance.hasBeatenLevel('weekQT')) {
       daSongs.push("termination"); // if passed the week, and freeplay, adds Termination, anytime-
+
+      if (Save.instance.hasBeatenSong("termination", ["normal", "hard-double"])) {
+        daSongs.push("cessation"); // if passed termination in any diff, adds Cessation
+      }
     }
 
     return daSongs; // If hasn't passed the week
