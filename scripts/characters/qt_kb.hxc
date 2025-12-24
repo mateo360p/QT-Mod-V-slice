@@ -46,14 +46,14 @@ class VsQTKillerBotCharacter extends MultiSparrowCharacter
 		if (PlayState.instance == null) return;
 
 		if (!event.note.noteData.getMustHitNote() && canDrain(Constants.HEALTH_SICK_BONUS)) {
-        PlayState.instance.health -= (Constants.HEALTH_SICK_BONUS * qt_hpDrainMultiplier);
+        PlayState.instance.health -= (Constants.HEALTH_SICK_BONUS * qt_hpDrainMultiplier) / ((FlxG.onMobile) ? 2 : 1);
 		}
 	}
 
   function onNoteMiss(event:NoteScriptEvent) {
     super.onNoteMiss(event);
 
-    if (PlayState.instance == null) return;
+    if (PlayState.instance == null || FlxG.onMobile) return;
     var lossMult:Float = 1 - qt_lossMultiplier;
     PlayState.instance.health += (Constants.HEALTH_MISS_PENALTY * lossMult);
   }
@@ -65,7 +65,7 @@ class VsQTKillerBotCharacter extends MultiSparrowCharacter
 
       // While the hold note is being hit, and there is length on the hold note...
       if (holdNote.hitNote && !holdNote.missedNote && holdNote.sustainLength > 0 && canDrain(Constants.HEALTH_HOLD_BONUS_PER_SECOND)) {
-        PlayState.instance.health -= (Constants.HEALTH_HOLD_BONUS_PER_SECOND * qt_hpDrainMultiplier) * elapsed;
+        PlayState.instance.health -= ((Constants.HEALTH_HOLD_BONUS_PER_SECOND * qt_hpDrainMultiplier) * elapsed) / ((FlxG.onMobile) ? 2 : 1);
       }
     }
   }

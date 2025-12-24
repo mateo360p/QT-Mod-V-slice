@@ -1,41 +1,73 @@
 import flixel.FlxG;
 import funkin.Paths;
-import flixel.util.FlxTimer;
 import funkin.play.PlayState;
 import funkin.Conductor;
-import funkin.play.scoring.Scoring;
-import funkin.graphics.FunkinSprite;
 import funkin.modding.module.Module;
-import funkin.Preferences;
-import haxe.Log;
-import funkin.play.event.SongEvent;
 import funkin.audio.FunkinSound;
 import funkin.play.GameOverSubState;
 import flixel.FlxSprite;
+import flixel.FlxCamera;
+import funkin.graphics.FunkinSprite;
+import funkin.play.stage.Bopper;
+import flixel.util.FlxColor;
+import funkin.modding.module.ModuleHandler;
 
 class QTBFdodge extends Module {
 	public var qt_dodgeTime:Float = null;
 	var qt_bfDodgeWindow:Float = 180;
 	var qt_bfDodgeCooldown:Float = 40; // really fkin nerfed
 	var dedByGlam_nono_byasawblade:Bool = false;
-
+	var qt_dodgeSongs:Array<String> = ["termination"];
+	var qt_alertSongs:Array<String> = ["termination", "cessation"];
+	var qt_alarmSongs:Array<String> = ["censory-overload", "termination"];
+	var camAlarm:FlxCamera; // fkin rotating HUD in termination makes this look weird, soo let's make another camera-
 	public function new() {
-		super('QTBFdodge', 99999);
+		super('QTBFdodge');
 	}
 
-	function onCreate(event:ScriptEvent) {
+	override function onCreate(event:ScriptEvent):Void {
         super.onCreate(event);
-
 		dedByGlam_nono_byasawblade = false;
 	}
 
-	function onSubStateOpenEnd(event:SubStateScriptEvent) {
+	override function onUpdate(elapsed:Float):Void {
+		super.onUpdate(elapsed);
+		if (PlayState.instance == null || !qt_dodgeSongs.contains(PlayState.instance.currentSong.id) || Conductor.instance == null) return;
+
+		var curTime = Conductor.instance.songPosition;
+		if (canBFDodge(curTime)) if (FlxG.keys.justPressed.SPACE && !PlayState.instance.isBotPlayMode) qtbfDodge();
+
+		if (qt_dodgeTime != null && curTime >= qt_dodgeTime + qt_bfDodgeWindow) {
+			var bf = PlayState.instance.currentStage.getBoyfriend();
+
+			if (bf != null) {
+				bf.scriptSet("isDodging", false);
+				bf.dance();
+			}
+
+			if (canBFDodge(curTime)) qt_dodgeTime = null;
+		}
+	}
+
+	override function onSongRetry(event:ScriptEvent):Void {
+		super.onSongRetry(event);
+		qt_dodgeTime = null;
+		dedByGlam_nono_byasawblade = false;
+	}
+
+	override function onSongLoaded(event):Void {
+        super.onSongLoaded(event);
+		if (qt_dodgeSongs.contains(PlayState.instance.currentSong.id)) initSawAssets();
+		if (qt_alertSongs.contains(PlayState.instance.currentSong.id)) initAlertAssets();
+		if (qt_alarmSongs.contains(PlayState.instance.currentSong.id)) initAlarmAssets();
+    }
+
+	override function onSubStateOpenEnd(event:SubStateScriptEvent):Void {
 		super.onSubStateOpenEnd(event);
 		if (!(Std.isOfType(event.targetState, GameOverSubState)) || !dedByGlam_nono_byasawblade) return;
 
 		var dummyKiller:FlxSprite = new FlxSprite();
 		dummyKiller.frames = Paths.getSparrowAtlas('hazardStuff/qt-port/sawkillanimation2');
-		//dummyKiller.animation.addByPrefix('normal', 'kb_attack_animation_kill_idle', 24, true);
 		dummyKiller.animation.addByPrefix('animate', 'kb_attack_animation_kill_moving', 24, true);
 		dummyKiller.x = GameOverSubState.instance.boyfriend.x - 1175; //negative = left
 		dummyKiller.y = GameOverSubState.instance.boyfriend.y + 100; //positive = down
@@ -43,31 +75,19 @@ class QTBFdodge extends Module {
 		GameOverSubState.instance.add(dummyKiller);
 	}
 
-	function onStateChangeEnd(event:StateChangeScriptEvent) {
+	override function onStateChangeEnd(event:StateChangeScriptEvent):Void {
 		super.onStateChangeEnd(event);
 		qt_dodgeTime = null;
 	}
 
-	function onSongRetry(event:ScriptEvent) {
-		super.onSongRetry(event);
-		qt_dodgeTime = null;
-		dedByGlam_nono_byasawblade = false;
-	}
-
 	function qtbfDodge() {
 		qt_dodgeTime = Conductor.instance.songPosition;
+		FunkinSound.playOnce(Paths.sound("hazard/dodge01"));
 		var bf = PlayState.instance.currentStage.getBoyfriend();
-
-		if (PlayState.instance == null || PlayState.instance.currentStage == null || bf == null)
-			return;
+		if (PlayState.instance == null || PlayState.instance.currentStage == null || bf == null) return;
 
 		bf.playAnimation('dodge', true);
 		bf.scriptSet("isDodging", true);
-		FunkinSound.playOnce(Paths.sound("hazard/dodge01"));
-	}
-
-	function setBFdodging(value:Bool) {
-		bf.scriptSet("isDodging", value);
 	}
 
 	/**
@@ -89,25 +109,97 @@ class QTBFdodge extends Module {
 		return curTime >= qt_dodgeTime + qt_bfDodgeWindow + qt_bfDodgeCooldown;
 	}
 
-	override function onUpdate(elapsed:Float):Void {
-		super.onUpdate(elapsed);
-		if (PlayState.instance == null || PlayState.instance.currentSong.id != "termination" || Conductor.instance == null) return;
-
-		var curTime = Conductor.instance.songPosition;
-
-		if (canBFDodge(curTime)) {
-			if (FlxG.keys.justPressed.SPACE && !PlayState.instance.isBotPlayMode) qtbfDodge();
+	public function initSawAssets() {
+		var qtSawblade:Bopper;
+		if (PlayState.instance.currentStage.getNamedProp("qt_sawblade") != null) {
+			qtSawblade = PlayState.instance.currentStage.getNamedProp("qt_sawblade"); // Avoiding lag part 3
+		} else { // fkin HUGE lag man, I hope they add a feature to use onCreate on these
+			qtSawblade = new Bopper(0);
+			qtSawblade.loadSparrow('hazardStuff/qt-port/attackv6');
+			qtSawblade.animation.addByPrefix('fire', 'kb_attack_animation_fire', 24, false);
+			qtSawblade.setAnimationOffsets("fire", 3000, 0);
+			qtSawblade.animation.addByPrefix('prepare', 'kb_attack_animation_prepare', 24, false);
+			qtSawblade.setAnimationOffsets("prepare", 1300, 0);
+			qtSawblade.setGraphicSize(Std.int(qtSawblade.width * 1.15));
+			PlayState.instance.currentStage.addBopper(qtSawblade, "qt_sawblade");
 		}
 
-		if (qt_dodgeTime != null && curTime >= qt_dodgeTime + qt_bfDodgeWindow) {
-			var bf = PlayState.instance.currentStage.getBoyfriend();
+        var bfX = PlayState.instance.currentStage.getBoyfriend().x;
+        var bfy = PlayState.instance.currentStage.getBoyfriend().y;
 
-			if (bf != null) {
-				bf.scriptSet("isDodging", false);
-				bf.dance();
-			}
+        qtSawblade.x = bfX - 200;
+        qtSawblade.y = bfy + 50;
+        qtSawblade.zIndex = 1101;
+        qtSawblade.alpha = 0;
+    }
 
-			if (canBFDodge(curTime)) qt_dodgeTime = null;
+	public function initAlertAssets() {
+		var qtAlert:Bopper;
+		if (PlayState.instance.currentStage.getNamedProp("qt_alert") != null) {
+			qtAlert = PlayState.instance.currentStage.getNamedProp("qt_alert"); // Avoiding lag part 2
+		} else {
+			qtAlert = new Bopper(0);
+			qtAlert.loadSparrow('hazardStuff/qt-port/attack_alert_NEW');
+			qtAlert.animation.addByPrefix('alert', 'kb_attack_animation_alert-single', 24, false);
+			qtAlert.setAnimationOffsets("alert", 0, 0);
+			qtAlert.animation.addByPrefix('alertDOUBLE', 'kb_attack_animation_alert-double', 24, false);
+			qtAlert.setAnimationOffsets("alertDOUBLE", 60, 5);
+			qtAlert.animation.addByPrefix('alertTRIPLE', 'kb_attack_animation_alert-triple', 24, false);
+			qtAlert.setAnimationOffsets("alertTRIPLE", 84, 30);
+			qtAlert.animation.addByPrefix('alertQUAD', 'kb_attack_animation_alert-quad', 24, false);
+			qtAlert.setAnimationOffsets("alertQUAD", 67, 20);
+			qtAlert.setGraphicSize(Std.int(qtAlert.width * 1.5));
+			PlayState.instance.currentStage.addBopper(qtAlert, "qt_alert");
 		}
-	}
+
+        qtAlert.alpha = 0;
+        qtAlert.zIndex = 1100;
+        qtAlert.cameras = [PlayState.instance.camHUD];
+        qtAlert.screenCenter();
+    }
+
+    public function initAlarmAssets() {
+        if (camAlarm == null || !FlxG.cameras.list.contains(camAlarm)) {
+            camAlarm = new FlxCamera();
+            camAlarm.bgColor = 0x00000000;
+            FlxG.cameras.add(camAlarm, false);
+        }
+		var alarmLeft:FunkinSprite;
+		var alarmRight:FunkinSprite;
+
+        // Left Alarm
+        if (PlayState.instance.currentStage.getNamedProp("qt_gradientAlarmLeft") != null) {
+            alarmLeft = PlayState.instance.currentStage.getNamedProp("qt_gradientAlarmLeft"); // Avoiding lag
+        } else {
+            alarmLeft = new FunkinSprite(-600, -480).loadTexture('hazardStuff/inhuman-port/back-Gradient');
+            alarmLeft.scrollFactor.set(0.5, 0.5);
+            alarmLeft.setGraphicSize(Std.int(alarmLeft.width * 1.1));
+            alarmLeft.updateHitbox();
+            alarmLeft.flipX = false;
+            alarmLeft.alpha = 0;
+            PlayState.instance.currentStage.add(alarmLeft);
+        }
+
+        // Right Alarm
+        if (PlayState.instance.currentStage.getNamedProp("qt_gradientAlarmRight") != null) {
+            alarmRight = PlayState.instance.currentStage.getNamedProp("qt_gradientAlarmRight");
+        } else {
+            alarmRight = new FunkinSprite(-600, -480).loadTexture('hazardStuff/inhuman-port/back-Gradient');
+            alarmRight.scrollFactor.set(0.5, 0.5);
+            alarmRight.setGraphicSize(Std.int(alarmRight.width * 1.1));
+            alarmRight.updateHitbox();
+            alarmRight.flipX = true;
+            alarmRight.alpha = 0;
+            PlayState.instance.currentStage.add(alarmRight);
+        }
+
+        alarmLeft.cameras = [camAlarm];
+        alarmLeft.x -= 85;
+        alarmRight.cameras = [camAlarm];
+        alarmRight.x -= 85;
+        alarmLeft.zIndex = 1000;
+        alarmRight.zIndex = 1001;
+        alarmLeft.color = FlxColor.RED;
+        alarmRight.color = FlxColor.RED;
+    }
 }

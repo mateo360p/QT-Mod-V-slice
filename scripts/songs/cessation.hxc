@@ -12,8 +12,6 @@ import flixel.util.FlxColor;
 
 class QTCessationSong extends Song {
     var hasPlayedEndCutscene:Bool;
-    var qtSawblade:Bopper;
-    var qtAlert:Bopper;
     var cessationTroll:FunkinSprite;
     var getsDaJoke:Bool = false;
     var canSkipEndScreen:Bool = false;
@@ -27,11 +25,9 @@ class QTCessationSong extends Song {
 
         getsDaJoke = (FlxG.random.int(1, 5) == 5);
         canSkipEndScreen = false;
-
         initDummyAssets();
         PlayState.instance.currentStage.getNamedProp('FG').loadTexture("hazardStuff/qt-port/stage/streetFrontCute");
         PlayState.instance.currentStage.getNamedProp('BG').loadTexture("hazardStuff/qt-port/stage/streetBackCute");
-
         hasPlayedEndCutscene = false;
     }
 
@@ -44,11 +40,9 @@ class QTCessationSong extends Song {
         }
     }
 
-    function onSongRetry(event:ScriptEvent) {
+    override function onSongRetry(event:ScriptEvent) {
         super.onSongRetry(event);
-
         getsDaJoke = (FlxG.random.int(1, 5) == 5);
-
         hasPlayedEndCutscene = false;
     }
 
@@ -56,48 +50,32 @@ class QTCessationSong extends Song {
         PlayState.instance.startConversation('cessation-end');
     }
 
-    public override function onSongEnd(event:CountdownScriptEvent):Void
-    {
+    override function onSongEnd(event:CountdownScriptEvent):Void {
         if (!hasPlayedEndCutscene) {
             hasPlayedEndCutscene = true;
-
             PlayState.instance.disableKeys = false;
             startEndDialogue();
-
             event.cancel();
-        }
-        else
-        {
+        } else {
             PlayState.instance.disableKeys = true;
             super.onSongEnd(event);
         }
     }
 
+    override function onBeatHit(event:SongTimeScriptEvent):Void {
+        super.onBeatHit(event);
+
+        if (event.beat < 160) return;
+        if(event.beat == 163 || event.beat == 262) setSuffix("alt");
+        else if(event.beat == 199 || event.beat == 300) setSuffix("together");
+
+        if (!getsDaJoke) return;
+        if(event.beat == 376 || event.beat == 377) handleFkinJoke(0);
+        else if(event.beat == 378) handleFkinJoke(1);
+        else if(event.beat == 379) handleFkinJoke(2);
+    }
+
     function initDummyAssets() {
-        if (qtAlert == null || !PlayState.instance.currentStage.members.contains(qtAlert)) {
-            if (PlayState.instance.currentStage.getNamedProp("qt_alert") != null) {
-                qtAlert = PlayState.instance.currentStage.getNamedProp("qt_alert"); // Avoiding lag part 2
-            } else {
-                qtAlert = new Bopper(0);
-                qtAlert.loadSparrow('hazardStuff/qt-port/attack_alert_NEW');
-                qtAlert.animation.addByPrefix('alert', 'kb_attack_animation_alert-single', 24, false);
-                qtAlert.setAnimationOffsets("alert", 0, 0);
-                qtAlert.animation.addByPrefix('alertDOUBLE', 'kb_attack_animation_alert-double', 24, false);
-                qtAlert.setAnimationOffsets("alertDOUBLE", 60, 5);
-                qtAlert.animation.addByPrefix('alertTRIPLE', 'kb_attack_animation_alert-triple', 24, false);
-                qtAlert.setAnimationOffsets("alertTRIPLE", 84, 30);
-                qtAlert.animation.addByPrefix('alertQUAD', 'kb_attack_animation_alert-quad', 24, false);
-                qtAlert.setAnimationOffsets("alertQUAD", 67, 20);
-                qtAlert.setGraphicSize(Std.int(qtAlert.width * 1.5));
-                PlayState.instance.currentStage.addBopper(qtAlert, "qt_alert");
-            }
-        }
-
-        qtAlert.alpha = 0;
-        qtAlert.zIndex = 1100;
-        qtAlert.cameras = [PlayState.instance.camHUD];
-        qtAlert.screenCenter();
-
         cessationTroll = FunkinSprite.create(0, 0, 'hazardStuff/qt-port/justkidding');
         cessationTroll.setGraphicSize(Std.int(cessationTroll.width * 0.9));
         cessationTroll.cameras = [PlayState.instance.camHUD];
@@ -107,48 +85,33 @@ class QTCessationSong extends Song {
         PlayState.instance.add(cessationTroll);
     }
 
-    
-    public function endScreenHazard():Void // For displaying the "thank you for playing" screen on Cessation
-	{
-		var black:FlxSprite = new FunkinSprite(0, 0).makeGraphic(FlxG.width * 3, FlxG.height * 3, FlxColor.BLACK);
+    public function endScreenHazard():Void { // For displaying the "thank you for playing" screen on Cessation
+		var black:FunkinSprite = new FunkinSprite(0, 0).makeSolidColor(FlxG.width * 3, FlxG.height * 3, FlxColor.BLACK);
 		black.scrollFactor.set();
 		black.screenCenter();
 
-		var screen:FlxSprite = new FunkinSprite(-600, -480).loadTexture('hazardStuff/qt-port/FinalScreen');
-		screen.setGraphicSize(0, Std.int(FlxG.height)); // Fits the height of the screen, the width, who cares?
+		var screen:FunkinSprite = new FunkinSprite(-600, -480).loadTexture('hazardStuff/qt-port/FinalScreen');
+		screen.setGraphicSize(0, Std.int(FlxG.height)); // Fits it to the height of the screen, the width..., who cares?
 		screen.scrollFactor.set();
 		screen.screenCenter();
 
 		var hasTriggeredAlready:Bool = false;
-
 		screen.alpha = 0;
 		black.alpha = 0;
-		
 		PlayState.instance.add(black);
 		PlayState.instance.add(screen);
 
 		FlxTween.tween(PlayState.instance.camHUD, {alpha: 0}, 1, {ease: FlxEase.linear});
-
-		//Fade in code stolen from schoolIntro() >:3
-		new FlxTimer().start(0.15, function(swagTimer:FlxTimer)
-		{
+		new FlxTimer().start(0.15, function(swagTimer:FlxTimer) {
 			black.alpha += 0.075;
-			if (black.alpha < 1)
-			{
-				swagTimer.reset();
-			}
-			else
-			{
+			if (black.alpha < 1) swagTimer.reset();
+			else {
 				screen.alpha += 0.075;
-				if (screen.alpha < 1)
-				{
-					swagTimer.reset();
-				}
+				if (screen.alpha < 1) swagTimer.reset();
 				canSkipEndScreen = true;
-				//Wait 12 seconds, then do shit -Haz
-				new FlxTimer().start(10, function(tmr:FlxTimer)
-				{
-					if(!hasTriggeredAlready && canSkipEndScreen){
+				// Wait 12 seconds, then do shit -Haz
+				new FlxTimer().start(10, function(tmr:FlxTimer) {
+					if(!hasTriggeredAlready && canSkipEndScreen) {
 						hasTriggeredAlready = true;
 						if (PlayState.instance != null) PlayState.instance.endSong();
 					}
@@ -157,31 +120,11 @@ class QTCessationSong extends Song {
 		});		
 	}
 
-    public function onBeatHit(event:SongTimeScriptEvent):Void {
-        super.onBeatHit(event);
-
-        if (event.beat < 160) return;
-        if(event.beat == 163 || event.beat == 262) {
-            setSuffix("alt");
-        } else if(event.beat == 199 || event.beat == 300) {
-            setSuffix("together");
-        }
-
-        if (!getsDaJoke) return;
-        if(event.beat == 376 || event.beat == 377) {
-            handleFkinJoke(0);
-        } else if(event.beat == 378) {
-            handleFkinJoke(1);
-        } else if(event.beat == 379) {
-            handleFkinJoke(2);
-        }
-    }
-
-    public function handleFkinJoke(hahaTakeIt:Int = 0) {
+    function handleFkinJoke(hahaTakeIt:Int = 0) {
         switch (hahaTakeIt) {
             case 0: // fkin ohno
-                qtAlert.alpha = 1;
-                qtAlert.playAnimation("alert");
+                PlayState.instance.currentStage.getNamedProp("qt_alert").alpha = 1;
+                PlayState.instance.currentStage.getNamedProp("qt_alert").playAnimation("alert");
                 FunkinSound.playOnce(Paths.sound("hazard/alert"), 0.85);
             case 1: // fkin AJAJA
                 cessationTroll.visible = true;
@@ -191,14 +134,13 @@ class QTCessationSong extends Song {
         }
     }
 
-    public function setSuffix(daSuffix:String = "") {
+    function setSuffix(daSuffix:String = "") {
         var daQTKBnian = PlayState.instance.currentStage.getDad();
-        if (daQTKBnian != null) {
-            daQTKBnian.scriptSet("animSuffix", daSuffix);
-            if (daSuffix == "together") daSuffix = "";
+        if (daQTKBnian == null) return;
+        daQTKBnian.scriptSet("animSuffix", daSuffix);
 
-            daQTKBnian.idleSuffix = "-" + daSuffix;
-            daQTKBnian.shouldAlternate = true;
-        }
+        if (daSuffix == "together") daSuffix = "";
+        daQTKBnian.idleSuffix = "-" + daSuffix;
+        daQTKBnian.shouldAlternate = true;
     }
 }

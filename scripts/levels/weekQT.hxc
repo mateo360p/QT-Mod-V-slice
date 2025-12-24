@@ -5,13 +5,11 @@ import funkin.ui.story.StoryMenuState;
 
 class WeekQTLevel extends Level
 {
-  function new()
-  {
+  function new() {
     super('weekQT');
   }
 
-  override public function getSongs():Array<String>
-  {
+  override function getSongs():Array<String> {
     var daSongs:Array<String> = super.getSongs().copy();
 
     if (Std.isOfType(FlxG.state, StoryMenuState)) { // In storymode returns terminate
@@ -27,8 +25,7 @@ class WeekQTLevel extends Level
     return daSongs; // If hasn't passed the week
   }
 
-  override public function getSongDisplayNames(difficulty:String):Array<String>
-  {
+  override function getSongDisplayNames(difficulty:String):Array<String> {
     var songList:Array<String> = getSongs() ?? [];
     songList.remove("terminate"); // fkin bait song
     var songNameList:Array<String> = songList.map(function(songId:String) {

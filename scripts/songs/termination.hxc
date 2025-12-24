@@ -13,8 +13,7 @@ import funkin.Conductor;
 import flixel.math.FlxPoint;
 import funkin.play.GameOverSubState;
 
-// YOU CANNOT USE MAPS IN A SCRIPT!? WHYYYY WON'T THIS WORKKKK
-// Who tf coded the stpid strumlines? THEY HAVE NO FKIN SENSE, WHY!??????
+// Well, moving notes is fkin hell-
 class QTTerminationSong extends Song {
     var inAngleRotating:Bool = false;
     var defPosArray:Map<Int, FlxPoint>;
@@ -24,28 +23,26 @@ class QTTerminationSong extends Song {
     var pincer2:FunkinSprite;
     var pincer3:FunkinSprite;
     var pincer4:FunkinSprite;
-    var pincerState:Int = 22;
     public function new() {
         super('termination');
     }
 
-    function onCreate(event:ScriptEvent):Void {
+    override function onCreate(event:ScriptEvent):Void {
         super.onCreate(event);
 
+        inAngleRotating = false;
         PlayState.instance.currentStage.getGirlfriend().animation.addByPrefix("scared-termination", "GF FEAR", 24, true);
         PlayState.instance.currentStage.getGirlfriend().setAnimationOffsets("scared-termination", -2, -17);
         createPincers();
         initDefArrowPos();
-        pincerState = 22;
         nonVisibleStaticArrows();
         resetCameraAngle();
     }
 
-    function onSongRetry(event:ScriptEvent) {
+    override function onSongRetry(event:ScriptEvent):Void {
         super.onSongRetry(event);
 
         inAngleRotating = false;
-        pincerState = 22;
         restartPincers();
         nonVisibleStaticArrows();
         resetCameraAngle();
@@ -53,73 +50,70 @@ class QTTerminationSong extends Song {
         PlayState.instance.currentStage.getGirlfriend().playAnimation('scared', true);
     }
 
-    function onBeatHit(event:SongTimeScriptEvent):Void {
-        super.onBeatHit(event);
-
-        if (event.beat == 0 || event.beat == 8 || event.beat == 16 || event.beat == 24) {
-            terminationIntroShit(Std.int(event.beat / 8));
-        } else if (event.beat == 640) {
-            var kb = PlayState.instance.currentStage.getDad();
-            if (kb != null) {
-                kb.idleSuffix = '-alt';
-                kb.shouldAlternate = false;
-            }
-        } else if (event.beat == 702) {
-            PlayState.instance.currentStage.scriptCall("revealError", [2]);
-            PlayState.instance.camGame.shake(0.0133, 0.54);
-            PlayState.instance.camHUD.shake(0.0132, 0.54);
-            var kb = PlayState.instance.currentStage.getDad();
-            if (kb != null) {
-                kb.idleSuffix = '-angry';
-                kb.shouldAlternate = false; // ye
-            }
-            PlayState.instance.currentStage.getGirlfriend().forceAnimationForDuration("scared-termination", 35);
-            if (PlayState.instance.currentStage.getDad().characterId == "qt_kb")
-                PlayState.instance.currentStage.getDad().scriptCall("setDrain", [0.1, null]);
-        } else if (event.beat == 704) {
-            PlayState.instance.currentStage.scriptCall("revealError", [1]);
-            if (PlayState.instance.currentStage.getDad().characterId == "qt_kb")
-                PlayState.instance.currentStage.getDad().scriptCall("setDrain", [0.01, 1.1275]);
-        } else if (event.beat == 831) {
-            if (PlayState.instance.currentStage.getDad().characterId == "qt_kb")
-                PlayState.instance.currentStage.getDad().scriptCall("setDrain", [0.0125, 1.2]);
-        } else if (event.beat == 832) {
-            PlayState.instance.currentStage.scriptCall("revealError", [0]);
-            var kb = PlayState.instance.currentStage.getDad();
-            if (kb != null) {
-                kb.idleSuffix = '';
-                kb.shouldAlternate = true;
-            }
-        } else if (event.beat == 834) { // fkin gf delay
-            PlayState.instance.currentStage.getGirlfriend().playAnimation('scared', true);
-        } else if (event.beat == 1088) {
-            var kb = PlayState.instance.currentStage.getDad();
-            if (kb != null) {
-                kb.idleSuffix = '-alt';
-                kb.shouldAlternate = false;
-            }
-        }
-    }
-
-    function onStepHit(event:SongTimeScriptEvent):Void {
-        super.onStepHit(event);
-        if (event.step < 2039 || event.step > 2561) return;
-        if (event.step == 2040) {
-            kbPincerState(22);
-        }
-        else if (event.step == 2048) {
-            kbPincerState(23);
-        } else if (event.step == 2560) {
-            kbPincerState(24);
-        }
-    }
-
     override function onUpdate(elapsed:Float):Void {
         super.onUpdate(elapsed);
 
-        if (PlayState.instance == null) return;
+        if (PlayState.instance != null) cameraAngleMovement();
+    }
 
-        cameraAngleMovement();
+    override function onBeatHit(event:SongTimeScriptEvent):Void {
+        super.onBeatHit(event);
+        if ((event.beat > 24 && event.beat < 640) || event.beat > 1088) return;
+        if (event.beat == 0 || event.beat == 8 || event.beat == 16 || event.beat == 24) terminationIntroShit(Std.int(event.beat / 8));
+        switch (event.beat) {
+            case 640:
+                changeIdle("-alt");
+            case 702:
+                PlayState.instance.currentStage.scriptCall("revealError", [2]);
+                shakeCameras(0.0133, 0.0132, 0.54);
+                changeIdle("-angry");
+                PlayState.instance.currentStage.getGirlfriend().forceAnimationForDuration("scared-termination", 35);
+                setKBDrain(0.1);
+            case 704:
+                PlayState.instance.currentStage.scriptCall("revealError", [1]);
+                setKBDrain(0.01, 1.1275);
+            case 831:
+                setKBDrain(0.0125, 1.2);
+            case 832:
+                PlayState.instance.currentStage.scriptCall("revealError", [0]);
+                changeIdle("");
+            case 834:
+                PlayState.instance.currentStage.getGirlfriend().playAnimation('scared', true);
+            case 1088:
+                changeIdle("-alt");
+        }
+    }
+
+    override function onStepHit(event:SongTimeScriptEvent):Void {
+        super.onStepHit(event);
+        if (event.step < 2039 || event.step > 2561) return;
+
+        if (event.step == 2040) kbPincerState(22);
+        else if (event.step == 2048) kbPincerState(23);
+        else if (event.step == 2560) kbPincerState(24);
+    }
+
+    override function onNoteHit(event:HitNoteScriptEvent):Void {
+        if (event.eventCanceled) return;
+
+        if (event.note.kind == "qt_outro_fade") terminationOutroShit(event.note.noteData.data, event.note.noteData.getMustHitNote());
+        super.onNoteHit(event);
+    }
+
+    function setKBDrain(drain:Float, loss:Float = null) {
+        if (PlayState.instance.currentStage.getDad().characterId != "qt_kb") return;
+        PlayState.instance.currentStage.getDad().scriptCall("setDrain", [drain, loss]);
+    }
+
+    function changeIdle(suffix:String) {
+        var kb = PlayState.instance.currentStage.getDad();
+        if (kb == null) return;
+        kb.idleSuffix = suffix;
+        kb.shouldAlternate = (suffix == "");
+    }
+
+    function shakeCameras(gameVal:Float, hudVal:Float, duration:Float = 0.63) {
+        PlayState.instance.camGame.shake(gameVal, duration); PlayState.instance.camHUD.shake(hudVal, duration);
     }
 
     function createPincers() {
@@ -171,217 +165,6 @@ class QTTerminationSong extends Song {
 
     function kbPincerState(state:Int) {
         switch(state) {
-            // Man, this is shi-, I'll try to make a better system for this, later-
-            // Note Movement seems to be hard as ####, sooo, uhhhhhh-
-            //first pincer move
-            /*case 0:
-                kbPincerPrepare(3, false);
-            case 1:
-                kbPincerGrab(3);
-
-                var yVar:Float = (Preferences.downscroll ? -70 : 70);
-                var daArrow = getArrowNote(6);
-                var yCur:Float = daArrow.y;
-                FlxTween.tween(daArrow, {y: yCur + yVar}, 0.25, {ease: FlxEase.quadOut});
-                FlxTween.tween(pincer3, {y: yCur + yVar}, 0.25, {ease: FlxEase.quadOut});
-
-            case 2:
-                kbPincerPrepare(3, true);
-
-            //2nd pincer move
-            case 3:
-                kbPincerPrepare(3, false);
-                kbPincerPrepare(1, false);
-            case 4:
-                kbPincerGrab(1);
-                kbPincerGrab(3);
-
-                var anArrow = getArrowNote(6);
-                FlxTween.tween(anArrow, {y: getArrowDefPos(6).y}, 0.3, {ease: FlxEase.quadOut});
-                FlxTween.tween(pincer3, {y: getArrowDefPos(6).y}, 0.3, {ease: FlxEase.quadOut});
-
-                var daArrow = getArrowNote(4);
-                var yVar:Float = (Preferences.downscroll ? -62 : 62);
-                var xVar:Float = -25;
-                var yCur:Float = daArrow.y;
-                var xCur:Float = daArrow.x;
-                FlxTween.tween(daArrow, {x: xCur + xVar, y: yCur + yVar}, 0.25, {ease: FlxEase.quadOut});
-                FlxTween.tween(pincer1, {x: xCur + xVar, y: yCur + yVar}, 0.25, {ease: FlxEase.quadOut});
-
-            case 5:
-                kbPincerPrepare(3, true);
-                kbPincerPrepare(1, true);
-
-            //3rd pincer move
-            case 6:
-                kbPincerPrepare(1, false);
-                kbPincerPrepare(2, false);
-                kbPincerPrepare(4, false);
-            case 7:
-                kbPincerGrab(1);
-                kbPincerGrab(2);
-                kbPincerGrab(4);
-
-                var anArrow = getArrowNote(4);
-                FlxTween.tween(anArrow, {x: getArrowDefPos(4).x, y: getArrowDefPos(4).y}, 0.3, {ease: FlxEase.quadOut});
-                FlxTween.tween(pincer1, {x: getArrowDefPos(4).x, y: getArrowDefPos(4).y}, 0.3, {ease: FlxEase.quadOut});
-
-                var daArrow = getArrowNote(7);
-                var yVar:Float = (Preferences.downscroll ? -40 : 40);
-                var xVar:Float = 50;
-                var yCur:Float = daArrow.y;
-                var xCur:Float = daArrow.x;
-                FlxTween.tween(daArrow, {x: xCur + xVar, y: yCur + yVar}, 0.25, {ease: FlxEase.quadOut});
-                FlxTween.tween(pincer4, {x: xCur + xVar, y: yCur + yVar}, 0.25, {ease: FlxEase.quadOut});
-
-                var daArrow2 = getArrowNote(5);
-                var yVar2:Float = (Preferences.downscroll ? -70 : 70);
-                var xVar2:Float = 11;
-                var yCur2:Float = daArrow2.y;
-                var xCur2:Float = daArrow2.x;
-                FlxTween.tween(daArrow2, {x: xCur2 + xVar2, y: yCur2 + yVar2}, 0.25, {ease: FlxEase.quadOut});
-                FlxTween.tween(pincer2, {x: xCur2 + xVar2, y: yCur2 + yVar2}, 0.25, {ease: FlxEase.quadOut});
-
-            case 8:
-                kbPincerPrepare(4, true);
-                kbPincerPrepare(2, true);
-                kbPincerPrepare(1, true);
-
-            //4th pincer move
-            case 9: 
-                kbPincerPrepare(1, false);
-                kbPincerPrepare(2, false);
-                kbPincerPrepare(3, false);
-                kbPincerPrepare(4, false);
-            case 10:
-                kbPincerGrab(1);
-                kbPincerGrab(2);
-                kbPincerGrab(3);
-                kbPincerGrab(4);
-
-                var daArrow = getArrowNote(4);
-                var daArrow2 = getArrowNote(7);
-                var yVar:Float = (Preferences.downscroll ? -32 : 32);
-                var xVar:Float = -16;
-                var yCur:Float = daArrow.y;
-                var xCur:Float = daArrow.x;
-                var yCur2:Float = daArrow2.y;
-                var xCur2:Float = daArrow2.x;
-                FlxTween.tween(daArrow, {x: xCur + xVar, y: yCur + yVar}, 0.25, {ease: FlxEase.quadOut});
-                FlxTween.tween(pincer1, {x: xCur + xVar, y: yCur + yVar}, 0.25, {ease: FlxEase.quadOut});
-
-                FlxTween.tween(daArrow2, {x: xCur2 - xVar, y: yCur2 + yVar}, 0.25, {ease: FlxEase.quadOut});
-                FlxTween.tween(pincer4, {x: xCur2 - xVar, y: yCur2 + yVar}, 0.25, {ease: FlxEase.quadOut});
-
-                var daArrow3 = getArrowNote(5);
-                var daArrow4 = getArrowNote(6);
-                var yVar2:Float = (Preferences.downscroll ? 11 : -11);
-                var yCurL:Float =  getArrowDefPos(6).y;
-
-                FlxTween.tween(daArrow3, {x: getArrowDefPos(5).x, y: yCurL + yVar2}, 0.25, {ease: FlxEase.quadOut});
-                FlxTween.tween(pincer2, {x: getArrowDefPos(5).x, y: yCurL + yVar2}, 0.25, {ease: FlxEase.quadOut});
-
-                FlxTween.tween(daArrow4, {x: getArrowDefPos(6).x, y: yCurL + yVar2}, 0.25, {ease: FlxEase.quadOut});
-                FlxTween.tween(pincer3, {x: getArrowDefPos(6).x, y: yCurL + yVar2}, 0.25, {ease: FlxEase.quadOut});
-
-                var daAngle:Float = (Preferences.downscroll ? 40 : -40);
-                FlxTween.tween(daArrow, {angle: daAngle}, 0.25, {ease: FlxEase.linear});
-                FlxTween.tween(daArrow2, {angle: -daAngle}, 0.25, {ease: FlxEase.linear});
-
-            case 11:
-                kbPincerPrepare(1, true);
-                kbPincerPrepare(2, true);
-                kbPincerPrepare(3, true);
-                kbPincerPrepare(4, true);
-            
-            //Long section
-            case 12:
-                kbPincerPrepare(4, false);
-                kbPincerPrepare(1, false);
-            case 13:
-                kbPincerGrab(1);
-                kbPincerGrab(4);
-
-                var daArrow = getArrowNote(4);
-                var daArrow2 = getArrowNote(7);
-                var yVar:Float = (Preferences.downscroll ? 75 : -75);
-
-                FlxTween.tween(daArrow, {x: getArrowDefPos(4).x, y: getArrowDefPos(4).y + yVar}, 0.75, {ease: FlxEase.quadInOut});
-                FlxTween.tween(pincer1, {x: getArrowDefPos(4).x, y: getArrowDefPos(4).y + yVar}, 0.75, {ease: FlxEase.quadInOut});
-
-                FlxTween.tween(daArrow2, {x: getArrowDefPos(7).x, y: getArrowDefPos(7).y - yVar}, 0.75, {ease: FlxEase.quadInOut});
-                FlxTween.tween(pincer4, {x: getArrowDefPos(7).x, y: getArrowDefPos(7).y - yVar}, 0.75, {ease: FlxEase.quadInOut});
-
-            case 14:
-                var daArrow = getArrowNote(4);
-                var daArrow2 = getArrowNote(7);
-
-                FlxTween.tween(daArrow, {x: getArrowDefPos(7).x}, 0.9, {ease: FlxEase.quadInOut});
-                FlxTween.tween(pincer1, {x: getArrowDefPos(7).x}, 0.9, {ease: FlxEase.quadInOut});
-
-                FlxTween.tween(daArrow2, {x: getArrowDefPos(4).x}, 0.9, {ease: FlxEase.quadInOut});
-                FlxTween.tween(pincer4, {x: getArrowDefPos(4).x}, 0.9, {ease: FlxEase.quadInOut});
-
-            case 15:
-                var daArrow = getArrowNote(4);
-                var daArrow2 = getArrowNote(7);
-
-                FlxTween.tween(daArrow, {x: getArrowDefPos(7).x, y: getArrowDefPos(7).y}, 0.75, {ease: FlxEase.quadInOut});
-                FlxTween.tween(pincer1, {x: getArrowDefPos(7).x, y: getArrowDefPos(7).y}, 0.75, {ease: FlxEase.quadInOut});
-
-                FlxTween.tween(daArrow2, {x: getArrowDefPos(4).x, y: getArrowDefPos(4).y}, 0.75, {ease: FlxEase.quadInOut});
-                FlxTween.tween(pincer4, {x: getArrowDefPos(4).x, y: getArrowDefPos(4).y}, 0.75, {ease: FlxEase.quadInOut});
-
-                var daAngle:Float = 0;
-                FlxTween.tween(daArrow, {angle: daAngle}, 0.725, {ease: FlxEase.quadOut});
-                FlxTween.tween(daArrow2, {angle: daAngle}, 0.725, {ease: FlxEase.quadOut});
-
-            case 16:
-                kbPincerPrepare(4, true);
-                kbPincerPrepare(1, true);
-                kbPincerPrepare(3, false);
-                kbPincerPrepare(2, false);
-            case 17:
-                kbPincerGrab(2);
-                kbPincerGrab(3);
-                
-                var daArrow = getArrowNote(5);
-                var daArrow2 = getArrowNote(6);
-                var yVar:Float = (Preferences.downscroll ? -75 : 75);
-
-                FlxTween.tween(daArrow, {x: getArrowDefPos(5).x, y: getArrowDefPos(5).y + yVar}, 0.75, {ease: FlxEase.quadInOut});
-                FlxTween.tween(pincer2, {x: getArrowDefPos(5).x, y: getArrowDefPos(5).y + yVar}, 0.75, {ease: FlxEase.quadInOut});
-
-                FlxTween.tween(daArrow2, {x: getArrowDefPos(6).x, y: getArrowDefPos(6).y - yVar}, 0.75, {ease: FlxEase.quadInOut});
-                FlxTween.tween(pincer3, {x: getArrowDefPos(6).x, y: getArrowDefPos(6).y - yVar}, 0.75, {ease: FlxEase.quadInOut});
-
-            case 18:
-                var daArrow = getArrowNote(5);
-                var daArrow2 = getArrowNote(6);
-
-                FlxTween.tween(daArrow, {x: getArrowDefPos(6).x}, 0.9, {ease: FlxEase.quadInOut});
-                FlxTween.tween(pincer2, {x: getArrowDefPos(6).x}, 0.9, {ease: FlxEase.quadInOut});
-
-                FlxTween.tween(daArrow2, {x: getArrowDefPos(5).x}, 0.9, {ease: FlxEase.quadInOut});
-                FlxTween.tween(pincer3, {x: getArrowDefPos(5).x}, 0.9, {ease: FlxEase.quadInOut});
-
-            case 19:
-                var daArrow = getArrowNote(5);
-                var daArrow2 = getArrowNote(6);
-
-                FlxTween.tween(daArrow, {x: getArrowDefPos(6).x, y: getArrowDefPos(6).y}, 0.75, {ease: FlxEase.quadInOut});
-                FlxTween.tween(pincer2, {x: getArrowDefPos(6).x, y: getArrowDefPos(6).y}, 0.75, {ease: FlxEase.quadInOut});
-
-                FlxTween.tween(daArrow2, {x: getArrowDefPos(5).x, y: getArrowDefPos(5).y}, 0.75, {ease: FlxEase.quadInOut});
-                FlxTween.tween(pincer3, {x: getArrowDefPos(5).x, y: getArrowDefPos(5).y}, 0.75, {ease: FlxEase.quadInOut});
-
-            case 20:
-                kbPincerPrepare(3, true);
-                kbPincerPrepare(2, true);
-            case 21:
-                for (i in 0...PlayState.instance.playerStrumline.strumlineNotes.members.length) {
-                    FlxTween.tween(getArrowNote(i + 4), {angle: 0, x: getArrowDefPos(i + 4).x, y: getArrowDefPos(i + 4).y}, 1.375, {ease: FlxEase.quadInOut});
-                }*/
             case 22: //Prepare screenshake
                 kbPincerPrepare(5, false);
                 /*if(forceMiddleScroll)
@@ -393,7 +176,7 @@ class QTTerminationSong extends Song {
                 /*if(forceMiddleScroll)
                     kbPincerGrab(2);
                 else*/
-                    kbPincerGrab(4);
+                kbPincerGrab(4);
                 inAngleRotating = true;
             case 24: //Screenshake end
                 kbPincerPrepare(5, true);
@@ -403,14 +186,13 @@ class QTTerminationSong extends Song {
                 kbPincerPrepare(4, true);
                 inAngleRotating = false;
                 resetCameraAngle();
-                //camHUD.angle=0;
         }
     }
 
+    ////--- Events 
     public function kbPincerPrepare(laneID:Int, goAway:Bool) {
         function hazardComeOnManWhatIsThisJAJAJA(daPincer:FunkinSprite, goesAway:Bool, laneID:Int) {
             var noteID:Int = -1;
-
             switch(laneID) { // fkin Translating-
                 case 1:
                     noteID = 4;
@@ -424,21 +206,17 @@ class QTTerminationSong extends Song {
                     noteID = 0;
                 case 6:
                     noteID = 3;
-                default:
-                    // XDXDXD
+                default: // XDXDXD
             }
             if (noteID < 0) return;
             var daArrow = getArrowNote(noteID);
             daPincer.loadTexture(Paths.image('hazardStuff/qt-port/pincer-open'));
 
             var daY:Float = (Preferences.downscroll ? 500 : -500);
-
-            if(!goesAway) {
+            if(goesAway) FlxTween.tween(daPincer, {y: daArrow.y + daY}, 0.4, {ease: FlxEase.backIn});
+            else {
                 daPincer.setPosition(daArrow.x, daArrow.y + daY);
-                // add(daPincer);
                 FlxTween.tween(daPincer, {y: daArrow.y}, 0.3, {ease: FlxEase.elasticOut});
-            } else {
-                FlxTween.tween(daPincer, {y: daArrow.y + daY}, 0.4, {ease: FlxEase.backIn/*, onComplete: function(twn:FlxTween){remove(daPincer);}*/});
             }
             daPincer.visible = true;
         }
@@ -458,10 +236,12 @@ class QTTerminationSong extends Song {
         hazardComeOnManWhatIsThisJAJAJA(dummyPincer, goAway, laneID);
 	}
 
-	public function kbPincerGrab(laneID:Int):Void {
+	function kbPincerGrab(laneID:Int):Void {
 		switch(laneID) {
-			case 1 | 5:
+			case 1:
 				pincer1.loadTexture(Paths.image('hazardStuff/qt-port/pincer-close'));
+            case 5:
+                pincer1.loadTexture(Paths.image('hazardStuff/qt-port/pincer-close'));
 			case 2:
 				pincer2.loadTexture(Paths.image('hazardStuff/qt-port/pincer-close'));
 			case 3:
@@ -485,31 +265,15 @@ class QTTerminationSong extends Song {
         PlayState.instance.camHUD.angle = 0;
     }
 
-    function onNoteHit(event:HitNoteScriptEvent) {
-        if (event.eventCanceled) return;
-
-        if (event.note.kind == "qt_outro_fade") {
-            terminationOutroShit(event.note.noteData.data, event.note.noteData.getMustHitNote());
-        }
-
-        super.onNoteHit(event);
-    }
-
-    public function onCountdownStart(event:CountdownScriptEvent):Void {
-        super.onCountdownStart(event);
-    }
-
     function nonVisibleStaticArrows() {
-        for (i in 0...PlayState.instance.playerStrumline.strumlineNotes.members.length) {
+        for (i in 0...PlayState.instance.playerStrumline.strumlineNotes.members.length)
             PlayState.instance.playerStrumline.strumlineNotes.members[i].visible = false;
-        }
 
-        for (i in 0...PlayState.instance.opponentStrumline.strumlineNotes.members.length) {
+        for (i in 0...PlayState.instance.opponentStrumline.strumlineNotes.members.length)
             PlayState.instance.opponentStrumline.strumlineNotes.members[i].visible = false;
-        }
     }
 
-    function terminationIntroShit(state:Int):Void {
+    function terminationIntroShit(state:Int) {
         if (PlayState.instance == null) return;
         var playerArrow = PlayState.instance.playerStrumline.strumlineNotes.members[3 - state];
         var opponentArrow = PlayState.instance.opponentStrumline.strumlineNotes.members[state];
@@ -518,8 +282,7 @@ class QTTerminationSong extends Song {
 
         FlxTween.cancelTweensOf(playerArrow); // Stops arrow's fading in, just in case
         FlxTween.cancelTweensOf(opponentArrow);
-		FlxG.camera.shake(0.002,1);
-		PlayState.instance.camHUD.shake(0.002,1);
+        shakeCameras(0.002, 0.002, 1);
 
         playerArrow.alpha = 0;
         opponentArrow.alpha = 0;
@@ -531,15 +294,13 @@ class QTTerminationSong extends Song {
         opponentArrow.y += (Preferences.downscroll ? -25 : 25);
         FlxTween.tween(opponentArrow, {y: defOy, alpha: 1}, 1.22, {ease: FlxEase.cubeOut});
 	}
-    ////---------------------------------------------------------------------------------------
 
-    function terminationOutroShit(state:Int, isPlayer:Bool):Void {
+    function terminationOutroShit(state:Int, isPlayer:Bool) {
         if (PlayState.instance == null) return;
         var daArrow = (isPlayer ? PlayState.instance.playerStrumline.strumlineNotes.members[state] : PlayState.instance.opponentStrumline.strumlineNotes.members[state - 4]);
         FlxTween.tween(daArrow, {alpha: 0}, 1.1, {ease: FlxEase.sineInOut});
     }
-    ////----------------------------------------- Fkin Arrow Helpers ----------------------------------------------
-
+    ////---Fkin Arrow Helpers
     // Initializes the Arrow def positions map, with all the "posible arrows"
     function initDefArrowPos() {
         defPosArray = [];
@@ -549,7 +310,6 @@ class QTTerminationSong extends Song {
             var daArrow = getArrowNote(i);
             fkinOpponentPosArray.push(FlxPoint.get(daArrow.x, daArrow.y));
         }
-
         for (i in 0...PlayState.instance.playerStrumline.strumlineNotes.members.length) {
             var daArrow = getArrowNote(i + 4);
             fkinPlayerPosArray.push(FlxPoint.get(daArrow.x, daArrow.y));
@@ -558,14 +318,12 @@ class QTTerminationSong extends Song {
 
     // Returns an static arrow. 0-3: Opponent Arrows; 4-7 Player Arrows;
     function getArrowNote(note:Int):StrumlineNote {
-        if (note < 4) {
-            return PlayState.instance.opponentStrumline.strumlineNotes.members[note];
-        }
+        if (note < 4) return PlayState.instance.opponentStrumline.strumlineNotes.members[note];
         return PlayState.instance.playerStrumline.strumlineNotes.members[note - 4];
     }
 
     // Gets an FlxPoint from the positions
-	public function getArrowDefPos(key:Int):FlxPoint {
+	function getArrowDefPos(key:Int):FlxPoint {
         if (key > 3) return fkinPlayerPosArray[key - 4];
         return fkinOpponentPosArray[key];
 	}

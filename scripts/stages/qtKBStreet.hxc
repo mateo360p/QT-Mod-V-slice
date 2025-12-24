@@ -1,50 +1,44 @@
 import flixel.FlxG;
 import funkin.play.stage.Stage;
 import funkin.play.PlayState;
-import funkin.graphics.FunkinSprite;
-import flixel.math.FlxMath;
-import flixel.tweens.misc.VarTween;
-import flixel.tweens.FlxTween;
-import flixel.tweens.FlxEase;
 import funkin.graphics.shaders.DropShadowShader;
 import funkin.play.character.CharacterType;
 
 class QTKBStreetStage extends Stage
 {
-    var errorColor:FlxColor = 0xFF338fd6;
+    var errorColor:FlxColor = 0xFF338FD6;
     var errorShaders:Array<DropShadowShader> = [];
+
     function new() {
         super('qtKBStreet');
     }
 
-    inline function canDodgeSong():Bool {
-        return PlayState.instance.currentSong.id == "termination";
-    }
-
     override function onCreate(event:ScriptEvent):Void {
         super.onCreate(event);
-
-        PlayState.instance.currentStage.getNamedProp('TV').danceEvery = 0.0; // fkin code
-        PlayState.instance.currentStage.getNamedProp('qt_alert').danceEvery = 0.0;
-        PlayState.instance.currentStage.getNamedProp('qt_sawblade').danceEvery = 0.0;
-        PlayState.instance.currentStage.getNamedProp('qt_alert').alpha = 0.0;
-        PlayState.instance.currentStage.getNamedProp('qt_sawblade').alpha = 0.0;
-
-        prepareGas();
-        revealError(0);
+        onRestart();
     }
 
-    public function onGameOver(event:ScriptEvent) {
+    override function onSongRetry(event:ScriptEvent):Void {
+        super.onSongRetry(event);
+        onRestart();
+        PlayState.instance.currentStage.getNamedProp("TV").playAnimation("idle", true);
+    }
+
+    override function onGameOver(event:ScriptEvent):Void {
         for (i in 0...errorShaders.length) errorShaders[i].color = 0x00000000;
         super.onGameOver(event);
     }
 
-    override function addCharacter(character:BaseCharacter, charType:CharacterType):Void
-    {
-        // Apply the shader automatically to each character as it gets added.
-        super.addCharacter(character, charType);
-        trace('Applied stage shader to ' + character.characterName);
+    override function onBeatHit(event:SongTimeScriptEvent):Void {
+        super.onBeatHit(event);
 
+        if (PlayState.instance.currentStage.getNamedProp('TV') == null) return;
+        var tvAnim:String = PlayState.instance.currentStage.getNamedProp('TV').getCurrentAnimation();
+        if (tvAnim == "alert" || tvAnim == "heart") PlayState.instance.currentStage.getNamedProp('TV').playAnimation(tvAnim, true);
+    }
+
+    override function addCharacter(character:BaseCharacter, charType:CharacterType):Void {
+        super.addCharacter(character, charType);
         var rim = new DropShadowShader();
         rim.color = 0x00000000;
         character.shader = rim;
@@ -56,61 +50,25 @@ class QTKBStreetStage extends Stage
         switch (charType) {
             case CharacterType.BF:
                 rim.angle = 67.75;
-
                 character.animation.onFrameChange.add(function() {
                     if (getBoyfriend() != null) rim.updateFrameInfo(getBoyfriend().frame);
                 });
-
             case CharacterType.GF:
-                rim.angle = 90;
                 rim.distance = 34;
-
                 character.animation.onFrameChange.add(function() {
                     rim.updateFrameInfo(getGirlfriend().frame);
                 });
-
             case CharacterType.DAD:
                 rim.angle = 112.25;
-                //rim.threshold = 0.3;
-
                 character.animation.onFrameChange.add(function() {
                     rim.updateFrameInfo(getDad().frame);
                 });
-
             default:
         }
     }
 
-    function onSongRetry(event:ScriptEvent) {
-        super.onSongRetry(event);
-
-        PlayState.instance.currentStage.getNamedProp('TV').danceEvery = 0.0; // idk just in case
-        PlayState.instance.currentStage.getNamedProp("TV").playAnimation("idle", true);
-        PlayState.instance.currentStage.getNamedProp('qt_alert').danceEvery = 0.0;
-        PlayState.instance.currentStage.getNamedProp('qt_sawblade').danceEvery = 0.0;
-        PlayState.instance.currentStage.getNamedProp('qt_alert').alpha = 0.0;
-        PlayState.instance.currentStage.getNamedProp('qt_sawblade').alpha = 0.0;
-
-        prepareGas();
-        revealError(0);
-    }
-
-    public function onBeatHit(event:SongTimeScriptEvent):Void {
-        super.onBeatHit(event);
-
-        if (PlayState.instance.currentStage.getNamedProp('TV') == null) return;
-
-        var tvAnim:String = PlayState.instance.currentStage.getNamedProp('TV').getCurrentAnimation();
-        if (tvAnim == "alert" || tvAnim == "heart") PlayState.instance.currentStage.getNamedProp('TV').playAnimation(tvAnim, true);
-    }
-
-    override function onUpdate(event:UpdateScriptEvent)
-    {
-        super.onUpdate(event);
-    }
-
     // Pretty well-coded code, isn't it?
-    public function revealError(daCase:Int):Void {
+    public function revealError(daCase:Int) {
         switch(daCase) {
             case 1:// 1 to set error
                 for (i in 0...errorShaders.length) errorShaders[i].color = errorColor;
@@ -139,7 +97,6 @@ class QTKBStreetStage extends Stage
     function prepareGas() {
         var gas1 = PlayState.instance.currentStage.getNamedProp('gas1');
         var gas2 = PlayState.instance.currentStage.getNamedProp('gas2');
-
         var xVariation:Int = 1680;
         var yVariation:Int = -600;
 
@@ -153,5 +110,15 @@ class QTKBStreetStage extends Stage
         gas2.angle = 31;
         gas1.zIndex = 1002;
         gas2.zIndex = 1003;
+    }
+
+    function onRestart() {
+        PlayState.instance.currentStage.getNamedProp('TV').danceEvery = 0.0;
+        PlayState.instance.currentStage.getNamedProp('qt_alert').danceEvery = 0.0;
+        PlayState.instance.currentStage.getNamedProp('qt_sawblade').danceEvery = 0.0;
+        PlayState.instance.currentStage.getNamedProp('qt_alert').alpha = 0.0;
+        PlayState.instance.currentStage.getNamedProp('qt_sawblade').alpha = 0.0;
+        prepareGas();
+        revealError(0);
     }
 }

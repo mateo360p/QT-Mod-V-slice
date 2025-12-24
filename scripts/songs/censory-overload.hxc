@@ -15,29 +15,21 @@ class QTCensoryOverloadSong extends Song {
         super('censory-overload');
     }
 
-    function onCreate(event:ScriptEvent):Void {
+    override function onCreate(event:ScriptEvent):Void {
         super.onCreate(event);
-
         hasPlayedCutscene = false;
     }
 
-    function onSongRetry(event:ScriptEvent) {
+    override function onSongRetry(event:ScriptEvent):Void {
         super.onSongRetry(event);
-
         hasPlayedCutscene = true;
         var kb = PlayState.instance.currentStage.getDad();
-        if (kb != null) {
-            kb.idleSuffix = '';
-            kb.shouldAlternate = true;
-        }
+        changeIdle("");
     }
 
-    public function onCountdownStart(event:CountdownScriptEvent):Void {
+    override function onCountdownStart(event:CountdownScriptEvent):Void {
         super.onCountdownStart(event);
-
-        if (!(PlayStatePlaylist.isStoryMode) || PlayState.instance.isChartingMode || hasPlayedCutscene) {
-            return;
-        }
+        if (!(PlayStatePlaylist.isStoryMode) || PlayState.instance.isChartingMode || hasPlayedCutscene) return;
 
         hasPlayedCutscene = true;
         event.cancel();
@@ -48,18 +40,17 @@ class QTCensoryOverloadSong extends Song {
         PlayState.instance.startConversation('censory-overload');
     }
 
-    public override function onDialogueEnd() {
+    override function onDialogueEnd() {
         Countdown.performCountdown();
     }
 
-    function kbWakesUp():Void {
+    function kbWakesUp() {
         FlxG.camera.visible = true;
         PlayState.instance.disableKeys = true;
-
         PlayState.instance.camHUD.visible = false;
         PlayState.instance.camCutscene.visible = true;
 
-        var blackBG:FunkinSprite = new FunkinSprite(0, 0).makeGraphic(FlxG.width * 3, FlxG.height * 3, FlxColor.BLACK);
+        var blackBG:FunkinSprite = new FunkinSprite(0, 0).makeSolidColor(FlxG.width * 3, FlxG.height * 3, FlxColor.BLACK);
         blackBG.cameras = [PlayState.instance.camCutscene];
         blackBG.updateHitbox();
         blackBG.screenCenter();
@@ -89,7 +80,7 @@ class QTCensoryOverloadSong extends Song {
         daQT.alpha = 0;
         PlayState.instance.currentStage.add(daQT);
 
-        var black:FunkinSprite = new FunkinSprite(0, 0).makeGraphic(FlxG.width * 3, FlxG.height * 3, FlxColor.BLACK);
+        var black:FunkinSprite = new FunkinSprite(0, 0).makeSolidColor(FlxG.width * 3, FlxG.height * 3, FlxColor.BLACK);
         black.cameras = [PlayState.instance.camCutscene];
         black.updateHitbox();
         black.screenCenter();
@@ -102,19 +93,11 @@ class QTCensoryOverloadSong extends Song {
 
         new FlxTimer().start(0.3, function(tmr:FlxTimer) {
             black.alpha -= 0.125;
-            if (black.alpha > 0)
-            {
-                tmr.reset(0.3);
-            }
-            else
-            {
-                new FlxTimer().start(0.3, function(swagTimer:FlxTimer)
-                {
+            if (black.alpha > 0) tmr.reset(0.3);
+            else {
+                new FlxTimer().start(0.3, function(swagTimer:FlxTimer) {
                     daQT.alpha += 0.15;
-                    if (daQT.alpha < 1)
-                    {
-                        swagTimer.reset();
-                    }
+                    if (daQT.alpha < 1) swagTimer.reset();
                     else
                     {
                         daQT.animation.play('idle');
@@ -128,16 +111,11 @@ class QTCensoryOverloadSong extends Song {
                                 blackBG.destroy();
                                 horrorStage.destroy();
                                 daQT.destroy();
-                                dummySound.fadeOut(1, 0, function() {
-                                    dummySound.destroy();
-                                });
+                                dummySound.fadeOut(1, 0, dummySound.destroy);
                                 startDialogue();
                             });
                         });
-                        new FlxTimer().start(13, function(deadTime:FlxTimer)
-                        {
-                            PlayState.instance.camCutscene.fade(FlxColor.WHITE, 3, false);
-                        });
+                        new FlxTimer().start(13, () -> PlayState.instance.camCutscene.fade(FlxColor.WHITE, 3, false));
                     }
                 });
             }
@@ -145,100 +123,89 @@ class QTCensoryOverloadSong extends Song {
 	}
 
     // fkin good coding incoming
-    public function onBeatHit(event:SongTimeScriptEvent):Void {
+    override function onBeatHit(event:SongTimeScriptEvent):Void {
         super.onBeatHit(event);
 
         // Gas release Shit
-        if(event.beat >= 80 && event.beat <= 208) //first drop
-        {
-            //Gas Release effect
-            if (event.beat % 16 == 0)
-            {
-                PlayState.instance.currentStage.getNamedProp('gas1').playAnimation('burst');
-                PlayState.instance.currentStage.getNamedProp('gas2').playAnimation('burst');
-            }
+        if(event.beat >= 80 && event.beat <= 208) {// 1st drop
+            if (event.beat % 16 == 0) burstGas("");
         }
-        else if(event.beat >= 304 && event.beat <= 432) //second drop
-        {
+        else if(event.beat >= 304 && event.beat <= 432) {// 2nd drop
             /*if(camZooming && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms)
             {
                 FlxG.camera.zoom += 0.0075;
                 camHUD.zoom += 0.015;
             }*/
 
-            //Gas Release effect
-            if (event.beat % 8 == 0)
-            {
-                PlayState.instance.currentStage.getNamedProp('gas1').playAnimation('burstALT');
-                PlayState.instance.currentStage.getNamedProp('gas2').playAnimation('burstALT');
-            }
+            if (event.beat % 8 == 0) burstGas("ALT");
         }
-        else if(event.beat >= 560 && event.beat <= 688){ //third drop
+        else if(event.beat >= 560 && event.beat <= 688) { // 3rd drop
             /*if(camZooming && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms)
             {
                 FlxG.camera.zoom += 0.0075;
                 camHUD.zoom += 0.015;
             }*/
-            //Gas Release effect
-            if (event.beat % 4 == 0)
-            {
-                PlayState.instance.currentStage.getNamedProp('gas1').playAnimation('burstFAST');
-                PlayState.instance.currentStage.getNamedProp('gas2').playAnimation('burstFAST');
-            }
+            if (event.beat % 4 == 0) burstGas("FAST");
         }
-        else if(event.beat >= 832 && event.beat <= 960){ //final drop
+        else if(event.beat >= 832 && event.beat <= 960) { // Final drop
             /*if(camZooming && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms)
             {
                 FlxG.camera.zoom += 0.0075;
                 camHUD.zoom += 0.015;
             }*/
 
-            //Gas Release effect
-            if (event.beat % 4 == 2)
-            {
-                PlayState.instance.currentStage.getNamedProp('gas1').playAnimation('burstFAST');
-                PlayState.instance.currentStage.getNamedProp('gas2').playAnimation('burstFAST');
-            }
+            if (event.beat % 4 == 2) burstGas("FAST");
         }
         /*else if((event.beat == 976 || event.beat == 992) && camZooming && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms){ //Extra zooms for distorted kicks at end
             FlxG.camera.zoom += 0.031;
             camHUD.zoom += 0.062;
         }*/
-        else if(event.beat == 702){
-            PlayState.instance.currentStage.getNamedProp('gas1').playAnimation('burst');
-            PlayState.instance.currentStage.getNamedProp('gas2').playAnimation('burst');
+        else if(event.beat == 702) {
+            burstGas("");
         }
 
         // Shakes, Alt Idles and Errors
-        if (event.beat == 558) {
-            PlayState.instance.camGame.shake(0.0097, 0.63);
-            PlayState.instance.camHUD.shake(0.0092, 0.63);
-        } else if (event.beat == 688) {
-            var kb = PlayState.instance.currentStage.getDad();
-            if (kb != null) {
-                kb.idleSuffix = '-alt';
-                kb.shouldAlternate = false;
-            }
-        } else if (event.beat == 702) {
-            PlayState.instance.currentStage.scriptCall("revealError", [2]);
-            PlayState.instance.camGame.shake(0.0123, 0.63);
-            PlayState.instance.camHUD.shake(0.012, 0.63);
-            var kb = PlayState.instance.currentStage.getDad();
-            if (kb != null) {
-                kb.idleSuffix = '';
-                kb.shouldAlternate = true; // ye
-            }
-        } else if (event.beat == 704) {
-            PlayState.instance.currentStage.scriptCall("revealError", [1]);
-            if (PlayState.instance.currentStage.getDad().characterId == "qt_kb") 
-                PlayState.instance.currentStage.getDad().scriptCall("setDrain", [0.0095, 1.125]);
-        } else if (event.beat == 768) {
-            if (PlayState.instance.currentStage.getDad().characterId == "qt_kb") 
-                PlayState.instance.currentStage.getDad().scriptCall("setDrain", [0.125]);
-        } else if (event.beat == 832) {
-            PlayState.instance.currentStage.scriptCall("revealError", [0]);
-            if (PlayState.instance.currentStage.getDad().characterId == "qt_kb") 
-                PlayState.instance.currentStage.getDad().scriptCall("setDrain", [0.01195, 1.075]);
+        switch(event.beat) {
+            case 558:
+                shakeCameras(0.0097, 0.0092);
+            case 688:
+                changeIdle("-alt");
+            case 702:
+                PlayState.instance.currentStage.scriptCall("revealError", [2]);
+                shakeCameras(0.0123, 0.012);
+                changeIdle("");
+            case 704:
+                PlayState.instance.currentStage.scriptCall("revealError", [1]);
+                setKBDrain(0.0095, 1.125);
+            case 768:
+                setKBDrain(0.125);
+            case 832:
+                PlayState.instance.currentStage.scriptCall("revealError", [0]);
+                setKBDrain(0.01195, 1.075);
+            default:
+                // Nothing :O
         }
+    }
+
+    function burstGas(suffix:String) {
+        PlayState.instance.currentStage.getNamedProp('gas1').playAnimation('burst' + suffix);
+        PlayState.instance.currentStage.getNamedProp('gas2').playAnimation('burst' + suffix);
+    }
+
+    function setKBDrain(drain:Float, loss:Float = null) {
+        if (PlayState.instance.currentStage.getDad().characterId != "qt_kb") return;
+        PlayState.instance.currentStage.getDad().scriptCall("setDrain", [drain, loss]);
+    }
+
+    function changeIdle(suffix:String) {
+        var kb = PlayState.instance.currentStage.getDad();
+        if (kb == null) return;
+        kb.idleSuffix = suffix;
+        kb.shouldAlternate = (suffix == "");
+    }
+
+    function shakeCameras(gameVal:Float, hudVal:Float, duration:Float = 0.63) {
+        PlayState.instance.camGame.shake(gameVal, duration);
+        PlayState.instance.camHUD.shake(hudVal, duration);
     }
 }
