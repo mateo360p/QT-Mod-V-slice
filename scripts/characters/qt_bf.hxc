@@ -139,7 +139,7 @@ class VsQTBoyfriendCharacter extends MultiSparrowCharacter
 
     if (PlayState.instance == null) return;
 
-      if (FlxG.keys.justPressed.SHIFT && !isDodging && !PlayState.instance.disableKeys && !PlayState.instance.isInCutscene && !this.isHoldingNote() && this.getCurrentAnimation() != "hey" && !this.getCurrentAnimation().endsWith("miss"))
+      if (FlxG.keys.justPressed.SHIFT && !isDodging && !PlayState.instance.disableKeys && !PlayState.instance.isInCutscene && PlayState.instance.subState == null && !this.isHoldingNote() && this.getCurrentAnimation() != "hey" && !this.getCurrentAnimation().endsWith("miss"))
         doHey();
   }
 }

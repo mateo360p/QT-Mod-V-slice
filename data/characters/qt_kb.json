@@ -10,11 +10,11 @@
     60
   ],
   "cameraOffsets": [
-    -180,
+    -120,
     -50
   ],
   "scale": 1,
-  "singTime": 4,
+  "singTime": 6,
   "isPixel": false,
   "flipX": false,
   "healthIcon": {

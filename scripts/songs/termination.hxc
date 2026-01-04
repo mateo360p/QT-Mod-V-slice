@@ -27,6 +27,24 @@ class QTTerminationSong extends Song {
         super('termination');
     }
 
+    function fetchAssetPaths():Array<String> // These are in the stage data, so they should have been preloaded, but just in case-
+	{
+		var results:Array<String> = super.fetchAssetPaths();
+
+        results.push(Paths.image("hazardStuff/inhuman-port/back-Gradient"));
+        results.push(Paths.getSparrowAtlas("hazardStuff/qt-port/stage/Gas_Release"));
+		results.push(Paths.getSparrowAtlas("hazardStuff/qt-port/attack_alert_NEW"));
+        results.push(Paths.getSparrowAtlas("hazardStuff/qt-port/attackv6"));
+        results.push(Paths.sound("hazard/dodge01"));
+        results.push(Paths.sound("hazard/bonk"));
+		for (i in ["Double", "Triple", "Quadruple", ""]) results.push(Paths.sound("hazard/alert" + i));
+        for (i in ["-double", "-triple", "-quadruple", ""]) results.push(Paths.sound("hazard/attack" + i));
+        results.push(Paths.image("hazardStuff/qt-port/pincer-open"));
+        results.push(Paths.image("hazardStuff/qt-port/pincer-close"));
+
+		return results;
+	}
+
     override function onCreate(event:ScriptEvent):Void {
         super.onCreate(event);
 
@@ -37,6 +55,7 @@ class QTTerminationSong extends Song {
         initDefArrowPos();
         nonVisibleStaticArrows();
         resetCameraAngle();
+        killGas(); // I'm too lazy to add the gas in code, so let's remove it!
     }
 
     override function onSongRetry(event:ScriptEvent):Void {
@@ -48,6 +67,7 @@ class QTTerminationSong extends Song {
         resetCameraAngle();
         PlayState.instance.currentStage.getGirlfriend().canPlayOtherAnims = true;
         PlayState.instance.currentStage.getGirlfriend().playAnimation('scared', true);
+        killGas(); // I'm too lazy to add the gas in code, so let's remove it!
     }
 
     override function onUpdate(elapsed:Float):Void {
@@ -116,6 +136,11 @@ class QTTerminationSong extends Song {
         PlayState.instance.camGame.shake(gameVal, duration); PlayState.instance.camHUD.shake(hudVal, duration);
     }
 
+    function killGas() {
+        PlayState.instance.currentStage.getNamedProp('gas1')?.kill();
+        PlayState.instance.currentStage.getNamedProp('gas2')?.kill();
+    }
+
     function createPincers() {
         pincer1 = new FunkinSprite(0, 0).loadTexture('hazardStuff/qt-port/pincer-close');
 		pincer1.scrollFactor.set();
@@ -145,11 +170,20 @@ class QTTerminationSong extends Song {
         var daX:Float = (Preferences.downscroll ? 160 : 218);
         var daY:Float = (Preferences.downscroll ? -100 : 240);
         var daAngle:Float = (Preferences.downscroll ? 270 : 90);
-        pincer1.angle = daAngle;
+        if (FlxG.onMobile) {
+            var amplification:Float = (FlxG.width / FlxG.height) / (FlxG.initialWidth / FlxG.initialHeight);
+            pincer1.scale.set(0.4 * amplification, 0.4 * amplification);
+            pincer1.updateHitbox();
+            pincer1.origin.set(0, 0);
+        }
+
+        pincer1.angle = (FlxG.onMobile ? 90 : daAngle);
         pincer2.angle = daAngle;
         pincer3.angle = daAngle;
         pincer4.angle = daAngle;
-        pincer1.offset.set(daX, daY);
+        if (FlxG.onMobile) pincer1.offset.set(218, 240);
+        else pincer1.offset.set(daX, daY);
+
         pincer2.offset.set(daX, daY);
         pincer3.offset.set(daX, daY);
         pincer4.offset.set(daX, daY);
@@ -212,7 +246,7 @@ class QTTerminationSong extends Song {
             var daArrow = getArrowNote(noteID);
             daPincer.loadTexture(Paths.image('hazardStuff/qt-port/pincer-open'));
 
-            var daY:Float = (Preferences.downscroll ? 500 : -500);
+            var daY:Float = (Preferences.downscroll && daPincer.angle == 270 ? 500 : -500); // fkin fixes
             if(goesAway) FlxTween.tween(daPincer, {y: daArrow.y + daY}, 0.4, {ease: FlxEase.backIn});
             else {
                 daPincer.setPosition(daArrow.x, daArrow.y + daY);

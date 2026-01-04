@@ -39,8 +39,6 @@ class VsQTNervousBotCharacter extends MultiSparrowCharacter
   function fetchAssetPaths():Array<String> {
       var results:Array<String> = super.fetchAssetPaths();
 
-      FunkinSound.playOnce(Paths.sound('garWeak'));
-
       for (i in 1...4) {
           results.push(Paths.sound('hazard/glitch-error0' + i));
       }

@@ -6,8 +6,10 @@ import funkin.play.character.CharacterType;
 
 class QTKBStreetStage extends Stage
 {
-    var errorColor:FlxColor = 0xFF338FD6;
-    var errorShaders:Array<DropShadowShader> = [];
+    var kbShader:DropShadowShader;
+    var gfShader:DropShadowShader;
+    var bfShader:DropShadowShader;
+    var gasSongs:Array<String> = ["censory-overload"];
 
     function new() {
         super('qtKBStreet');
@@ -25,7 +27,7 @@ class QTKBStreetStage extends Stage
     }
 
     override function onGameOver(event:ScriptEvent):Void {
-        for (i in 0...errorShaders.length) errorShaders[i].color = 0x00000000;
+        getBoyfriend().shader = null;
         super.onGameOver(event);
     }
 
@@ -37,15 +39,22 @@ class QTKBStreetStage extends Stage
         if (tvAnim == "alert" || tvAnim == "heart") PlayState.instance.currentStage.getNamedProp('TV').playAnimation(tvAnim, true);
     }
 
+    override function buildStage():Void {
+        super.buildStage();
+        if (!gasSongs.contains(PlayState.instance.currentSong.id)) {
+            PlayState.instance.currentStage.getNamedProp('gas1').kill();
+            PlayState.instance.currentStage.getNamedProp('gas2').kill();
+        }
+    }
+
     override function addCharacter(character:BaseCharacter, charType:CharacterType):Void {
         super.addCharacter(character, charType);
         var rim = new DropShadowShader();
-        rim.color = 0x00000000;
-        character.shader = rim;
+        rim.color = 0xFF338FD6;
         rim.attachedSprite = character;
-        errorShaders.push(rim);
         rim.angle = 90;
         rim.distance = 20;
+        if (FlxG.onMobile) rim.antialiasAmt = 0;
 
         switch (charType) {
             case CharacterType.BF:
@@ -53,44 +62,49 @@ class QTKBStreetStage extends Stage
                 character.animation.onFrameChange.add(function() {
                     if (getBoyfriend() != null) rim.updateFrameInfo(getBoyfriend().frame);
                 });
+                bfShader = rim;
             case CharacterType.GF:
                 rim.distance = 34;
                 character.animation.onFrameChange.add(function() {
                     rim.updateFrameInfo(getGirlfriend().frame);
                 });
+                gfShader = rim;
             case CharacterType.DAD:
                 rim.angle = 112.25;
                 character.animation.onFrameChange.add(function() {
                     rim.updateFrameInfo(getDad().frame);
                 });
+                kbShader = rim;
             default:
         }
+        character.shader = rim;
+        character.shader = null; // idk if this makes a difference-
     }
 
     // Pretty well-coded code, isn't it?
     public function revealError(daCase:Int) {
         switch(daCase) {
             case 1:// 1 to set error
-                for (i in 0...errorShaders.length) errorShaders[i].color = errorColor;
-                PlayState.instance.currentStage.getNamedProp('BG-error').visible = true;
-                PlayState.instance.currentStage.getNamedProp('FG-error').visible = true;
-                PlayState.instance.currentStage.getNamedProp('BG-pre').visible = false;
-                PlayState.instance.currentStage.getNamedProp('BG').visible = false;
-                PlayState.instance.currentStage.getNamedProp('FG').visible = false;
+                applyShaders(true);
+                PlayState.instance.currentStage.getNamedProp('BG-error').revive();
+                PlayState.instance.currentStage.getNamedProp('FG-error').revive();
+                PlayState.instance.currentStage.getNamedProp('BG-pre').kill();
+                PlayState.instance.currentStage.getNamedProp('BG').kill();
+                PlayState.instance.currentStage.getNamedProp('FG').kill();
             case 2: // 2 to set it to pre-error
-                PlayState.instance.currentStage.getNamedProp('BG-error').visible = false;
-                PlayState.instance.currentStage.getNamedProp('FG-error').visible = false;
-                PlayState.instance.currentStage.getNamedProp('BG-pre').visible = true;
-                PlayState.instance.currentStage.getNamedProp('BG').visible = false;
-                PlayState.instance.currentStage.getNamedProp('FG').visible = true;
+                PlayState.instance.currentStage.getNamedProp('BG-error').kill();
+                PlayState.instance.currentStage.getNamedProp('FG-error').kill();
+                PlayState.instance.currentStage.getNamedProp('BG-pre').revive();
+                PlayState.instance.currentStage.getNamedProp('BG').kill();
+                PlayState.instance.currentStage.getNamedProp('FG').revive();
                 FlxG.camera.shake(0.0078, 0.675);
             default: // anything else to set it to normal
-                for (i in 0...errorShaders.length) errorShaders[i].color = 0x00000000;
-                PlayState.instance.currentStage.getNamedProp('BG-error').visible = false;
-                PlayState.instance.currentStage.getNamedProp('FG-error').visible = false;
-                PlayState.instance.currentStage.getNamedProp('BG-pre').visible = false;
-                PlayState.instance.currentStage.getNamedProp('BG').visible = true;
-                PlayState.instance.currentStage.getNamedProp('FG').visible = true;
+                applyShaders(false);
+                PlayState.instance.currentStage.getNamedProp('BG-error').kill();
+                PlayState.instance.currentStage.getNamedProp('FG-error').kill();
+                PlayState.instance.currentStage.getNamedProp('BG-pre').kill();
+                PlayState.instance.currentStage.getNamedProp('BG').revive();
+                PlayState.instance.currentStage.getNamedProp('FG').revive();
         }
     }
 
@@ -110,15 +124,28 @@ class QTKBStreetStage extends Stage
         gas2.angle = 31;
         gas1.zIndex = 1002;
         gas2.zIndex = 1003;
+        gas1.antialiasing = !FlxG.onMobile;
+        gas2.antialiasing = !FlxG.onMobile;
     }
 
     function onRestart() {
         PlayState.instance.currentStage.getNamedProp('TV').danceEvery = 0.0;
-        PlayState.instance.currentStage.getNamedProp('qt_alert').danceEvery = 0.0;
-        PlayState.instance.currentStage.getNamedProp('qt_sawblade').danceEvery = 0.0;
-        PlayState.instance.currentStage.getNamedProp('qt_alert').alpha = 0.0;
-        PlayState.instance.currentStage.getNamedProp('qt_sawblade').alpha = 0.0;
+        PlayState.instance.currentStage.getNamedProp('gas1')?.antialiasing = !(FlxG.onMobile);
+        PlayState.instance.currentStage.getNamedProp('gas2')?.antialiasing = !(FlxG.onMobile);
+        PlayState.instance.currentStage.getNamedProp('TV').antialiasing = !(FlxG.onMobile);
         prepareGas();
         revealError(0);
+    }
+
+    function applyShaders(on:Bool) {
+        if (on) {
+            getBoyfriend()?.shader = bfShader;
+            getGirlfriend()?.shader = gfShader;
+            getDad()?.shader = kbShader;
+        } else {
+            getBoyfriend()?.shader = null;
+            getGirlfriend()?.shader = null;
+            getDad()?.shader = null;
+        }
     }
 }

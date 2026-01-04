@@ -15,6 +15,15 @@ class QTCensoryOverloadSong extends Song {
         super('censory-overload');
     }
 
+    function fetchAssetPaths():Array<String> 
+	{
+		var results:Array<String> = super.fetchAssetPaths();
+
+        results.push(Paths.image("hazardStuff/inhuman-port/back-Gradient"));
+        results.push(Paths.getSparrowAtlas("hazardStuff/qt-port/stage/Gas_Release"));
+		return results;
+	}
+
     override function onCreate(event:ScriptEvent):Void {
         super.onCreate(event);
         hasPlayedCutscene = false;

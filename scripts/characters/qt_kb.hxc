@@ -59,6 +59,7 @@ class VsQTKillerBotCharacter extends MultiSparrowCharacter
   }
 
   function drainHoldNote(elapsed:Float) {
+    if (PlayState.instance == null || PlayState.instance.opponentStrumline == null) return;
     for (holdNote in PlayState.instance.opponentStrumline.holdNotes.members)
     {
       if (holdNote == null || !holdNote.alive || holdNote.noteData == null) continue;

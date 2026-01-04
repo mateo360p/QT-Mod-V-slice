@@ -90,16 +90,10 @@
       "offsets": [-4, 5]
     },
     {
-      "name": "cheer",
-      "prefix": "Cheer",
-      "assetPath": "characters/BFCheer",
-      "offsets": [0, 0]
-    },
-    {
       "name": "hit",
       "prefix": "BF hit",
       "assetPath": "characters/BOYFRIEND",
-      "offsets": [0, 0]
+      "offsets": [14, 18]
     },
     {
       "name": "hit-hold",
@@ -107,7 +101,7 @@
       "frameIndices": [10, 11],
       "looped": true,
       "assetPath": "characters/BOYFRIEND",
-      "offsets": [0, 0]
+      "offsets": [14, 18]
     },
     {
       "name": "firstDeath",

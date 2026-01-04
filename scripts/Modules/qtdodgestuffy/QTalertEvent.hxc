@@ -4,46 +4,28 @@ import funkin.audio.FunkinSound;
 import funkin.play.event.SongEvent;
 import funkin.play.stage.Bopper;
 import funkin.modding.module.ModuleHandler;
+import funkin.Conductor;
 
 class QTalertEvent extends SongEvent {
     public function new() {
         super('KB_Alert');
     }
 
-    function sawblade():Bopper {
-        if (PlayState.instance.currentStage.getNamedProp("qt_sawblade") == null) ModuleHandler.getModule("QTBFdodge").scriptCall("initSawAssets");
-        return PlayState.instance.currentStage.getNamedProp("qt_sawblade");
-    }
-
-    function alert():Bopper {
-        if (PlayState.instance.currentStage.getNamedProp("qt_alert") == null) ModuleHandler.getModule("QTBFdodge").scriptCall("initAlertAssets");
-        return PlayState.instance.currentStage.getNamedProp("qt_alert");
-    }
-
     override function handleEvent(data:SongEventData):Void {
-        var variant:String = "";
-        var soundV:String =  "";
+        var alertV:String = "";
+        var prepareS:Bool = data.value.prep_saw ?? false;
         switch(data.value.count) {
             case 2:
-                variant = "DOUBLE";
-                soundV = "Double";
+                alertV = "DOUBLE";
             case 3:
-                variant = "TRIPLE";
-                soundV = "Triple";
+                alertV = "TRIPLE";
             case 4:
-                variant = "QUAD";
-                soundV = "Quadruple";
+                alertV = "QUAD";
             default:
-                variant = "";
-                soundV = "";
+                alertV = "";
         }
-        alert().playAnimation("alert" + variant);
-        alert().alpha = 1;
-        FunkinSound.playOnce(Paths.sound("hazard/alert" + soundV), 0.85);
-        if (data.value.prep_saw != null) if (data.value.prep_saw) {
-            sawblade().playAnimation("prepare", true);
-            sawblade().alpha = 1;
-        }
+        Conductor.instance.update();
+        ModuleHandler.getModule("DodgeModuleQT").scriptCall("handleAlert", [alertV, data.value.count, prepareS]);
     }
 
     public override function getTitle():String {

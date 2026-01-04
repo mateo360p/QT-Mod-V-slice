@@ -14,38 +14,10 @@ class QTdodgeEvent extends SongEvent {
         super('KB_AttackFire');
     }
 
-    function sawblade():Bopper {
-        if (PlayState.instance.currentStage.getNamedProp("qt_sawblade") == null) ModuleHandler.getModule("QTBFdodge").scriptCall("initSawAssets");
-        return PlayState.instance.currentStage.getNamedProp("qt_sawblade");
-    }
-
     public override function handleEvent(data:SongEventData) {
+        Conductor.instance.update();
         PlayState.instance.mayPauseGame = false;
-        sawblade().playAnimation("fire", true);
-
-        var daSound:String = "";
-        switch(data.value.snd) {
-            case 2:
-                daSound = "-double";
-            case 3:
-                daSound = "-triple";
-            case 4:
-                daSound = "-quadruple";
-            default:
-                daSound = "";
-        }
-        FunkinSound.playOnce(Paths.sound("hazard/attack" + daSound), 0.85);
-        new FlxTimer().start(0.09, function(_) {
-            if (Conductor.instance != null) {
-                PlayState.instance.mayPauseGame = true;
-                var wulDai:Bool = ModuleHandler.getModule("QTBFdodge").scriptCall("evalQTDodge", [Conductor.instance.songPosition]);
-                /*if (PlayState.instance.isBotPlayMode) */ModuleHandler.getModule("QTBFdodge").scriptCall("qtbfDodge", []);
-                /*else if (wulDai) {
-                    ModuleHandler.getModule("QTBFdodge").scriptSet("dedByGlam_nono_byasawblade", true);
-                    PlayState.instance.health = -40404; // funnyNumber
-                }*/
-            }
-        });
+        ModuleHandler.getModule("DodgeModuleQT").scriptCall("handleSawblade", [data.value.snd]);
     }
 
     public override function getTitle():String

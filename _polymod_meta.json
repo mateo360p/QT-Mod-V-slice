@@ -1,5 +1,5 @@
 {
-  "title": "vs. QT - V-Slice Port [2.1.1]",
+  "title": "vs. QT - V-Slice Port [3.0.1]",
   "description": "",
   "author": "Dipazio",
   "contributors": [
@@ -9,7 +9,7 @@
       "url": "https://github.com/mateo360p"
     }
   ],
-  "api_version": "0.7.5",
-  "mod_version": "2.1.1",
+  "api_version": "0.8.0",
+  "mod_version": "3.0.1",
   "license": "Apache-2.0"
 }

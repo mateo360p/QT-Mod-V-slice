@@ -26,8 +26,6 @@ class QTCessationSong extends Song {
         getsDaJoke = (FlxG.random.int(1, 5) == 5);
         canSkipEndScreen = false;
         initDummyAssets();
-        PlayState.instance.currentStage.getNamedProp('FG').loadTexture("hazardStuff/qt-port/stage/streetFrontCute");
-        PlayState.instance.currentStage.getNamedProp('BG').loadTexture("hazardStuff/qt-port/stage/streetBackCute");
         hasPlayedEndCutscene = false;
     }
 
@@ -83,6 +81,9 @@ class QTCessationSong extends Song {
         cessationTroll.y = 205;
         cessationTroll.visible = false;
         PlayState.instance.add(cessationTroll);
+
+        PlayState.instance.currentStage.getNamedProp('FG').loadTexture("hazardStuff/qt-port/stage/streetFrontCute");
+        PlayState.instance.currentStage.getNamedProp('BG').loadTexture("hazardStuff/qt-port/stage/streetBackCute");
     }
 
     public function endScreenHazard():Void { // For displaying the "thank you for playing" screen on Cessation
@@ -123,9 +124,7 @@ class QTCessationSong extends Song {
     function handleFkinJoke(hahaTakeIt:Int = 0) {
         switch (hahaTakeIt) {
             case 0: // fkin ohno
-                PlayState.instance.currentStage.getNamedProp("qt_alert").alpha = 1;
-                PlayState.instance.currentStage.getNamedProp("qt_alert").playAnimation("alert");
-                FunkinSound.playOnce(Paths.sound("hazard/alert"), 0.85);
+                ModuleHandler.getModule("DodgeModuleQT").scriptCall("handleAlert", ["", "", false]);
             case 1: // fkin AJAJA
                 cessationTroll.visible = true;
                 FunkinSound.playOnce(Paths.sound("hazard/bruh"), 0.75);

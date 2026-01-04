@@ -13,29 +13,17 @@ class QTAlarmGradientEvent extends SongEvent {
         super('Alarm Gradient');
     }
 
-    function alarm(sideRight:Bool):FunkinSprite {
-        if (PlayState.instance.currentStage.getNamedProp("qt_gradientAlarmRight") == null ||
-            PlayState.instance.currentStage.getNamedProp("qt_gradientAlarmLeft") == null
-            ) ModuleHandler.getModule("QTBFdodge").scriptCall("initAlarmAssets");
-        return PlayState.instance.currentStage.getNamedProp("qt_gradientAlarm" + (sideRight ? "Right" : "Left"));
-    }
-
     public override function handleEvent(data:SongEventData) {
-        var daValue1:String = Std.string(data.value.value1); // Just in case-
+        var alarmSide:String = Std.string(data.value.value1); // Just in case-
         var targetAlpha:Float = Std.parseFloat(data.value.value2);
         if(Math.isNaN(targetAlpha)) targetAlpha = 0;
 
-        var dummyAlarm = null;
-
-        if(daValue1.toLowerCase() == "left") dummyAlarm = alarm(false);
-        else if(daValue1.toLowerCase() == "right") dummyAlarm = alarm(true);
+        var alarmLeft:Bool = null;
+        if(alarmSide.toLowerCase() == "left") alarmLeft = true;
+        else if(alarmSide.toLowerCase() == "right") alarmLeft = false;
         else return;
 
-        if (dummyAlarm == null) return;
-        FlxTween.tween(dummyAlarm, {alpha: targetAlpha}, 0.25, {
-            ease: FlxEase.quartOut,
-            onComplete: function(twn:FlxTween) {FlxTween.tween(dummyAlarm, {alpha: 0}, 0.36, {ease: FlxEase.cubeOut});}
-        });
+        ModuleHandler.getModule("DodgeModuleQT").scriptCall("handleAlarm", [alarmLeft, targetAlpha]);
     }
 
     public override function getTitle():String {
