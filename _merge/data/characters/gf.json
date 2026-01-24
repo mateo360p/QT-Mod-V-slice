@@ -1,0 +1,12 @@
+[
+	{
+		"op": "add",
+		"path": "/animations/-",
+		"value": {
+			"name": "qtScaredTermination",
+			"prefix": "Fear",
+			"looped": true,
+			"frameIndices": [0, 1, 2, 3]
+		} 
+	}
+]
