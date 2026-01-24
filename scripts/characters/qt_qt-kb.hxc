@@ -61,11 +61,14 @@ class VsQTdaQTandKillerBotCharacter extends MultiSparrowCharacter
     super.onNoteMiss(event);
 
     if (PlayState.instance == null) return;
+
     var lossMult:Float = 1 - qt_lossMultiplier;
     PlayState.instance.health += (Constants.HEALTH_MISS_PENALTY * lossMult);
   }
 
   function drainHoldNote(elapsed:Float) {
+    if (PlayState.instance == null) return;
+
     for (holdNote in PlayState.instance.opponentStrumline.holdNotes.members)
     {
       if (holdNote == null || !holdNote.alive || holdNote.noteData == null) continue;

@@ -37,6 +37,9 @@ class DogeModuleQT extends Module {
     var alertSounds:Array<FunkinSound> = []; // I hope this fixes the little "delay" that the sounds have in mobile- // yeah, it didn't-
     var attackSounds:Array<FunkinSound> = [];
 
+	var qtBotplay:Bool = false; // autobotplay for the saws, when active, the dodge sprite wont exist on mobile, this just for testing or my vids ¯\_(ツ)_/¯
+	// NOTE: if u are goin' 2 use the qtBotplay, make sure u know who you actually r before doubtin' if you r a gud and an actual person on this society ;D
+
 	public function new() {
 		super('DodgeModuleQT');
 	}
@@ -63,12 +66,48 @@ class DogeModuleQT extends Module {
         destroyStuff();
     }
 
+	override function onPause(event:PauseScriptEvent):Void {
+		super.onPause(event);
+
+		if (PlayState.instance == null) return;
+
+		if (alertSounds != [] && alertSounds != null) {
+			for (s in alertSounds) {
+				s?.pause();
+			}
+		}
+
+		if (attackSounds != [] && attackSounds != null) {
+			for (a in attackSounds) {
+				a?.pause();
+			}
+		}
+	}
+
+	override function onResume(event:ScriptEvent):Void {
+		super.onResume(event);
+
+		if (PlayState.instance == null) return;
+
+		if (alertSounds != [] && alertSounds != null) {
+			for (s in alertSounds) {
+				s?.resume();
+			}
+		}
+
+		if (attackSounds != [] && attackSounds != null) {
+			for (a in attackSounds) {
+				a?.resume();
+			}
+		}
+	}
+
 	// Starts assets depending of the current song
 	override function onSongLoaded(event):Void {
         super.onSongLoaded(event);
 		if (dodgeSongs.contains(curSongID())) {
 			initSawAssets();
-			if (FlxG.onMobile) initTouchArea();
+			if (FlxG.onMobile && !(qtBotplay || PlayState.instance.isBotPlayMode)) initTouchArea();
 		}
 		if (alertSongs.contains(curSongID())) initAlertAssets();
 		if (alarmSongs.contains(curSongID())) initAlarmAssets();
@@ -115,7 +154,7 @@ class DogeModuleQT extends Module {
 	 * @return if the player will die
 	 */
 	public function evalDodge(eventTime:Float):Bool {
-		if (dodgeTime == null) return true;
+		if (qtBotplay || dodgeTime == null) return true;
 		return (eventTime - getDodgeWindow()) > dodgeTime;
 	}
 
@@ -125,7 +164,7 @@ class DogeModuleQT extends Module {
 	 * @return if the player can dodge, or if the dodge time is null
 	 */
 	public function canDodge(curTime:Float):Bool {
-		if (dodgeTime == null) return true;
+		if (qtBotplay || dodgeTime == null) return true;
 		if (FlxG.onMobile) return curTime >= dodgeTime + (getDodgeWindow() / 3) + getDodgeCooldown(); // Juicy ig
 		return curTime >= dodgeTime + getDodgeWindow() + getDodgeCooldown();
 	}
@@ -243,6 +282,8 @@ class DogeModuleQT extends Module {
 		touchSprite.alpha = 0.15;
         touchSprite.cameras = [PlayState.instance.camHUD];
         PlayState.instance.add(touchSprite);
+
+		//touchSprite.visible = !(qtBotplay || PlayState.instance.isBotPlayMode);
 	}
 
 // --- Handlers ---
@@ -252,15 +293,19 @@ class DogeModuleQT extends Module {
 		Conductor.instance.update();
 
 		sawblade.playAnimation("fire", true);
-		//FunkinSound.playOnce(Paths.sound("hazard/attack" + snd), 0.85);
 		attackSounds[snd - 1]?.play(true);
 		var isExtraSaw:Bool = (snd != 1);
+		if (PlayState.instance.isBotPlayMode || qtBotplay) {
+			dodge();
+			PlayState.instance.mayPauseGame = true;
+			return;
+		}
+
         new FlxTimer().start(0.09, function(_) {
             if (PlayState.instance != null && Conductor.instance != null) {
                 PlayState.instance.mayPauseGame = true;
                 var wulDai:Bool = evalDodge(Conductor.instance.songPosition);
-                if (PlayState.instance.isBotPlayMode) dodge();
-                else if (wulDai) {
+                if (!(PlayState.instance.isBotPlayMode || qtBotplay) && wulDai) {
 					if (FlxG.onMobile && isExtraSaw && PlayState.instance.health >= 0.64) {
 						curBF().playAnimation("hit", true);
 						FunkinSound.playOnce(Paths.sound("hazard/bonk"), 0.85);
@@ -281,7 +326,6 @@ class DogeModuleQT extends Module {
 
 		alert.playAnimation("alert" + alertV);
         alert.alpha = 1;
-        //FunkinSound.playOnce(Paths.sound("hazard/alert" + soundV), 0.85);
 		alertSounds[soundV - 1]?.play(true);
 
         if (!prepareSaw) return;
@@ -348,7 +392,7 @@ class DogeModuleQT extends Module {
     }
 
 	function touchedMobile():Bool {
-		if (touchSprite == null) return false;
+		if (qtBotplay || touchSprite == null) return false;
 		return (TouchUtil.overlapsComplex(touchSprite) && TouchUtil.justPressed);
 	}
 }

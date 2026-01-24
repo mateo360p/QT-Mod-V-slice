@@ -8,6 +8,8 @@ import funkin.play.PlayState;
 import funkin.play.PlayStatePlaylist;
 import funkin.play.song.Song;
 
+import Date;
+
 class QTTerminateSong extends Song {
     var hasPlayedCutscene:Bool;
     var hasPlayedEndCutscene:Bool;
@@ -17,6 +19,9 @@ class QTTerminateSong extends Song {
 
     override function onCreate(event:ScriptEvent):Void {
         super.onCreate(event);
+
+        discordRPC(); //will anyone play this song? No. But, why not-?
+
         hasPlayedCutscene = false;
         hasPlayedEndCutscene = false;
     }
@@ -63,5 +68,19 @@ class QTTerminateSong extends Song {
             FlxG.sound.music.pause();
             new FlxTimer().start(1.65, () -> startEndDialogue());
         });
+    }
+
+    function discordRPC() {
+        if (FlxG.onMobile || PlayState.instance == null) return;
+
+        var daTime = Date.now().getTime();
+        var daAlbum:String = PlayState.instance.currentChart.album;
+        var daIcon:String = null;
+
+        var dummyDad = PlayState.instance.currentStage.getDad();
+        if (dummyDad != null) daIcon = dummyDad._data?.healthIcon?.id;
+
+        if (daAlbum != null && daAlbum != "") PlayState.instance.discordRPCAlbum = "https://raw.githubusercontent.com/mateo360p/QT-Mod-V-slice/refs/heads/Port-art/discord/albums/" + daAlbum + ".png?raw=true?t=" + daTime;
+        if (daIcon != null && daIcon != "") PlayState.instance.discordRPCIcon = "https://raw.githubusercontent.com/mateo360p/QT-Mod-V-slice/refs/heads/Port-art/discord/icons/" + daIcon + ".png?raw=true?t=" + daTime;
     }
 }

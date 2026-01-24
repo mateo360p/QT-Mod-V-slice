@@ -13,6 +13,8 @@ import funkin.Conductor;
 import flixel.math.FlxPoint;
 import funkin.play.GameOverSubState;
 
+import Date;
+
 // Well, moving notes is fkin hell-
 class QTTerminationSong extends Song {
     var inAngleRotating:Bool = false;
@@ -23,6 +25,7 @@ class QTTerminationSong extends Song {
     var pincer2:FunkinSprite;
     var pincer3:FunkinSprite;
     var pincer4:FunkinSprite;
+
     public function new() {
         super('termination');
     }
@@ -48,9 +51,9 @@ class QTTerminationSong extends Song {
     override function onCreate(event:ScriptEvent):Void {
         super.onCreate(event);
 
+        discordRPC();
+
         inAngleRotating = false;
-        PlayState.instance.currentStage.getGirlfriend().animation.addByPrefix("scared-termination", "GF FEAR", 24, true);
-        PlayState.instance.currentStage.getGirlfriend().setAnimationOffsets("scared-termination", -2, -17);
         createPincers();
         initDefArrowPos();
         nonVisibleStaticArrows();
@@ -87,7 +90,8 @@ class QTTerminationSong extends Song {
                 PlayState.instance.currentStage.scriptCall("revealError", [2]);
                 shakeCameras(0.0133, 0.0132, 0.54);
                 changeIdle("-angry");
-                PlayState.instance.currentStage.getGirlfriend().forceAnimationForDuration("scared-termination", 35);
+                PlayState.instance.currentStage.getGirlfriend().playAnimation('qtScaredTermination', true);
+                PlayState.instance.currentStage.getGirlfriend().canPlayOtherAnims = false;
                 setKBDrain(0.1);
             case 704:
                 PlayState.instance.currentStage.scriptCall("revealError", [1]);
@@ -98,9 +102,12 @@ class QTTerminationSong extends Song {
                 PlayState.instance.currentStage.scriptCall("revealError", [0]);
                 changeIdle("");
             case 834:
+                PlayState.instance.currentStage.getGirlfriend().canPlayOtherAnims = true;
                 PlayState.instance.currentStage.getGirlfriend().playAnimation('scared', true);
             case 1088:
                 changeIdle("-alt");
+            case 1152:
+                terminationEnd(); // clearing all the posible missing notes, fanciness!
         }
     }
 
@@ -170,20 +177,12 @@ class QTTerminationSong extends Song {
         var daX:Float = (Preferences.downscroll ? 160 : 218);
         var daY:Float = (Preferences.downscroll ? -100 : 240);
         var daAngle:Float = (Preferences.downscroll ? 270 : 90);
-        if (FlxG.onMobile) {
-            var amplification:Float = (FlxG.width / FlxG.height) / (FlxG.initialWidth / FlxG.initialHeight);
-            pincer1.scale.set(0.4 * amplification, 0.4 * amplification);
-            pincer1.updateHitbox();
-            pincer1.origin.set(0, 0);
-        }
 
-        pincer1.angle = (FlxG.onMobile ? 90 : daAngle);
+        pincer1.angle = daAngle;
         pincer2.angle = daAngle;
         pincer3.angle = daAngle;
         pincer4.angle = daAngle;
-        if (FlxG.onMobile) pincer1.offset.set(218, 240);
-        else pincer1.offset.set(daX, daY);
-
+        pincer1.offset.set(daX, daY);
         pincer2.offset.set(daX, daY);
         pincer3.offset.set(daX, daY);
         pincer4.offset.set(daX, daY);
@@ -200,91 +199,49 @@ class QTTerminationSong extends Song {
     function kbPincerState(state:Int) {
         switch(state) {
             case 22: //Prepare screenshake
-                kbPincerPrepare(5, false);
-                /*if(forceMiddleScroll)
-                    kbPincerPrepare(6, false);
-                else*/
-                    kbPincerPrepare(4, false);
+                var dummy = 0;
+                if (FlxG.onMobile) dummy = 4;
+                kbPincerPrepare(dummy, false);
+                kbPincerPrepare(7, false);
             case 23: //SHAKEY SHAKEY
-                kbPincerGrab(1);
-                /*if(forceMiddleScroll)
-                    kbPincerGrab(2);
-                else*/
-                kbPincerGrab(4);
+                var dummy = 0;
+                if (FlxG.onMobile) dummy = 4;
+                kbPincerGrab(dummy);
+                kbPincerGrab(7);
                 inAngleRotating = true;
             case 24: //Screenshake end
-                kbPincerPrepare(5, true);
-                /*if(forceMiddleScroll)
-                    kbPincerPrepare(6, true);
-                else*/
-                kbPincerPrepare(4, true);
+                var dummy = 0;
+                if (FlxG.onMobile) dummy = 4;
+                kbPincerPrepare(dummy, true);
+                kbPincerPrepare(7, true);
                 inAngleRotating = false;
                 resetCameraAngle();
         }
     }
 
     ////--- Events 
-    public function kbPincerPrepare(laneID:Int, goAway:Bool) {
-        function hazardComeOnManWhatIsThisJAJAJA(daPincer:FunkinSprite, goesAway:Bool, laneID:Int) {
-            var noteID:Int = -1;
-            switch(laneID) { // fkin Translating-
-                case 1:
-                    noteID = 4;
-                case 2:
-                    noteID = 5;
-                case 3:
-                    noteID = 6;
-                case 4:
-                    noteID = 7;
-                case 5:
-                    noteID = 0;
-                case 6:
-                    noteID = 3;
-                default: // XDXDXD
-            }
-            if (noteID < 0) return;
-            var daArrow = getArrowNote(noteID);
-            daPincer.loadTexture(Paths.image('hazardStuff/qt-port/pincer-open'));
 
-            var daY:Float = (Preferences.downscroll && daPincer.angle == 270 ? 500 : -500); // fkin fixes
-            if(goesAway) FlxTween.tween(daPincer, {y: daArrow.y + daY}, 0.4, {ease: FlxEase.backIn});
-            else {
-                daPincer.setPosition(daArrow.x, daArrow.y + daY);
-                FlxTween.tween(daPincer, {y: daArrow.y}, 0.3, {ease: FlxEase.elasticOut});
-            }
-            daPincer.visible = true;
-        }
+    // laneID 0-3: opponent notes
+    // laneID 4-7: player notes
+    public function kbPincerPrepare(note:Int, goesAway:Bool) {
+        var dummyPincer = getArrowPincer(note);
+        if (dummyPincer == null) return;
 
-        var dummyPincer;
-        switch (laneID) {
-            case 1 | 5:
-                dummyPincer = pincer1;
-            case 2 | 6:
-                dummyPincer = pincer2;
-            case 3:
-                dummyPincer = pincer3;
-            case 4:
-                dummyPincer = pincer4;
+        var daArrow = getArrowNote(note);
+        dummyPincer.loadTexture(Paths.image('hazardStuff/qt-port/pincer-open'));
+
+        var daY:Float = (Preferences.downscroll ? 500 : -500);
+        if(goesAway) FlxTween.tween(dummyPincer, {y: daArrow.y + daY}, 0.4, {ease: FlxEase.backIn});
+        else {
+            dummyPincer.setPosition(daArrow.x, daArrow.y + daY);
+            FlxTween.tween(dummyPincer, {y: daArrow.y}, 0.3, {ease: FlxEase.elasticOut});
         }
-        if (dummyPincer ==  null) return;
-        hazardComeOnManWhatIsThisJAJAJA(dummyPincer, goAway, laneID);
+        dummyPincer.visible = true;
 	}
 
-	function kbPincerGrab(laneID:Int):Void {
-		switch(laneID) {
-			case 1:
-				pincer1.loadTexture(Paths.image('hazardStuff/qt-port/pincer-close'));
-            case 5:
-                pincer1.loadTexture(Paths.image('hazardStuff/qt-port/pincer-close'));
-			case 2:
-				pincer2.loadTexture(Paths.image('hazardStuff/qt-port/pincer-close'));
-			case 3:
-				pincer3.loadTexture(Paths.image('hazardStuff/qt-port/pincer-close'));
-			case 4:
-				pincer4.loadTexture(Paths.image('hazardStuff/qt-port/pincer-close'));
-			default:
-				trace("Fkin idiot, that laneID is wrong"); // Spicy
-		}
+	function kbPincerGrab(note:Int):Void {
+        var dummyPincer = getArrowPincer(note);
+        dummyPincer?.loadTexture(Paths.image('hazardStuff/qt-port/pincer-close'));
 	}
 
     // Screen rotating
@@ -334,6 +291,23 @@ class QTTerminationSong extends Song {
         var daArrow = (isPlayer ? PlayState.instance.playerStrumline.strumlineNotes.members[state] : PlayState.instance.opponentStrumline.strumlineNotes.members[state - 4]);
         FlxTween.tween(daArrow, {alpha: 0}, 1.1, {ease: FlxEase.sineInOut});
     }
+
+    function terminationEnd() {
+        if (PlayState.instance == null) return;
+
+        for (i in 0...PlayState.instance.playerStrumline.strumlineNotes.members.length)
+            var dummy = PlayState.instance.playerStrumline.strumlineNotes.members[i];
+            if (dummy.alpha == 0) continue;
+            FlxTween.cancelTweensOf(dummy);
+            FlxTween.tween(dummy, {alpha: 0}, 2.1, {ease: FlxEase.sineInOut});
+
+        for (i in 0...PlayState.instance.opponentStrumline.strumlineNotes.members.length)
+            var dummy = PlayState.instance.opponentStrumline.strumlineNotes.members[i];
+            if (dummy.alpha == 0) continue;
+            FlxTween.cancelTweensOf(dummy);
+            FlxTween.tween(dummy, {alpha: 0}, 2.1, {ease: FlxEase.sineInOut});
+    }
+
     ////---Fkin Arrow Helpers
     // Initializes the Arrow def positions map, with all the "posible arrows"
     function initDefArrowPos() {
@@ -361,4 +335,43 @@ class QTTerminationSong extends Song {
         if (key > 3) return fkinPlayerPosArray[key - 4];
         return fkinOpponentPosArray[key];
 	}
+
+    // Gets a pincer according to a note
+    function getArrowPincer(note:Int):FunkinSprite {
+        switch(note) {
+			case 0: // how does the "or" work here-?
+				return pincer1;
+            case 4:
+				return pincer1;
+			case 1:
+				return pincer2;
+            case 5:
+				return pincer2;
+			case 2:
+				return pincer3;
+            case 6:
+				return pincer3;
+			case 3:
+				return pincer4;
+            case 7:
+				return pincer4;
+			default:
+				trace("Fkin idiot, that note doesn't exist!" + note); // Spiceful
+                return null;
+		}
+    }
+
+    function discordRPC() {
+        if (FlxG.onMobile || PlayState.instance == null) return;
+
+        var daTime = Date.now().getTime();
+        var daAlbum:String = PlayState.instance.currentChart.album;
+        var daIcon:String = null;
+
+        var dummyDad = PlayState.instance.currentStage.getDad();
+        if (dummyDad != null) daIcon = dummyDad._data?.healthIcon?.id;
+
+        if (daAlbum != null && daAlbum != "") PlayState.instance.discordRPCAlbum = "https://raw.githubusercontent.com/mateo360p/QT-Mod-V-slice/refs/heads/Port-art/discord/albums/" + daAlbum + ".png?raw=true?t=" + daTime;
+        if (daIcon != null && daIcon != "") PlayState.instance.discordRPCIcon = "https://raw.githubusercontent.com/mateo360p/QT-Mod-V-slice/refs/heads/Port-art/discord/icons/" + daIcon + ".png?raw=true?t=" + daTime;
+    }
 }

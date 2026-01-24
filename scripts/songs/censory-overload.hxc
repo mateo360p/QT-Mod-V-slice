@@ -9,6 +9,8 @@ import funkin.play.PlayStatePlaylist;
 import funkin.play.song.Song;
 import flixel.util.FlxColor;
 
+import Date;
+
 class QTCensoryOverloadSong extends Song {
     var hasPlayedCutscene:Bool;
     public function new() {
@@ -26,6 +28,9 @@ class QTCensoryOverloadSong extends Song {
 
     override function onCreate(event:ScriptEvent):Void {
         super.onCreate(event);
+
+        discordRPC();
+
         hasPlayedCutscene = false;
     }
 
@@ -216,5 +221,19 @@ class QTCensoryOverloadSong extends Song {
     function shakeCameras(gameVal:Float, hudVal:Float, duration:Float = 0.63) {
         PlayState.instance.camGame.shake(gameVal, duration);
         PlayState.instance.camHUD.shake(hudVal, duration);
+    }
+
+    function discordRPC() {
+        if (FlxG.onMobile || PlayState.instance == null) return;
+
+        var daTime = Date.now().getTime();
+        var daAlbum:String = PlayState.instance.currentChart.album;
+        var daIcon:String = null;
+
+        var dummyDad = PlayState.instance.currentStage.getDad();
+        if (dummyDad != null) daIcon = dummyDad._data?.healthIcon?.id;
+
+        if (daAlbum != null && daAlbum != "") PlayState.instance.discordRPCAlbum = "https://raw.githubusercontent.com/mateo360p/QT-Mod-V-slice/refs/heads/Port-art/discord/albums/" + daAlbum + ".png?raw=true?t=" + daTime;
+        if (daIcon != null && daIcon != "") PlayState.instance.discordRPCIcon = "https://raw.githubusercontent.com/mateo360p/QT-Mod-V-slice/refs/heads/Port-art/discord/icons/" + daIcon + ".png?raw=true?t=" + daTime;
     }
 }
