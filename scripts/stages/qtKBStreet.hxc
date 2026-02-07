@@ -42,8 +42,8 @@ class QTKBStreetStage extends Stage
     override function buildStage():Void {
         super.buildStage();
         if (!gasSongs.contains(PlayState.instance.currentSong.id)) {
-            PlayState.instance.currentStage.getNamedProp('gas1').kill();
-            PlayState.instance.currentStage.getNamedProp('gas2').kill();
+            PlayState.instance.currentStage.getNamedProp('gas1')?.kill();
+            PlayState.instance.currentStage.getNamedProp('gas2')?.kill();
         }
     }
 
@@ -135,10 +135,10 @@ class QTKBStreetStage extends Stage
     }
 
     function onRestart() {
-        PlayState.instance.currentStage.getNamedProp('TV').danceEvery = 0.0;
+        PlayState.instance.currentStage.getNamedProp('TV')?.danceEvery = 0.0;
         PlayState.instance.currentStage.getNamedProp('gas1')?.antialiasing = !(FlxG.onMobile);
         PlayState.instance.currentStage.getNamedProp('gas2')?.antialiasing = !(FlxG.onMobile);
-        PlayState.instance.currentStage.getNamedProp('TV').antialiasing = !(FlxG.onMobile);
+        PlayState.instance.currentStage.getNamedProp('TV')?.antialiasing = !(FlxG.onMobile);
         prepareGas();
         revealError(0);
     }
