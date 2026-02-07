@@ -1,0 +1,9 @@
+{
+  "version": "1.0.0",
+  "name": "VS. QT PICO EXPANSION ALBUM",
+  "artists": [
+    "Dipazio"
+  ],
+  "albumArtAsset": "freeplay/albumRoll/QTpicoExpansion_album",
+  "albumTitleAsset": "freeplay/albumRoll/QTpicoExpansion-text"
+}

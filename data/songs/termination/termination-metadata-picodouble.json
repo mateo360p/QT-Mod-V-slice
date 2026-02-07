@@ -1,7 +1,7 @@
 {
 	"timeFormat": "ms",
-	"artist": "Hazard24",
-	"charter": "Unknown",
+	"artist": "Dipazio",
+	"charter": "Dipazio",
 	"divisions": 96,
 	"looped": false,
 	"offsets": {
@@ -11,33 +11,33 @@
 		"altVocals": {    }
 	},
 	"playData": {
-		"songVariations": ["double", "pico", "picodouble"],
+		"songVariations": [],
 		"difficulties": [
-			"normal"
+			"hard"
 		],
 		"characters": {
-			"player": "qt_bf",
-			"girlfriend": "gf",
+			"player": "qt_pico",
+			"girlfriend": "qt_nene",
 			"opponent": "qt_kb",
-			"instrumental": "",
+			"instrumental": "picodouble",
 			"altInstrumentals": [      ],
 			"opponentVocals": [
 				"qt_kb"
 			],
 			"playerVocals": [
-				"qt_bf"
+				"qt_pico"
 			]
 		},
 		"stage": "qtKBStreet",
 		"noteStyle": "funkin",
 		"ratings": {
-			"normal": 12
+			"hard": 15
 		},
-		"album": "vsQTmod",
+		"album": "QTpicoExpansion",
 		"previewStart": 0,
 		"previewEnd": 15000
 	},
-	"songName": "Termination",
+	"songName": "Termination (Pico Mix)",
 	"timeChanges": [
 		{"t": 0, "bpm": 222}
 	],

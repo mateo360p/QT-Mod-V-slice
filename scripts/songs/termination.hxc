@@ -15,6 +15,8 @@ import funkin.play.GameOverSubState;
 
 import Date;
 
+using StringTools;
+
 // Well, moving notes is fkin hell-
 class QTTerminationSong extends Song {
     var inAngleRotating:Bool = false;
@@ -69,7 +71,7 @@ class QTTerminationSong extends Song {
         nonVisibleStaticArrows();
         resetCameraAngle();
         PlayState.instance.currentStage.getGirlfriend().canPlayOtherAnims = true;
-        PlayState.instance.currentStage.getGirlfriend().playAnimation('scared', true);
+        if (isPico()) PlayState.instance.currentStage.getGirlfriend().playAnimation('scared', true);
         killGas(); // I'm too lazy to add the gas in code, so let's remove it!
     }
 
@@ -90,8 +92,10 @@ class QTTerminationSong extends Song {
                 PlayState.instance.currentStage.scriptCall("revealError", [2]);
                 shakeCameras(0.0133, 0.0132, 0.54);
                 changeIdle("-angry");
-                PlayState.instance.currentStage.getGirlfriend().playAnimation('qtScaredTermination', true);
-                PlayState.instance.currentStage.getGirlfriend().canPlayOtherAnims = false;
+                if (!isPico()) {
+                    PlayState.instance.currentStage.getGirlfriend().playAnimation('qtScaredTermination', true);
+                    PlayState.instance.currentStage.getGirlfriend().canPlayOtherAnims = false;
+                }
                 setKBDrain(0.1);
             case 704:
                 PlayState.instance.currentStage.scriptCall("revealError", [1]);
@@ -102,8 +106,10 @@ class QTTerminationSong extends Song {
                 PlayState.instance.currentStage.scriptCall("revealError", [0]);
                 changeIdle("");
             case 834:
-                PlayState.instance.currentStage.getGirlfriend().canPlayOtherAnims = true;
-                PlayState.instance.currentStage.getGirlfriend().playAnimation('scared', true);
+                if (!isPico())  {
+                    PlayState.instance.currentStage.getGirlfriend().canPlayOtherAnims = true;
+                    PlayState.instance.currentStage.getGirlfriend().playAnimation('scared', true);
+                }
             case 1088:
                 changeIdle("-alt");
             case 1152:
@@ -374,4 +380,12 @@ class QTTerminationSong extends Song {
         if (daAlbum != null && daAlbum != "") PlayState.instance.discordRPCAlbum = "https://raw.githubusercontent.com/mateo360p/QT-Mod-V-slice/refs/heads/Port-art/discord/albums/" + daAlbum + ".png?raw=true?t=" + daTime;
         if (daIcon != null && daIcon != "") PlayState.instance.discordRPCIcon = "https://raw.githubusercontent.com/mateo360p/QT-Mod-V-slice/refs/heads/Port-art/discord/icons/" + daIcon + ".png?raw=true?t=" + daTime;
     }
+
+    function isPico():Bool {
+		if (PlayState.instance == null || PlayState.instance.currentVariation == null) {
+			trace("QT DODGE MODULE: PlayState Variation Null!");
+			return false;
+		}
+		return PlayState.instance.currentVariation.contains("pico");
+	}
 }

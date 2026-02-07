@@ -19,6 +19,8 @@ import flixel.util.FlxTimer;
 import funkin.util.HapticUtil;
 import funkin.util.TouchUtil;
 
+using StringTools;
+
 class DogeModuleQT extends Module {
 	public var dodgeTime:Float = null; // The last dodged time
 	public var dedBySaw:Bool = false; // If the player died by a sawblade hit
@@ -47,11 +49,13 @@ class DogeModuleQT extends Module {
 // --- Generals ---
 	override function onCreate(event:ScriptEvent):Void {
         super.onCreate(event);
+		GameOverSubState.animationSuffix = '';
 		restartValues();
 	}
 
 	override function onSongRetry(event:ScriptEvent):Void {
 		super.onSongRetry(event);
+		GameOverSubState.animationSuffix = '';
 		restartValues();
 	}
 
@@ -62,6 +66,7 @@ class DogeModuleQT extends Module {
 
     override function onDestroy(event):Void {
         super.onDestroy(event);
+		GameOverSubState.animationSuffix = '';
         restartValues();
         destroyStuff();
     }
@@ -116,7 +121,7 @@ class DogeModuleQT extends Module {
 	// Creates the game over saw sprite
 	override function onSubStateOpenEnd(event:SubStateScriptEvent):Void {
 		super.onSubStateOpenEnd(event);
-		if (!(Std.isOfType(event.targetState, GameOverSubState) && dedBySaw)) return;
+		if (!(Std.isOfType(event.targetState, GameOverSubState) && dedBySaw && !isPico())) return;
 		initGameOverSaw();
 	}
 
@@ -187,9 +192,18 @@ class DogeModuleQT extends Module {
 		sawblade = new Bopper(0);
 		sawblade.loadSparrow('hazardStuff/qt-port/attackv6');
 		sawblade.animation.addByPrefix('fire', 'kb_attack_animation_fire', 24, false);
-		sawblade.setAnimationOffsets("fire", 2800, 0);
 		sawblade.animation.addByPrefix('prepare', 'kb_attack_animation_prepare', 24, false);
-		sawblade.setAnimationOffsets("prepare", 1300, 0);
+
+		var offX = 0;
+		var offY = 0;
+		if (isPico()) {
+			offX = -100;
+			offY = -100;
+		}
+
+		sawblade.setAnimationOffsets("fire", 2700 + offX, 0 + offY); // Just to match the ded anim :v
+		sawblade.setAnimationOffsets("prepare", 900, 0 + offY);
+
 		sawblade.setGraphicSize(Std.int(sawblade.width * 1.15));
 
 		PlayState.instance.currentStage.addBopper(sawblade, "qt_sawblade");
@@ -293,6 +307,7 @@ class DogeModuleQT extends Module {
 		Conductor.instance.update();
 
 		sawblade.playAnimation("fire", true);
+		sawblade.alpha = 1;
 		attackSounds[snd - 1]?.play(true);
 		var isExtraSaw:Bool = (snd != 1);
 		if (PlayState.instance.isBotPlayMode || qtBotplay) {
@@ -307,13 +322,14 @@ class DogeModuleQT extends Module {
                 var wulDai:Bool = evalDodge(Conductor.instance.songPosition);
                 if (!(PlayState.instance.isBotPlayMode || qtBotplay) && wulDai) {
 					if (FlxG.onMobile && isExtraSaw && PlayState.instance.health >= 0.64) {
-						curBF().playAnimation("hit", true);
+						if (isPico()) curBF()?.playAnimation("hit", true);
 						FunkinSound.playOnce(Paths.sound("hazard/bonk"), 0.85);
 						PlayState.instance.health -= 0.6; // Miracle! now die-
 						return;
 					}
                     dedBySaw = true;
                     PlayState.instance.health = -4040404; // funnyNumber
+					GameOverSubState.animationSuffix = '-qtSaw';
                 }
             }
         });
@@ -330,7 +346,7 @@ class DogeModuleQT extends Module {
 
         if (!prepareSaw) return;
 		sawblade?.playAnimation("prepare", true);
-		if (sawblade != null && sawblade.exists) sawblade.alpha = 1;
+		sawblade?.alpha = 1;
 	}
 
 	public function handleAlarm(isAlarmLeft:Bool, targetAlpha:Float) {
@@ -356,6 +372,7 @@ class DogeModuleQT extends Module {
 	function restartValues() {
 		dodgeTime = null;
 		dedBySaw = false;
+		sawblade?.alpha = 0;
 	}
 
 	function destroyStuff() {
@@ -394,5 +411,13 @@ class DogeModuleQT extends Module {
 	function touchedMobile():Bool {
 		if (qtBotplay || touchSprite == null) return false;
 		return (TouchUtil.overlapsComplex(touchSprite) && TouchUtil.justPressed);
+	}
+
+	function isPico():Bool {
+		if (PlayState.instance == null) {
+			trace("QT DODGE MODULE: PlayState Null!");
+			return false;
+		}
+		return PlayState.instance.currentVariation.contains("pico");
 	}
 }

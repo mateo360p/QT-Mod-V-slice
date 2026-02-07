@@ -68,6 +68,12 @@ class QTKBStreetStage extends Stage
                 character.animation.onFrameChange.add(function() {
                     rim.updateFrameInfo(getGirlfriend().frame);
                 });
+                if (getGirlfriend().characterId == 'nene')
+                {
+                    rim.loadAltMask(Paths.image('qtMasks/nene_mask'));
+                    rim.maskThreshold = 0.4;
+                    rim.useAltMask = true;
+                }
                 gfShader = rim;
             case CharacterType.DAD:
                 rim.angle = 112.25;
