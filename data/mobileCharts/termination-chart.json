@@ -4,51 +4,1705 @@
     "normal": 3.2
   },
   "events": [
-    {
-      "t": 0,
-      "e": "streetTVstate",
-      "v": {
+  {
+   "t": 0,
+   "e": "streetTVstate",
+   "v": {
 	"value1": "2",
 	"value2": ""
 }
-    },
-    {
-      "t": 0,
-      "e": "FocusCamera",
-      "v": {
+  },
+  {
+   "t": 0,
+   "e": "FocusCamera",
+   "v": {
 	"char": 0
 }
-    },
-    {
-      "t": 2162.16216216216,
-      "e": "FocusCamera",
-      "v": {
+  },
+  {
+   "t": 2162.16216216216,
+   "e": "FocusCamera",
+   "v": {
 	"char": 1
 }
-    },
-    {
-      "t": 4324.32432432432,
-      "e": "streetTVstate",
-      "v": {
+  },
+  {
+   "t": 4256.75675675676,
+   "e": "SetCameraBop",
+   "v": {
+	"rate": 2,
+	"intensity": 1
+}
+  },
+  {
+   "t": 4324.32432432432,
+   "e": "streetTVstate",
+   "v": {
 	"value1": "3",
 	"value2": ""
 }
-    },
-    {
-      "t": 4324.32432432432,
-      "e": "FocusCamera",
-      "v": {
+  },
+  {
+   "t": 4324.32432432432,
+   "e": "FocusCamera",
+   "v": {
 	"char": 0
 }
-    },
-    {
-      "t": 6486.48648648649,
-      "e": "FocusCamera",
-      "v": {
+  },
+  {
+   "t": 6418.91891891892,
+   "e": "SetCameraBop",
+   "v": {
+	"rate": 1,
+	"intensity": 1
+}
+  },
+  {
+   "t": 6486.48648648649,
+   "e": "FocusCamera",
+   "v": {
 	"char": 1
 }
-    },
-    {
+  },
+  {
+   "t": 8108.10810810811,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 8581.08108108108,
+   "e": "SetCameraBop",
+   "v": {
+	"rate": 2,
+	"offset": 1,
+	"intensity": 1.2
+}
+  },
+  {
+   "t": 8648.64864864865,
+   "e": "streetTVstate",
+   "v": {
+	"value1": "0",
+	"value2": ""
+}
+  },
+  {
+   "t": 12972.972972973,
+   "e": "FocusCamera",
+   "v": {
+	"char": 0
+}
+  },
+  {
+   "t": 17297.2972972973,
+   "e": "FocusCamera",
+   "v": {
+	"char": 1
+}
+  },
+  {
+   "t": 21621.6216216216,
+   "e": "FocusCamera",
+   "v": {
+	"char": 0
+}
+  },
+  {
+   "t": 24797.2972972973,
+   "e": "SetCameraBop",
+   "v": {
+	"rate": 1,
+	"offset": 0,
+	"intensity": 1.2
+}
+  },
+  {
+   "t": 25878.3783783784,
+   "e": "SetCameraBop",
+   "v": {
+	"rate": 4,
+	"offset": 0,
+	"intensity": 1.4
+}
+  },
+  {
+   "t": 25945.9459459459,
+   "e": "FocusCamera",
+   "v": {
+	"char": 1
+}
+  },
+  {
+   "t": 30270.2702702703,
+   "e": "FocusCamera",
+   "v": {
+	"char": 0
+}
+  },
+  {
+   "t": 34527.027027027,
+   "e": "SetCameraBop",
+   "v": {
+	"rate": 2,
+	"offset": 0,
+	"intensity": 1.2
+}
+  },
+  {
+   "t": 34594.5945945946,
+   "e": "FocusCamera",
+   "v": {
+	"char": 1
+}
+  },
+  {
+   "t": 43243.2432432432,
+   "e": "FocusCamera",
+   "v": {
+	"char": 0
+}
+  },
+  {
+   "t": 51824.3243243243,
+   "e": "SetCameraBop",
+   "v": {
+	"rate": 1,
+	"offset": 0,
+	"intensity": 1.2
+}
+  },
+  {
+   "t": 51891.8918918919,
+   "e": "FocusCamera",
+   "v": {
+	"char": 1
+}
+  },
+  {
+   "t": 51897.5225225225,
+   "e": "streetTVstate",
+   "v": {
+	"value1": "1",
+	"value2": "nyehehe"
+}
+  },
+  {
+   "t": 60540.5405405405,
+   "e": "FocusCamera",
+   "v": {
+	"char": 0
+}
+  },
+  {
+   "t": 69189.1891891891,
+   "e": "FocusCamera",
+   "v": {
+	"char": 1
+}
+  },
+  {
+   "t": 77837.8378378378,
+   "e": "FocusCamera",
+   "v": {
+	"char": 0
+}
+  },
+  {
+   "t": 81283.7837837838,
+   "e": "SetCameraBop",
+   "v": {
+	"rate": 1,
+	"offset": 0,
+	"intensity": 1.5
+}
+  },
+  {
+   "t": 82094.5945945946,
+   "e": "SetCameraBop",
+   "v": {
+	"rate": 1,
+	"offset": 0,
+	"intensity": 1.2
+}
+  },
+  {
+   "t": 86418.9189189189,
+   "e": "SetCameraBop",
+   "v": {
+	"rate": 2,
+	"offset": 0,
+	"intensity": 1.2
+}
+  },
+  {
+   "t": 86486.4864864865,
+   "e": "FocusCamera",
+   "v": {
+	"x": 0,
+	"duration": 4,
+	"y": 0,
+	"ease": "CLASSIC",
+	"char": 1
+}
+  },
+  {
+   "t": 86486.4864864865,
+   "e": "streetTVstate",
+   "v": {
+	"value1": "0",
+	"value2": ""
+}
+  },
+  {
+   "t": 88648.6486486486,
+   "e": "FocusCamera",
+   "v": {
+	"char": 0
+}
+  },
+  {
+   "t": 90810.8108108107,
+   "e": "FocusCamera",
+   "v": {
+	"char": 1
+}
+  },
+  {
+   "t": 92972.9729729729,
+   "e": "FocusCamera",
+   "v": {
+	"char": 0
+}
+  },
+  {
+   "t": 95135.1351351351,
+   "e": "FocusCamera",
+   "v": {
+	"char": 1
+}
+  },
+  {
+   "t": 97297.2972972972,
+   "e": "FocusCamera",
+   "v": {
+	"char": 0
+}
+  },
+  {
+   "t": 99459.4594594594,
+   "e": "FocusCamera",
+   "v": {
+	"char": 1
+}
+  },
+  {
+   "t": 101621.621621622,
+   "e": "FocusCamera",
+   "v": {
+	"char": 0
+}
+  },
+  {
+   "t": 103716.216216216,
+   "e": "SetCameraBop",
+   "v": {
+	"rate": 8,
+	"offset": 0,
+	"intensity": 1
+}
+  },
+  {
+   "t": 103783.783783784,
+   "e": "FocusCamera",
+   "v": {
+	"char": 1
+}
+  },
+  {
+   "t": 103783.783783784,
+   "e": "Set GF Speed",
+   "v": {
+	"value1": "2",
+	"value2": ""
+}
+  },
+  {
+   "t": 112432.432432432,
+   "e": "FocusCamera",
+   "v": {
+	"char": 0
+}
+  },
+  {
+   "t": 118918.918918919,
+   "e": "streetTVstate",
+   "v": {
+	"value1": "4",
+	"value2": ""
+}
+  },
+  {
+   "t": 119932.432432432,
+   "e": "SetCameraBop",
+   "v": {
+	"rate": 1,
+	"offset": 0,
+	"intensity": 1
+}
+  },
+  {
+   "t": 120540.540540541,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 120743.243243243,
+   "e": "SetCameraBop",
+   "v": {
+	"rate": 1,
+	"offset": 0,
+	"intensity": 0
+}
+  },
+  {
+   "t": 121013.513513514,
+   "e": "SetCameraBop",
+   "v": {
+	"rate": 4,
+	"offset": 0,
+	"intensity": 1
+}
+  },
+  {
+   "t": 121081.081081081,
+   "e": "streetTVstate",
+   "v": {
+	"value1": "0",
+	"value2": ""
+}
+  },
+  {
+   "t": 121081.081081081,
+   "e": "FocusCamera",
+   "v": {
+	"char": 1
+}
+  },
+  {
+   "t": 129189.189189189,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 129729.72972973,
+   "e": "FocusCamera",
+   "v": {
+	"char": 0
+}
+  },
+  {
+   "t": 137838.108108108,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 138310.810810811,
+   "e": "SetCameraBop",
+   "v": {
+	"rate": 1,
+	"offset": 0,
+	"intensity": 1.2
+}
+  },
+  {
+   "t": 138378.378378378,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "left",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 138378.378378378,
+   "e": "streetTVstate",
+   "v": {
+	"value1": "1",
+	"value2": ""
+}
+  },
+  {
+   "t": 138378.378378378,
+   "e": "Set GF Speed",
+   "v": {
+	"value1": "1",
+	"value2": ""
+}
+  },
+  {
+   "t": 138378.378378378,
+   "e": "FocusCamera",
+   "v": {
+	"char": 1
+}
+  },
+  {
+   "t": 138918.918918919,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "right",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 139459.459459459,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "left",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 139459.459459459,
+   "e": "FocusCamera",
+   "v": {
+	"char": 0
+}
+  },
+  {
+   "t": 140000,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "right",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 140540.540540541,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "left",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 140540.540540541,
+   "e": "FocusCamera",
+   "v": {
+	"char": 1
+}
+  },
+  {
+   "t": 141081.081081081,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "right",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 141621.621621622,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "left",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 141621.621621622,
+   "e": "FocusCamera",
+   "v": {
+	"char": 0
+}
+  },
+  {
+   "t": 142162.162162162,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "right",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 142702.702702703,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "left",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 142702.702702703,
+   "e": "FocusCamera",
+   "v": {
+	"char": 1
+}
+  },
+  {
+   "t": 143243.243243243,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "right",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 143783.783783784,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "left",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 143783.783783784,
+   "e": "FocusCamera",
+   "v": {
+	"char": 0
+}
+  },
+  {
+   "t": 144324.324324324,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "right",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 144864.864864865,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "left",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 144864.864864865,
+   "e": "FocusCamera",
+   "v": {
+	"char": 1
+}
+  },
+  {
+   "t": 145405.405405405,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "right",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 145945.945945946,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "left",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 145945.945945946,
+   "e": "FocusCamera",
+   "v": {
+	"char": 0
+}
+  },
+  {
+   "t": 146486.486486487,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "right",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 147027.027027027,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "left",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 147027.027027027,
+   "e": "FocusCamera",
+   "v": {
+	"char": 1
+}
+  },
+  {
+   "t": 147567.567567568,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "right",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 148108.108108108,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "left",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 148108.108108108,
+   "e": "FocusCamera",
+   "v": {
+	"char": 0
+}
+  },
+  {
+   "t": 148648.648648649,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "right",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 149189.189189189,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "left",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 149189.189189189,
+   "e": "FocusCamera",
+   "v": {
+	"char": 1
+}
+  },
+  {
+   "t": 149729.72972973,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "right",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 150270.27027027,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "left",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 150270.27027027,
+   "e": "FocusCamera",
+   "v": {
+	"char": 0
+}
+  },
+  {
+   "t": 150810.810810811,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "right",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 151351.351351351,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "left",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 151351.351351351,
+   "e": "FocusCamera",
+   "v": {
+	"char": 1
+}
+  },
+  {
+   "t": 151891.891891892,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "right",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 152432.432432433,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "left",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 152432.432432433,
+   "e": "FocusCamera",
+   "v": {
+	"char": 0
+}
+  },
+  {
+   "t": 152972.972972973,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "right",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 153513.513513514,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "left",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 153513.513513514,
+   "e": "FocusCamera",
+   "v": {
+	"char": 1
+}
+  },
+  {
+   "t": 154054.054054054,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "right",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 154594.594594595,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "left",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 154594.594594595,
+   "e": "FocusCamera",
+   "v": {
+	"char": 0
+}
+  },
+  {
+   "t": 155135.135135135,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "right",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 155675.675675676,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "left",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 155675.675675676,
+   "e": "FocusCamera",
+   "v": {
+	"char": 1
+}
+  },
+  {
+   "t": 156216.216216216,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "right",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 156216.216216216,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 156756.756756757,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "left",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 157297.297297297,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "right",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 157297.297297297,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 157837.837837838,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "left",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 158378.378378379,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "right",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 158648.648648649,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 158918.918918919,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "left",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 159459.459459459,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 159459.45945946,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "right",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 160000,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "left",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 160540.540540541,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "right",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 160540.540540541,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 161081.081081081,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "left",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 161621.621621622,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "right",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 161621.621621622,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 162162.162162162,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "left",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 162702.702702703,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "right",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 162972.972972973,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 163243.243243244,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "left",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 163783.783783784,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "right",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 163783.783783784,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 164324.324324325,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "left",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 164324.324324325,
+   "e": "FocusCamera",
+   "v": {
+	"char": 0
+}
+  },
+  {
+   "t": 164864.864864865,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "right",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 165405.405405406,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "left",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 165945.945945946,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "right",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 166486.486486487,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "left",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 167027.027027027,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "right",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 167567.567567568,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "left",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 168108.108108108,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "right",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 168648.648648649,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "left",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 169189.18918919,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "right",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 169729.72972973,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "left",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 170270.270270271,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "right",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 170810.810810811,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "left",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 171351.351351352,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "right",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 171891.891891892,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "left",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 172432.432432433,
+   "e": "Alarm Gradient",
+   "v": {
+	"value1": "right",
+	"value2": "0.375"
+}
+  },
+  {
+   "t": 172905.405405405,
+   "e": "SetCameraBop",
+   "v": {
+	"rate": 4,
+	"offset": 0,
+	"intensity": 1
+}
+  },
+  {
+   "t": 172972.972972973,
+   "e": "streetTVstate",
+   "v": {
+	"value1": "5",
+	"value2": ""
+}
+  },
+  {
+   "t": 172972.972972973,
+   "e": "FocusCamera",
+   "v": {
+	"char": 1
+}
+  },
+  {
+   "t": 173513.513513513,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 174594.594594595,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 175945.945945946,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 176756.756756757,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 177837.837837838,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 178918.918918919,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 180270.27027027,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 181081.081081081,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 181621.621621622,
+   "e": "FocusCamera",
+   "v": {
+	"char": 0
+}
+  },
+  {
+   "t": 183243.243243243,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 185405.405405405,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 189662.162162162,
+   "e": "SetCameraBop",
+   "v": {
+	"rate": 2,
+	"offset": 0,
+	"intensity": 2
+}
+  },
+  {
+   "t": 189729.72972973,
+   "e": "streetTVstate",
+   "v": {
+	"value1": "6",
+	"value2": ""
+}
+  },
+  {
+   "t": 190202.702702703,
+   "e": "SetCameraBop",
+   "v": {
+	"rate": 1,
+	"offset": 0,
+	"intensity": 1.4
+}
+  },
+  {
+   "t": 190270.270270271,
+   "e": "streetTVstate",
+   "v": {
+	"value1": "7",
+	"value2": ""
+}
+  },
+  {
+   "t": 190270.270270271,
+   "e": "FocusCamera",
+   "v": {
+	"char": 1
+}
+  },
+  {
+   "t": 198918.91891892,
+   "e": "FocusCamera",
+   "v": {
+	"char": 0
+}
+  },
+  {
+   "t": 207567.567567568,
+   "e": "FocusCamera",
+   "v": {
+	"char": 1
+}
+  },
+  {
+   "t": 208108.108108108,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 208918.918918919,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 210270.27027027,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 211081.081081081,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 212432.432432432,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 213513.513513513,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 214594.594594595,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 215675.675675676,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 216216.216216217,
+   "e": "FocusCamera",
+   "v": {
+	"char": 0
+}
+  },
+  {
+   "t": 217837.837837838,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 220000,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 224324.324324324,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 224797.297297297,
+   "e": "SetCameraBop",
+   "v": {
+	"rate": 2,
+	"offset": 1,
+	"intensity": 1.4
+}
+  },
+  {
+   "t": 224864.864864866,
+   "e": "streetTVstate",
+   "v": {
+	"value1": "1",
+	"value2": ""
+}
+  },
+  {
+   "t": 224864.864864866,
+   "e": "FocusCamera",
+   "v": {
+	"char": 1
+}
+  },
+  {
+   "t": 228648.648648649,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 230810.810810811,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 231891.891891892,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 232972.972972973,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 233513.513513515,
+   "e": "FocusCamera",
+   "v": {
+	"char": 0
+}
+  },
+  {
+   "t": 242162.162162162,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 242162.162162163,
+   "e": "FocusCamera",
+   "v": {
+	"char": 1
+}
+  },
+  {
+   "t": 246216.216216216,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 247027.027027027,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 249189.189189189,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 250270.27027027,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 250810.810810812,
+   "e": "FocusCamera",
+   "v": {
+	"char": 0
+}
+  },
+  {
+   "t": 258851.351351351,
+   "e": "SetCameraBop",
+   "v": {
+	"rate": 2,
+	"offset": 1,
+	"intensity": 0
+}
+  },
+  {
+   "t": 259391.891891892,
+   "e": "SetCameraBop",
+   "v": {
+	"rate": 1,
+	"offset": 0,
+	"intensity": 1.2
+}
+  },
+  {
+   "t": 259459.459459459,
+   "e": "FocusCamera",
+   "v": {
+	"x": 0,
+	"duration": 4,
+	"y": 0,
+	"char": 1,
+	"ease": "CLASSIC"
+}
+  },
+  {
+   "t": 263243.243243243,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 266486.486486486,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 267567.567567568,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 268108.10810811,
+   "e": "FocusCamera",
+   "v": {
+	"char": 0
+}
+  },
+  {
+   "t": 275878.378378378,
+   "e": "SetCameraBop",
+   "v": {
+	"rate": 1,
+	"offset": 0,
+	"intensity": 1.5
+}
+  },
+  {
+   "t": 276756.756756758,
+   "e": "FocusCamera",
+   "v": {
+	"char": 1
+}
+  },
+  {
+   "t": 277297.297297297,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 278108.108108108,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 279459.459459459,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 280270.27027027,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 281621.621621622,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 282702.702702703,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 283783.783783784,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 284594.594594595,
+   "e": "KB_AttackFire",
+   "v": {
+	"snd": 1
+}
+  },
+  {
+   "t": 285405.405405407,
+   "e": "FocusCamera",
+   "v": {
+	"char": 0
+}
+  },
+  {
+   "t": 286148.648648649,
+   "e": "SetCameraBop",
+   "v": {
+	"rate": 1,
+	"offset": 0,
+	"intensity": 1.8
+}
+  },
+  {
+   "t": 294054.054054054,
+   "e": "streetTVstate",
+   "v": {
+	"value1": "5",
+	"value2": "nyehehe"
+}
+  },
+  {
+   "t": 294054.054054054,
+   "e": "FocusCamera",
+   "v": {
+	"duration": 4,
+	"x": 0,
+	"y": 0,
+	"ease": "CLASSIC",
+	"char": 1
+}
+  },
+  {
+   "t": 294189.189189189,
+   "e": "streetTVstate",
+   "v": {
+	"value1": "0",
+	"value2": ""
+}
+  },
+  {
+   "t": 294290.540540541,
+   "e": "SetCameraBop",
+   "v": {
+	"rate": 8,
+	"offset": 0,
+	"intensity": 0.8
+}
+  },
+  {
+   "t": 302635.135135135,
+   "e": "SetCameraBop",
+   "v": {
+	"rate": 8,
+	"offset": 0,
+	"intensity": 1
+}
+  },
+  {
+   "t": 302702.702702704,
+   "e": "FocusCamera",
+   "v": {
+	"char": 0
+}
+  },
+  {
+   "t": 310202.702702703,
+   "e": "SetCameraBop",
+   "v": {
+	"rate": 1,
+	"offset": 0,
+	"intensity": 0.4
+}
+  },
+  {
+   "t": 311351.351351352,
+   "e": "FocusCamera",
+   "v": {
+	"char": 1
+}
+  },
+  {
+   "t": 311554.054054054,
+   "e": "SetCameraBop",
+   "v": {
+	"rate": 1,
+	"offset": 0,
+	"intensity": 0
+}
+  },
+      {
       "t": 7567.56756756757,
       "e": "KB_Alert",
       "v": {
@@ -62,204 +1716,6 @@
       "v": {
 	"count": 1,
 	"prep_saw": false
-}
-    },
-    {
-      "t": 8108.10810810811,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
-}
-    },
-    {
-      "t": 8648.64864864865,
-      "e": "streetTVstate",
-      "v": {
-	"value1": "0",
-	"value2": ""
-}
-    },
-    {
-      "t": 12972.972972973,
-      "e": "FocusCamera",
-      "v": {
-	"char": 0
-}
-    },
-    {
-      "t": 17297.2972972973,
-      "e": "FocusCamera",
-      "v": {
-	"char": 1
-}
-    },
-    {
-      "t": 21621.6216216216,
-      "e": "FocusCamera",
-      "v": {
-	"char": 0
-}
-    },
-    {
-      "t": 25945.9459459459,
-      "e": "FocusCamera",
-      "v": {
-	"char": 1
-}
-    },
-    {
-      "t": 30270.2702702703,
-      "e": "FocusCamera",
-      "v": {
-	"char": 0
-}
-    },
-    {
-      "t": 34594.5945945946,
-      "e": "FocusCamera",
-      "v": {
-	"char": 1
-}
-    },
-    {
-      "t": 43243.2432432432,
-      "e": "FocusCamera",
-      "v": {
-	"char": 0
-}
-    },
-    {
-      "t": 51891.8918918919,
-      "e": "FocusCamera",
-      "v": {
-	"char": 1
-}
-    },
-    {
-      "t": 51897.5225225225,
-      "e": "streetTVstate",
-      "v": {
-	"value1": "1",
-	"value2": "nyehehe"
-}
-    },
-    {
-      "t": 60540.5405405405,
-      "e": "FocusCamera",
-      "v": {
-	"char": 0
-}
-    },
-    {
-      "t": 69189.1891891891,
-      "e": "FocusCamera",
-      "v": {
-	"char": 1
-}
-    },
-    {
-      "t": 77837.8378378378,
-      "e": "FocusCamera",
-      "v": {
-	"char": 0
-}
-    },
-    {
-      "t": 86486.4864864865,
-      "e": "FocusCamera",
-      "v": {
-	"x": 0,
-	"duration": 4,
-	"y": 0,
-	"ease": "CLASSIC",
-	"char": 1
-}
-    },
-    {
-      "t": 86486.4864864865,
-      "e": "streetTVstate",
-      "v": {
-	"value1": "0",
-	"value2": ""
-}
-    },
-    {
-      "t": 88648.6486486486,
-      "e": "FocusCamera",
-      "v": {
-	"char": 0
-}
-    },
-    {
-      "t": 90810.8108108107,
-      "e": "FocusCamera",
-      "v": {
-	"char": 1
-}
-    },
-    {
-      "t": 92972.9729729729,
-      "e": "FocusCamera",
-      "v": {
-	"char": 0
-}
-    },
-    {
-      "t": 95135.1351351351,
-      "e": "FocusCamera",
-      "v": {
-	"char": 1
-}
-    },
-    {
-      "t": 97297.2972972972,
-      "e": "FocusCamera",
-      "v": {
-	"char": 0
-}
-    },
-    {
-      "t": 99459.4594594594,
-      "e": "FocusCamera",
-      "v": {
-	"char": 1
-}
-    },
-    {
-      "t": 101621.621621622,
-      "e": "FocusCamera",
-      "v": {
-	"char": 0
-}
-    },
-    {
-      "t": 103783.783783784,
-      "e": "FocusCamera",
-      "v": {
-	"char": 1
-}
-    },
-    {
-      "t": 103783.783783784,
-      "e": "Set GF Speed",
-      "v": {
-	"value1": "2",
-	"value2": ""
-}
-    },
-    {
-      "t": 112432.432432432,
-      "e": "FocusCamera",
-      "v": {
-	"char": 0
-}
-    },
-    {
-      "t": 118918.918918919,
-      "e": "streetTVstate",
-      "v": {
-	"value1": "4",
-	"value2": ""
 }
     },
     {
@@ -279,28 +1735,6 @@
 }
     },
     {
-      "t": 120540.540540541,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
-}
-    },
-    {
-      "t": 121081.081081081,
-      "e": "streetTVstate",
-      "v": {
-	"value1": "0",
-	"value2": ""
-}
-    },
-    {
-      "t": 121081.081081081,
-      "e": "FocusCamera",
-      "v": {
-	"char": 1
-}
-    },
-    {
       "t": 128648.648648649,
       "e": "KB_Alert",
       "v": {
@@ -317,412 +1751,6 @@
 }
     },
     {
-      "t": 129189.189189189,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
-}
-    },
-    {
-      "t": 129729.72972973,
-      "e": "FocusCamera",
-      "v": {
-	"char": 0
-}
-    },
-    {
-      "t": 138378.378378378,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "left",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 138378.378378378,
-      "e": "streetTVstate",
-      "v": {
-	"value1": "1",
-	"value2": ""
-}
-    },
-    {
-      "t": 138378.378378378,
-      "e": "Set GF Speed",
-      "v": {
-	"value1": "1",
-	"value2": ""
-}
-    },
-    {
-      "t": 138378.378378378,
-      "e": "FocusCamera",
-      "v": {
-	"char": 1
-}
-    },
-    {
-      "t": 138918.918918919,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "right",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 139459.459459459,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "left",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 139459.459459459,
-      "e": "FocusCamera",
-      "v": {
-	"char": 0
-}
-    },
-    {
-      "t": 140000,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "right",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 140540.540540541,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "left",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 140540.540540541,
-      "e": "FocusCamera",
-      "v": {
-	"char": 1
-}
-    },
-    {
-      "t": 141081.081081081,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "right",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 141621.621621622,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "left",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 141621.621621622,
-      "e": "FocusCamera",
-      "v": {
-	"char": 0
-}
-    },
-    {
-      "t": 142162.162162162,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "right",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 142702.702702703,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "left",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 142702.702702703,
-      "e": "FocusCamera",
-      "v": {
-	"char": 1
-}
-    },
-    {
-      "t": 143243.243243243,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "right",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 143783.783783784,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "left",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 143783.783783784,
-      "e": "FocusCamera",
-      "v": {
-	"char": 0
-}
-    },
-    {
-      "t": 144324.324324324,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "right",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 144864.864864865,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "left",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 144864.864864865,
-      "e": "FocusCamera",
-      "v": {
-	"char": 1
-}
-    },
-    {
-      "t": 145405.405405405,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "right",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 145945.945945946,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "left",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 145945.945945946,
-      "e": "FocusCamera",
-      "v": {
-	"char": 0
-}
-    },
-    {
-      "t": 146486.486486487,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "right",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 147027.027027027,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "left",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 147027.027027027,
-      "e": "FocusCamera",
-      "v": {
-	"char": 1
-}
-    },
-    {
-      "t": 147567.567567568,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "right",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 148108.108108108,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "left",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 148108.108108108,
-      "e": "FocusCamera",
-      "v": {
-	"char": 0
-}
-    },
-    {
-      "t": 148648.648648649,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "right",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 149189.189189189,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "left",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 149189.189189189,
-      "e": "FocusCamera",
-      "v": {
-	"char": 1
-}
-    },
-    {
-      "t": 149729.72972973,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "right",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 150270.27027027,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "left",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 150270.27027027,
-      "e": "FocusCamera",
-      "v": {
-	"char": 0
-}
-    },
-    {
-      "t": 150810.810810811,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "right",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 151351.351351351,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "left",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 151351.351351351,
-      "e": "FocusCamera",
-      "v": {
-	"char": 1
-}
-    },
-    {
-      "t": 151891.891891892,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "right",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 152432.432432433,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "left",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 152432.432432433,
-      "e": "FocusCamera",
-      "v": {
-	"char": 0
-}
-    },
-    {
-      "t": 152972.972972973,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "right",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 153513.513513514,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "left",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 153513.513513514,
-      "e": "FocusCamera",
-      "v": {
-	"char": 1
-}
-    },
-    {
-      "t": 154054.054054054,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "right",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 154594.594594595,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "left",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 154594.594594595,
-      "e": "FocusCamera",
-      "v": {
-	"char": 0
-}
-    },
-    {
-      "t": 155135.135135135,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "right",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 155675.675675676,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "left",
-	"value2": "0.375"
-}
-    },
-    {
       "t": 155675.675675676,
       "e": "KB_Alert",
       "v": {
@@ -731,41 +1759,11 @@
 }
     },
     {
-      "t": 155675.675675676,
-      "e": "FocusCamera",
-      "v": {
-	"char": 1
-}
-    },
-    {
       "t": 155945.945945946,
       "e": "KB_Alert",
       "v": {
 	"prep_saw": false,
 	"count": 1
-}
-    },
-    {
-      "t": 156216.216216216,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "right",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 156216.216216216,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
-}
-    },
-    {
-      "t": 156756.756756757,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "left",
-	"value2": "0.375"
 }
     },
     {
@@ -785,29 +1783,6 @@
 }
     },
     {
-      "t": 157297.297297297,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "right",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 157297.297297297,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
-}
-    },
-    {
-      "t": 157837.837837838,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "left",
-	"value2": "0.375"
-}
-    },
-    {
       "t": 158108.108108108,
       "e": "KB_Alert",
       "v": {
@@ -821,29 +1796,6 @@
       "v": {
 	"prep_saw": false,
 	"count": 1
-}
-    },
-    {
-      "t": 158378.378378379,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "right",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 158648.648648649,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
-}
-    },
-    {
-      "t": 158918.918918919,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "left",
-	"value2": "0.375"
 }
     },
     {
@@ -863,29 +1815,6 @@
 }
     },
     {
-      "t": 159459.459459459,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
-}
-    },
-    {
-      "t": 159459.45945946,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "right",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 160000,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "left",
-	"value2": "0.375"
-}
-    },
-    {
       "t": 160000,
       "e": "KB_Alert",
       "v": {
@@ -899,29 +1828,6 @@
       "v": {
 	"prep_saw": false,
 	"count": 1
-}
-    },
-    {
-      "t": 160540.540540541,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "right",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 160540.540540541,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
-}
-    },
-    {
-      "t": 161081.081081081,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "left",
-	"value2": "0.375"
 }
     },
     {
@@ -941,29 +1847,6 @@
 }
     },
     {
-      "t": 161621.621621622,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "right",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 161621.621621622,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
-}
-    },
-    {
-      "t": 162162.162162162,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "left",
-	"value2": "0.375"
-}
-    },
-    {
       "t": 162432.432432432,
       "e": "KB_Alert",
       "v": {
@@ -973,25 +1856,10 @@
     },
     {
       "t": 162702.702702703,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "right",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 162702.702702703,
       "e": "KB_Alert",
       "v": {
 	"prep_saw": false,
 	"count": 1
-}
-    },
-    {
-      "t": 162972.972972973,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
 }
     },
     {
@@ -1003,177 +1871,11 @@
 }
     },
     {
-      "t": 163243.243243244,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "left",
-	"value2": "0.375"
-}
-    },
-    {
       "t": 163513.513513513,
       "e": "KB_Alert",
       "v": {
 	"prep_saw": false,
 	"count": 1
-}
-    },
-    {
-      "t": 163783.783783784,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "right",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 163783.783783784,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
-}
-    },
-    {
-      "t": 164324.324324325,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "left",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 164324.324324325,
-      "e": "FocusCamera",
-      "v": {
-	"char": 0
-}
-    },
-    {
-      "t": 164864.864864865,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "right",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 165405.405405406,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "left",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 165945.945945946,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "right",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 166486.486486487,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "left",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 167027.027027027,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "right",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 167567.567567568,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "left",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 168108.108108108,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "right",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 168648.648648649,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "left",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 169189.18918919,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "right",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 169729.72972973,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "left",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 170270.270270271,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "right",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 170810.810810811,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "left",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 171351.351351352,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "right",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 171891.891891892,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "left",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 172432.432432433,
-      "e": "Alarm Gradient",
-      "v": {
-	"value1": "right",
-	"value2": "0.375"
-}
-    },
-    {
-      "t": 172972.972972973,
-      "e": "streetTVstate",
-      "v": {
-	"value1": "5",
-	"value2": ""
 }
     },
     {
@@ -1185,25 +1887,11 @@
 }
     },
     {
-      "t": 172972.972972973,
-      "e": "FocusCamera",
-      "v": {
-	"char": 1
-}
-    },
-    {
       "t": 173243.243243243,
       "e": "KB_Alert",
       "v": {
 	"prep_saw": false,
 	"count": 1
-}
-    },
-    {
-      "t": 173513.513513513,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
 }
     },
     {
@@ -1223,13 +1911,6 @@
 }
     },
     {
-      "t": 174594.594594595,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
-}
-    },
-    {
       "t": 175405.405405405,
       "e": "KB_Alert",
       "v": {
@@ -1243,13 +1924,6 @@
       "v": {
 	"prep_saw": false,
 	"count": 1
-}
-    },
-    {
-      "t": 175945.945945946,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
 }
     },
     {
@@ -1269,13 +1943,6 @@
 }
     },
     {
-      "t": 176756.756756757,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
-}
-    },
-    {
       "t": 177297.297297297,
       "e": "KB_Alert",
       "v": {
@@ -1289,13 +1956,6 @@
       "v": {
 	"prep_saw": false,
 	"count": 1
-}
-    },
-    {
-      "t": 177837.837837838,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
 }
     },
     {
@@ -1315,13 +1975,6 @@
 }
     },
     {
-      "t": 178918.918918919,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
-}
-    },
-    {
       "t": 179729.72972973,
       "e": "KB_Alert",
       "v": {
@@ -1335,13 +1988,6 @@
       "v": {
 	"prep_saw": false,
 	"count": 1
-}
-    },
-    {
-      "t": 180270.27027027,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
 }
     },
     {
@@ -1361,50 +2007,6 @@
 }
     },
     {
-      "t": 181081.081081081,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
-}
-    },
-    {
-      "t": 181621.621621622,
-      "e": "FocusCamera",
-      "v": {
-	"char": 0
-}
-    },
-    {
-      "t": 189729.72972973,
-      "e": "streetTVstate",
-      "v": {
-	"value1": "6",
-	"value2": ""
-}
-    },
-    {
-      "t": 190270.270270271,
-      "e": "streetTVstate",
-      "v": {
-	"value1": "7",
-	"value2": ""
-}
-    },
-    {
-      "t": 190270.270270271,
-      "e": "FocusCamera",
-      "v": {
-	"char": 1
-}
-    },
-    {
-      "t": 198918.91891892,
-      "e": "FocusCamera",
-      "v": {
-	"char": 0
-}
-    },
-    {
       "t": 207567.567567568,
       "e": "KB_Alert",
       "v": {
@@ -1413,25 +2015,11 @@
 }
     },
     {
-      "t": 207567.567567568,
-      "e": "FocusCamera",
-      "v": {
-	"char": 1
-}
-    },
-    {
       "t": 207837.837837838,
       "e": "KB_Alert",
       "v": {
 	"prep_saw": false,
 	"count": 1
-}
-    },
-    {
-      "t": 208108.108108108,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
 }
     },
     {
@@ -1451,13 +2039,6 @@
 }
     },
     {
-      "t": 208918.918918919,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
-}
-    },
-    {
       "t": 209729.72972973,
       "e": "KB_Alert",
       "v": {
@@ -1471,13 +2052,6 @@
       "v": {
 	"prep_saw": false,
 	"count": 1
-}
-    },
-    {
-      "t": 210270.27027027,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
 }
     },
     {
@@ -1497,13 +2071,6 @@
 }
     },
     {
-      "t": 211081.081081081,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
-}
-    },
-    {
       "t": 211891.891891892,
       "e": "KB_Alert",
       "v": {
@@ -1517,13 +2084,6 @@
       "v": {
 	"prep_saw": false,
 	"count": 1
-}
-    },
-    {
-      "t": 212432.432432432,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
 }
     },
     {
@@ -1543,13 +2103,6 @@
 }
     },
     {
-      "t": 213513.513513513,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
-}
-    },
-    {
       "t": 214054.054054054,
       "e": "KB_Alert",
       "v": {
@@ -1563,13 +2116,6 @@
       "v": {
 	"prep_saw": false,
 	"count": 1
-}
-    },
-    {
-      "t": 214594.594594595,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
 }
     },
     {
@@ -1589,35 +2135,6 @@
 }
     },
     {
-      "t": 215675.675675676,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
-}
-    },
-    {
-      "t": 216216.216216217,
-      "e": "FocusCamera",
-      "v": {
-	"char": 0
-}
-    },
-    {
-      "t": 224864.864864866,
-      "e": "streetTVstate",
-      "v": {
-	"value1": "1",
-	"value2": ""
-}
-    },
-    {
-      "t": 224864.864864866,
-      "e": "FocusCamera",
-      "v": {
-	"char": 1
-}
-    },
-    {
       "t": 228108.108108108,
       "e": "KB_Alert",
       "v": {
@@ -1631,13 +2148,6 @@
       "v": {
 	"prep_saw": false,
 	"count": 1
-}
-    },
-    {
-      "t": 228648.648648649,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
 }
     },
     {
@@ -1657,13 +2167,6 @@
 }
     },
     {
-      "t": 230810.810810811,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
-}
-    },
-    {
       "t": 231351.351351351,
       "e": "KB_Alert",
       "v": {
@@ -1677,13 +2180,6 @@
       "v": {
 	"prep_saw": false,
 	"count": 1
-}
-    },
-    {
-      "t": 231891.891891892,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
 }
     },
     {
@@ -1703,20 +2199,6 @@
 }
     },
     {
-      "t": 232972.972972973,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
-}
-    },
-    {
-      "t": 233513.513513515,
-      "e": "FocusCamera",
-      "v": {
-	"char": 0
-}
-    },
-    {
       "t": 241621.621621622,
       "e": "KB_Alert",
       "v": {
@@ -1730,20 +2212,6 @@
       "v": {
 	"prep_saw": false,
 	"count": 1
-}
-    },
-    {
-      "t": 242162.162162162,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
-}
-    },
-    {
-      "t": 242162.162162163,
-      "e": "FocusCamera",
-      "v": {
-	"char": 1
 }
     },
     {
@@ -1763,13 +2231,6 @@
 }
     },
     {
-      "t": 246216.216216216,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
-}
-    },
-    {
       "t": 246486.486486486,
       "e": "KB_Alert",
       "v": {
@@ -1783,13 +2244,6 @@
       "v": {
 	"prep_saw": false,
 	"count": 1
-}
-    },
-    {
-      "t": 247027.027027027,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
 }
     },
     {
@@ -1809,13 +2263,6 @@
 }
     },
     {
-      "t": 249189.189189189,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
-}
-    },
-    {
       "t": 249729.72972973,
       "e": "KB_Alert",
       "v": {
@@ -1829,31 +2276,6 @@
       "v": {
 	"prep_saw": false,
 	"count": 1
-}
-    },
-    {
-      "t": 250270.27027027,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
-}
-    },
-    {
-      "t": 250810.810810812,
-      "e": "FocusCamera",
-      "v": {
-	"char": 0
-}
-    },
-    {
-      "t": 259459.459459459,
-      "e": "FocusCamera",
-      "v": {
-	"x": 0,
-	"duration": 4,
-	"y": 0,
-	"char": 1,
-	"ease": "CLASSIC"
 }
     },
     {
@@ -1873,13 +2295,6 @@
 }
     },
     {
-      "t": 263243.243243243,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
-}
-    },
-    {
       "t": 265945.945945946,
       "e": "KB_Alert",
       "v": {
@@ -1893,13 +2308,6 @@
       "v": {
 	"prep_saw": false,
 	"count": 1
-}
-    },
-    {
-      "t": 266486.486486486,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
 }
     },
     {
@@ -1919,20 +2327,6 @@
 }
     },
     {
-      "t": 267567.567567568,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
-}
-    },
-    {
-      "t": 268108.10810811,
-      "e": "FocusCamera",
-      "v": {
-	"char": 0
-}
-    },
-    {
       "t": 276756.756756757,
       "e": "KB_Alert",
       "v": {
@@ -1941,25 +2335,11 @@
 }
     },
     {
-      "t": 276756.756756758,
-      "e": "FocusCamera",
-      "v": {
-	"char": 1
-}
-    },
-    {
       "t": 277027.027027027,
       "e": "KB_Alert",
       "v": {
 	"prep_saw": false,
 	"count": 1
-}
-    },
-    {
-      "t": 277297.297297297,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
 }
     },
     {
@@ -1979,13 +2359,6 @@
 }
     },
     {
-      "t": 278108.108108108,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
-}
-    },
-    {
       "t": 278918.918918919,
       "e": "KB_Alert",
       "v": {
@@ -1999,13 +2372,6 @@
       "v": {
 	"prep_saw": false,
 	"count": 1
-}
-    },
-    {
-      "t": 279459.459459459,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
 }
     },
     {
@@ -2025,13 +2391,6 @@
 }
     },
     {
-      "t": 280270.27027027,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
-}
-    },
-    {
       "t": 281081.081081081,
       "e": "KB_Alert",
       "v": {
@@ -2045,13 +2404,6 @@
       "v": {
 	"prep_saw": false,
 	"count": 1
-}
-    },
-    {
-      "t": 281621.621621622,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
 }
     },
     {
@@ -2071,13 +2423,6 @@
 }
     },
     {
-      "t": 282702.702702703,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
-}
-    },
-    {
       "t": 283243.243243243,
       "e": "KB_Alert",
       "v": {
@@ -2091,13 +2436,6 @@
       "v": {
 	"prep_saw": false,
 	"count": 1
-}
-    },
-    {
-      "t": 283783.783783784,
-      "e": "KB_AttackFire",
-      "v": {
-	"snd": 1
 }
     },
     {
@@ -2116,62 +2454,336 @@
 	"count": 1
 }
     },
-    {
-      "t": 284594.594594595,
+        {
+      "t": 8108.10810810811,
       "e": "KB_AttackFire",
       "v": {
 	"snd": 1
 }
     },
     {
-      "t": 285405.405405407,
-      "e": "FocusCamera",
+      "t": 120540.540540541,
+      "e": "KB_AttackFire",
       "v": {
-	"char": 0
+	"snd": 1
 }
     },
     {
-      "t": 294054.054054054,
-      "e": "streetTVstate",
+      "t": 129189.189189189,
+      "e": "KB_AttackFire",
       "v": {
-	"value1": "5",
-	"value2": "nyehehe"
+	"snd": 1
 }
     },
     {
-      "t": 294054.054054054,
-      "e": "FocusCamera",
+      "t": 156216.216216216,
+      "e": "KB_AttackFire",
       "v": {
-	"duration": 4,
-	"x": 0,
-	"y": 0,
-	"ease": "CLASSIC",
-	"char": 1
+	"snd": 1
 }
     },
     {
-      "t": 294189.189189189,
-      "e": "streetTVstate",
+      "t": 157297.297297297,
+      "e": "KB_AttackFire",
       "v": {
-	"value1": "0",
-	"value2": ""
+	"snd": 1
 }
     },
     {
-      "t": 302702.702702704,
-      "e": "FocusCamera",
+      "t": 158648.648648649,
+      "e": "KB_AttackFire",
       "v": {
-	"char": 0
+	"snd": 1
 }
     },
     {
-      "t": 311351.351351352,
-      "e": "FocusCamera",
+      "t": 159459.459459459,
+      "e": "KB_AttackFire",
       "v": {
-	"char": 1
+	"snd": 1
+}
+    },
+    {
+      "t": 160540.540540541,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 161621.621621622,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 162972.972972973,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 163783.783783784,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 173513.513513513,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 174594.594594595,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 175945.945945946,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 176756.756756757,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 177837.837837838,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 178918.918918919,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 180270.27027027,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 181081.081081081,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 208108.108108108,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 208918.918918919,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 210270.27027027,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 211081.081081081,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 212432.432432432,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 213513.513513513,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 214594.594594595,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 215675.675675676,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 228648.648648649,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 230810.810810811,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 231891.891891892,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 232972.972972973,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 242162.162162162,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 246216.216216216,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 247027.027027027,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 249189.189189189,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 250270.27027027,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 263243.243243243,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 266486.486486486,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 267567.567567568,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 277297.297297297,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 278108.108108108,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 279459.459459459,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 280270.27027027,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 281621.621621622,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 282702.702702703,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 283783.783783784,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
+}
+    },
+    {
+      "t": 284594.594594595,
+      "e": "KB_AttackFire",
+      "v": {
+	"snd": 1
 }
     }
-  ],
+ ],
   "notes": {
     "normal": [
       {
