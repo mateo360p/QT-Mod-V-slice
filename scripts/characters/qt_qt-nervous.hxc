@@ -1,124 +1,62 @@
+package funkin.play.character;
+
 import flixel.FlxG;
 import funkin.audio.FunkinSound;
-import funkin.play.character.MultiSparrowCharacter;
 import funkin.play.PlayState;
-import funkin.util.Constants;
-import funkin.util.HapticUtil;
 import funkin.Conductor;
+import flixel.math.FlxPoint;
+import funkin.play.character.VsQTKillerBotCharacter;
 
 using StringTools;
 
-class VsQTNervousBotCharacter extends MultiSparrowCharacter
+class VsQTNervousCharacter extends VsQTKillerBotCharacter
 {
-  var qt_hpDrainMultiplier:Float = 0.5925;
-  var qt_lossMultiplier:Float = 1.125;
-  function new()
+  final glitchStages:Array<String> = ['qtKBStreet', 'qtRealStreet', 'qtCessationStreet'];
+
+  public function new(characterId:String)
   {
-    super('qt_qt-nervous');
+    if (characterId == "UNKNOWN") {
+      characterId = "qt_qt-nervous";
+    }
+    super(characterId);
   }
 
-  function onCreate(event:ScriptEvent)
-  {
-    super.onCreate(event);
-
-    setDrain(0.0115, 1.125);
+  override function getDefaultDrain():FlxPoint {
+    return FlxPoint.get(0.0115, 1.125);
   }
 
-  override function onUpdate(event:UpdateScriptEvent):Void {
-    super.onUpdate(event);
-
-    drainHoldNote(event.elapsed);
-  }
-
-  function onSongRetry(event:ScriptEvent) {
-    super.onSongRetry(event);
-
-    setDrain(0.0115, 1.125);
-  }
+  override function resetIdle():Void {}
 
   function fetchAssetPaths():Array<String> {
       var results:Array<String> = super.fetchAssetPaths();
-
-      for (i in 1...4) {
-          results.push(Paths.sound('hazard/glitch-error0' + i));
-      }
-
+      for (i in 1...4) results.push(Paths.sound('hazard/glitch-error0' + i));
       return results;
   }
 
   override public function playSingAnimation(dir:NoteDirection, miss:Bool = false, ?suffix:String = ''):Void
   {
     var altAnim:String = '';
-    if (FlxG.random.int(1, 18) == 2) {
-				// Code for QT's random "glitch" alt animation to play.
+    if (DpzGlobalsModule.qualityLevel(1) && FlxG.random.bool(100 / 18)) {
 				altAnim = 'alt';
         FunkinSound.playOnce(Paths.sound('hazard/glitch-error0' + FlxG.random.int(1, 3)));
-
-				// 10% chance of an eye appearing on TV when glitching
-				if(FlxG.random.bool(10) && (PlayState.instance.currentSong.id == "careless" && !(Conductor.instance.currentBeat >= 190 && Conductor.instance.currentStep <= 898))) { 
-          var availableStages:Array<String> = ['qtKBStreet', 'qtRealStreet', 'qtCessationStreet'];
-          if (availableStages.contains(PlayState.instance.currentStage.id)) {
-						if(FlxG.random.bool(52)) PlayState.instance.currentStage.getNamedProp("TV").playAnimation("eyeLeft", true);
-						else PlayState.instance.currentStage.getNamedProp("TV").playAnimation("eyeRight", true);
-
-						PlayState.instance.currentStage.getNamedProp("TV").animation.finishCallback = function(daAnim:String){
-              if(daAnim == 'eyeLeft' || daAnim == 'eyeRight'){
-                PlayState.instance.currentStage.getNamedProp("TV").playAnimation("idle", true);
-                PlayState.instance.currentStage.getNamedProp("TV").animation.finishCallback == null;
-              }
-						}
-          }
-				}
+        randomGlitch(); // 10% chance of an eye appearing on TV when glitching
     }
 
     super.playSingAnimation(dir, miss, suffix + altAnim);
   }
 
-  function onNoteHit(event:HitNoteScriptEvent) {
-		super.onNoteHit(event);
+  function randomGlitch():Void {
+    if (!FlxG.random.bool(10)) return;
+    if (!glitchStages.contains(DpzGlobalsModule.curStageID())) return;
+    if (DpzGlobalsModule.curSongID() != "careless" || (Conductor.instance?.currentBeat >= 190 && Conductor.instance?.currentStep <= 898)) return;
 
-		if (PlayState.instance == null) return;
-
-		if (!event.note.noteData.getMustHitNote() && canDrain(Constants.HEALTH_SICK_BONUS)) {
-        PlayState.instance.health -= (Constants.HEALTH_SICK_BONUS * qt_hpDrainMultiplier) / ((FlxG.onMobile) ? 2 : 1);
-		}
-	}
-
-  function onNoteMiss(event:NoteScriptEvent) {
-    super.onNoteMiss(event);
-
-    if (PlayState.instance == null) return;
-
-    var lossMult:Float = 1 - qt_lossMultiplier;
-    PlayState.instance.health += (Constants.HEALTH_MISS_PENALTY * lossMult);
-  }
-
-  function drainHoldNote(elapsed:Float) {
-    if (PlayState.instance == null) return;
-
-    for (holdNote in PlayState.instance.opponentStrumline.holdNotes.members)
+    PlayState.instance?.currentStage?.getNamedProp("TV")?.playAnimation("eye" + (FlxG.random.bool(52) ? "Left" : "Right"), true);
+    PlayState.instance?.currentStage?.getNamedProp("TV")?.animation?.finishCallback = function(daAnim:String)
     {
-      if (holdNote == null || !holdNote.alive || holdNote.noteData == null) continue;
-
-      // While the hold note is being hit, and there is length on the hold note...
-      if (holdNote.hitNote && !holdNote.missedNote && holdNote.sustainLength > 0 && canDrain(Constants.HEALTH_HOLD_BONUS_PER_SECOND)) {
-        PlayState.instance.health -= ((Constants.HEALTH_HOLD_BONUS_PER_SECOND * qt_hpDrainMultiplier) * elapsed) / ((FlxG.onMobile) ? 2 : 1);
+      if(daAnim == 'eyeLeft' || daAnim == 'eyeRight'){
+        PlayState.instance?.currentStage?.getNamedProp("TV")?.playAnimation("idle", true);
+        PlayState.instance?.currentStage?.getNamedProp("TV")?.animation.finishCallback == null;
       }
     }
-  }
-
-  // Sooo this gets a value, and then converts it into a multiplier for the V-Slice health drain
-  // in QT, the HP gained when hitting a note is 0.02, in V-Slice is 0.03 (I think)
-  // Soo, to get the HPdrain equivalent here, we divide the QT mod value by its HP gain (0.02)
-  function setDrain(rawDrainValue:Float, rawLossMultiplier:Float = null):Void {
-    if (rawDrainValue != null) this.qt_hpDrainMultiplier = rawDrainValue / 0.02; // 0.02 is the healthDrain on QT mod (I think)
-    if (rawLossMultiplier != null) this.qt_lossMultiplier = rawLossMultiplier;
-  }
-
-  function canDrain(drain:Float):Bool {
-    if (PlayState.instance == null) return false;
-    if (drain == null) return false;
-
-    return (PlayState.instance.health - qt_hpDrainMultiplier*drain - 0.1 > Constants.HEALTH_MIN);
   }
 }

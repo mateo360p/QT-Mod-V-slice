@@ -1,0 +1,120 @@
+import flixel.FlxG;
+import funkin.modding.module.Module;
+import funkin.ui.options.OptionsState;
+import funkin.modding.module.ModuleHandler;
+import funkin.ui.title.TitleState;
+import funkin.graphics.FunkinSprite;
+
+class DpzQTModule extends Module {
+    public static final DPZ_SAVE_KEY_QT_SAWS:String = "dipazioQTdisablesaws"; // Are saws enabled?
+    public static final DPZ_SAVE_KEY_QT_VOCALS:String = "dipazioQToldvocals"; // Do we listen to the only good vocals?
+    public static final DPZ_SAVE_KEY_QT_TRICKS:String = "dipazioQTtricks"; // Do we move notes or drain hp?
+
+    public static final DPZ_SAVE_KEY_QT_DODGE_KEY:String = "dipazioControl_QTdodge"; // Dodge key
+    public static final DPZ_SAVE_KEY_QT_TAUNT_KEY:String = "dipazioControl_QTtaunt"; // Taunt key
+
+    public static final DPZ_SAVE_KEY_QT_SECRET_CESSATION:String = "dipazioSecret_Cessation"; // hmmm
+    public var addedOptions:Bool = false; // I did NOT have a better solution-
+
+    // ALL OF THIS FOR A LIL QT ON THE TITLE, worth it.
+    private var addedQT:Bool = false;
+    private var dummyState:Dynamic = null;
+    private var dummyQT:FunkinSprite = null;
+
+	public function new() {
+		super('DpzQTModule', 347); // NEEDS TO LOAD BEFORE DpzGlobalsModule!
+    }
+
+    override public function onStateChangeEnd(event:StateChangeScriptEvent)
+    {
+        dummyState = event.targetState;
+        addedQT = false;
+        DpzGlobalsModule.setDefaultSave(DpzQTModule.DPZ_SAVE_KEY_QT_DODGE_KEY, [32, 0]); // SPACE
+        DpzGlobalsModule.setDefaultSave(DpzQTModule.DPZ_SAVE_KEY_QT_TAUNT_KEY, [16, 0]); // SHIFT
+        DpzGlobalsModule.setDefaultSave(DpzQTModule.DPZ_SAVE_KEY_QT_VOCALS, true);
+        DpzGlobalsModule.setDefaultSave(DpzQTModule.DPZ_SAVE_KEY_QT_SAWS, false);
+        DpzGlobalsModule.setDefaultSave(DpzQTModule.DPZ_SAVE_KEY_QT_TRICKS, false);
+        DpzGlobalsModule.setDefaultSave(DpzQTModule.DPZ_SAVE_KEY_QT_SECRET_CESSATION, 0);
+        DpzGlobalsModule.getModOptions().set(DpzQTModule.DPZ_SAVE_KEY_QT_SECRET_CESSATION, 0);
+        DpzGlobalsModule.setDiscordRPC("QT", "https://raw.githubusercontent.com/mateo360p/QT-Mod-V-slice/refs/heads/Port-art/discord/");
+
+        if (!Std.isOfType(event.targetState, OptionsState)) return;
+        if (addedOptions) return;
+
+        addedOptions = true;
+        DpzGlobalsModule.dpzOptionsArray.push(addQTcontrols);
+        DpzGlobalsModule.dpzOptionsArray.push(addVocalsOption);
+        DpzGlobalsModule.dpzOptionsArray.push(addSawbladeOption);
+        DpzGlobalsModule.dpzOptionsArray.push(addTricksOption);
+    }
+
+    override function onUpdate(event:UpdateScriptEvent):Void {
+        if (!Std.isOfType(dummyState, TitleState)) return;
+        if (dummyState == null) return;
+        if (DpzGlobalsModule.getModOptions().get(DpzQTModule.DPZ_SAVE_KEY_QT_SECRET_CESSATION) != 2) return;
+        if (!dummyState?.skippedIntro || addedQT) return;
+
+        addedQT = true;
+        dummyQT = new FunkinSprite().loadSparrow("hazardStuff/qt-title");
+        dummyQT.animation.addByPrefix("idle", "titleanimation", 24, false);
+        dummyQT.setGraphicSize(Std.int(dummyQT.width * 0.25));
+        dummyQT.updateHitbox();
+        dummyQT.antialiasing = DpzGlobalsModule.getAntialias();
+        dummyQT.x = 100; dummyQT.y = FlxG.height - dummyQT.height + 10;
+        var index = dummyState.members.indexOf(dummyState.titleText);
+        dummyState?.insert(index, dummyQT);
+    }
+
+    override public function onBeatHit(event):Void {
+        if (!Std.isOfType(FlxG.state, TitleState) || !DpzGlobalsModule.qualityLevel(2)) return;
+        dummyQT?.animation?.play("idle", true);
+    }
+
+    public function dpzModule():Dynamic {
+        return ModuleHandler.getModule("DpzGlobalsModule");
+    }
+
+	public function addSawbladeOption(state:OptionsState):Void {
+        dpzModule()?.scriptCall("addCheckBoxOption", [state, "QT : Disable sawblades",
+            "If checked, KB sawblades won't appear\nNOTE: YOU WON'T GET SCORE OR RANK ON SAW SONGS.", DpzQTModule.DPZ_SAVE_KEY_QT_SAWS]);
+	}
+
+    public function addVocalsOption(state:OptionsState):Void {
+        dpzModule()?.scriptCall("addCheckBoxOption", [state, "QT : Old Voices",
+            "If checked, the vocals used on the songs would be from the v1 QT mod.", DpzQTModule.DPZ_SAVE_KEY_QT_VOCALS]);
+	}
+
+    public function addTricksOption(state:OptionsState):Void {
+        var dummyDesc:String = "If checked, disables tricks like HP drain and Note movement\nNOTE: YOU WON'T GET SCORE OR RANK ON 'TRICKED' SONGS.";
+        if (FlxG.onMobile) dummyDesc = "If checked, disables tricks like HP drain and Camera rotating\nNOTE: YOU WON'T GET SCORE OR RANK ON 'TRICKED' SONGS.";
+        dpzModule()?.scriptCall("addCheckBoxOption", [state, "QT : Disable tricks",
+            dummyDesc,
+            DpzQTModule.DPZ_SAVE_KEY_QT_TRICKS]);
+	}
+
+    public function addQTcontrols(state:OptionsState):Void {
+        dpzModule()?.scriptCall("addControlsHeader", [state, "V.S. QT"]);
+        dpzModule()?.scriptCall("addControlBind", [state, "DODGE", DpzQTModule.DPZ_SAVE_KEY_QT_DODGE_KEY]);
+        dpzModule()?.scriptCall("addControlBind", [state, "TAUNT", DpzQTModule.DPZ_SAVE_KEY_QT_TAUNT_KEY]);
+	}
+
+    public static function useOldVocals():Bool {
+        return DpzGlobalsModule.getModOptions().get(DpzQTModule.DPZ_SAVE_KEY_QT_VOCALS) ?? true;
+    }
+
+    public static function disabledSaws():Bool {
+        return DpzGlobalsModule.getModOptions().get(DpzQTModule.DPZ_SAVE_KEY_QT_SAWS) ?? false;
+    }
+
+    public static function disabledTricks():Bool {
+        return DpzGlobalsModule.getModOptions().get(DpzQTModule.DPZ_SAVE_KEY_QT_TRICKS) ?? false;
+    }
+
+    public static function dodgeJustPressed():Bool {
+        return FlxG.keys.anyJustPressed(DpzGlobalsModule.getModOptions().get(DpzQTModule.DPZ_SAVE_KEY_QT_DODGE_KEY) ?? []);
+    }
+
+    public static function tauntJustPressed():Bool {
+        return FlxG.keys.anyJustPressed(DpzGlobalsModule.getModOptions().get(DpzQTModule.DPZ_SAVE_KEY_QT_TAUNT_KEY) ?? []);
+    }
+}

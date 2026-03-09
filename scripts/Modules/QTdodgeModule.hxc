@@ -1,0 +1,557 @@
+import flixel.FlxG;
+import funkin.Paths;
+import funkin.play.PlayState;
+import funkin.Conductor;
+import funkin.modding.module.Module;
+import funkin.audio.FunkinSound;
+import funkin.play.GameOverSubState;
+import flixel.FlxSprite;
+import flixel.FlxCamera;
+import funkin.graphics.FunkinSprite;
+import funkin.play.stage.Bopper;
+import flixel.util.FlxColor;
+import funkin.modding.module.ModuleHandler;
+import funkin.play.stage.StageProp;
+import flixel.tweens.FlxEase;
+import funkin.play.event.SongEvent;
+import flixel.util.FlxTimer;
+import funkin.util.HapticUtil;
+import funkin.util.TouchUtil;
+import funkin.Preferences;
+import flixel.text.FlxTextBorderStyle;
+import funkin.play.cutscene.dialogue.FunkinTypeText;
+import funkin.play.components.HealthIcon;
+
+using StringTools;
+
+class QTdodgeModule extends Module {
+	public var dodgeTime:Float = null; // The last dodged time
+	public var dedBySaw:Bool = false; // If the player died by a sawblade hit
+
+	final dodgeSongs:Array<String> = ["termination"];
+	final alertSongs:Array<String> = ["termination", "cessation"];
+	final alarmSongs:Array<String> = ["censory-overload", "termination"];
+
+	var camQT:FlxCamera; // fkin rotating HUD in termination makes this look weird, soo let's make another camera-, also for the alert overlay
+	var alarmLeft:FunkinSprite;
+	var alarmRight:FunkinSprite;
+	var alert:Bopper;
+	var alertOverlay:FunkinSprite;
+	var sawblade:Bopper;
+	var touchSprite:FunkinSprite;
+
+    var alertSounds:Array<FunkinSound> = []; // I hope this fixes the little "delay" that the sounds have in mobile- // yeah, it didn't-
+    var attackSounds:Array<FunkinSound> = [];
+
+	public var qtBotplay:Bool = false; // autobotplay for the saws, when active, the dodge sprite wont exist on mobile, this just for testing or my vids ¯\_(ツ)_/¯
+	// NOTE: if u are goin' 2 use the qtBotplay, make sure u know who you actually r before doubtin' if you r a gud and an actual person in this society ;D
+
+	public function new() {
+		super('QTdodgeModule');
+	}
+
+// --- Generals ---
+	override function onCreate(event:ScriptEvent):Void {
+        super.onCreate(event);
+		GameOverSubState.animationSuffix = '';
+		restartValues();
+	}
+
+	override function onSongRetry(event:ScriptEvent):Void {
+		super.onSongRetry(event);
+		GameOverSubState.animationSuffix = '';
+		restartValues();
+	}
+
+	override function onStateChangeEnd(event:StateChangeScriptEvent):Void {
+		super.onStateChangeEnd(event);
+		restartValues();
+	}
+
+    override function onDestroy(event):Void {
+        super.onDestroy(event);
+		GameOverSubState.animationSuffix = '';
+        restartValues();
+        destroyStuff();
+    }
+
+	override function onPause(event:PauseScriptEvent):Void {
+		super.onPause(event);
+
+		if (PlayState.instance == null) return;
+
+		if (alertSounds != [] && alertSounds != null) {
+			for (s in alertSounds) {
+				s?.pause();
+			}
+		}
+
+		if (attackSounds != [] && attackSounds != null) {
+			for (a in attackSounds) {
+				a?.pause();
+			}
+		}
+	}
+
+	override function onResume(event:ScriptEvent):Void {
+		super.onResume(event);
+
+		if (PlayState.instance == null) return;
+
+		if (alertSounds != [] && alertSounds != null) {
+			for (s in alertSounds) {
+				s?.resume();
+			}
+		}
+
+		if (attackSounds != [] && attackSounds != null) {
+			for (a in attackSounds) {
+				a?.resume();
+			}
+		}
+	}
+
+	override function onSongEnd(event):Void {
+		super.onSongEnd(event);
+		if ((DpzQTModule.disabledSaws() && dodgeSongs.contains(curSongID()))
+			|| (DpzQTModule.disabledTricks() && DpzGlobalsModule.hasKeyboard() && curSongID == "termination")) PlayState.instance.isPracticeMode = true;
+	}
+
+	// Starts assets depending of the current song
+	override function onSongLoaded(event):Void {
+        super.onSongLoaded(event);
+		if (dodgeSongs.contains(curSongID())) {
+			initSawAssets();
+			if (!DpzGlobalsModule.hasKeyboard() && !(qtBotplay || PlayState.instance.isBotPlayMode)) initTouchArea();
+		}
+		if (alertSongs.contains(curSongID())) initAlertAssets();
+		if (alarmSongs.contains(curSongID())) initAlarmAssets();
+    }
+
+	// Creates the game over saw sprite
+	override function onSubStateOpenEnd(event:SubStateScriptEvent):Void {
+		super.onSubStateOpenEnd(event);
+		if (!(Std.isOfType(event.targetState, GameOverSubState) && dedBySaw && !DpzGlobalsModule.isPico())) return;
+		initGameOverSaw();
+	}
+
+	// Manages the dodge logic
+	override function onUpdate(event):Void {
+		super.onUpdate(event);
+		if (alertOverlay?.alpha > 0) alertOverlay?.alpha -= 1.2 * event.elapsed; // yeah I went lazy
+		if (PlayState.instance == null || !dodgeSongs.contains(curSongID()) || Conductor.instance == null) return;
+
+		var curTime = Conductor.instance.songPosition;
+		if (canDodge(curTime)) if (!(PlayState.instance.isBotPlayMode || qtBotplay) && PlayState.instance.subState == null && (DpzQTModule.dodgeJustPressed() || (!DpzGlobalsModule.hasKeyboard() && touchedMobile()))) dodge();
+
+		if (dodgeTime == null || (curTime < dodgeTime + getDodgeWindow())) return;
+
+		curBF()?.scriptSet("isDodging", false);
+		curBF()?.dance();
+		if (canDodge(curTime)) dodgeTime = null;
+	}
+
+// --- Dodge stuffy ---
+	/**
+	 * Plays all the bf dodge stuff, like sound, animation and values
+	 */
+	public function dodge():Void {
+		dodgeTime = Conductor.instance.songPosition;
+		FunkinSound.playOnce(Paths.sound("hazard/dodge01"));
+
+		if (PlayState.instance == null || PlayState.instance.currentStage == null) return;
+		curBF()?.playAnimation('dodge', true);
+		curBF()?.scriptSet("isDodging", true);
+	}
+
+	/**
+	 * Okay, soooo this takes the SPACE time and compares it to the death time (event 3rd beat) - the dodge window
+	 * @param eventTime The event time
+	 * @return if the player will die
+	 */
+	public function evalDodge(eventTime:Float):Bool {
+		if (qtBotplay || dodgeTime == null) return true;
+		return (eventTime - getDodgeWindow()) > dodgeTime;
+	}
+
+	/**
+	 * This just verifies that the dodge delay has passed, without timers
+	 * obviously, if the dodgetime is null, it hasn't even dodged yet
+	 * @return if the player can dodge, or if the dodge time is null
+	 */
+	public function canDodge(curTime:Float):Bool {
+		if (qtBotplay || dodgeTime == null) return true;
+		//if (FlxG.onMobile) return curTime >= dodgeTime + (getDodgeWindow() / 3) + getDodgeCooldown(); // Fkin idiot
+		return curTime >= dodgeTime + getDodgeWindow() + getDodgeCooldown();
+	}
+
+	function getDodgeWindow():Float {
+		return (!DpzGlobalsModule.hasKeyboard() ? 160 : 150); // mercy ig
+	}
+
+	function getDodgeCooldown():Float {
+		return (!DpzGlobalsModule.hasKeyboard() ? 40 : 60); // this might be kinda broken- // Yes IT IS
+	}
+
+// --- Assets buddies ---
+	public function initSawAssets() {
+		for (i in ["", "-double", "-triple", "-quadruple"]) {
+			var dummySound = FunkinSound.load(Paths.sound("hazard/attack" + i), 0.85);
+            if (dummySound != null) attackSounds.push(dummySound);
+			else trace("ATTACK SOUND " + i + " NULL");
+		}
+
+		sawblade = new Bopper(0);
+		sawblade.loadSparrow('hazardStuff/qt-port/attackv6');
+		sawblade.animation.addByPrefix('fire', 'kb_attack_animation_fire', 24, false);
+		sawblade.animation.addByPrefix('prepare', 'kb_attack_animation_prepare', 24, false);
+
+		var offX = 0;
+		var offY = 0;
+		if (DpzGlobalsModule.isPico()) {
+			offX = -100;
+			offY = -100;
+		}
+
+		sawblade.setAnimationOffsets("fire", 2700 + offX, 0 + offY); // Just to match the ded anim :v
+		sawblade.setAnimationOffsets("prepare", 900, 0 + offY);
+
+		sawblade.setGraphicSize(Std.int(sawblade.width * 1.15));
+
+		sawblade.antialiasing = !FlxG.onMobile;
+		PlayState.instance.currentStage.addBopper(sawblade, "qt_sawblade");
+
+        sawblade.x = curBF().x - 200;
+        sawblade.y = curBF().y + 80;
+        sawblade.zIndex = 1101;
+        sawblade.alpha = 0;
+    }
+
+	function initQTCamera():Void {
+		camQT = new FlxCamera();
+		camQT.bgColor = 0x00000000;
+		if (!FlxG.cameras.contains(camQT)) {
+			FlxG.cameras.add(camQT, false);
+			trace("[QTdodgeModule] Just added the QT Camera!");
+		} else {
+			trace("[QTdodgeModule] Already added the QT Camera");
+		}
+	}
+
+	public function initAlertAssets() {
+		for (i in ["", "Double", "Triple", "Quadruple"]) {
+			var dummySound = FunkinSound.load(Paths.sound("hazard/alert" + i), 0.85);
+            if (dummySound != null) alertSounds.push(dummySound);
+		}
+
+		alert = new Bopper(0);
+		alert.loadSparrow('hazardStuff/qt-port/attack_alert_NEW');
+		alert.animation.addByPrefix('alert', 'kb_attack_animation_alert-single', 24, false);
+		alert.setAnimationOffsets("alert", 0, 0);
+		alert.animation.addByPrefix('alertDOUBLE', 'kb_attack_animation_alert-double', 24, false);
+		alert.setAnimationOffsets("alertDOUBLE", 60, 5);
+		alert.animation.addByPrefix('alertTRIPLE', 'kb_attack_animation_alert-triple', 24, false);
+		alert.setAnimationOffsets("alertTRIPLE", 84, 30);
+		alert.animation.addByPrefix('alertQUAD', 'kb_attack_animation_alert-quad', 24, false);
+		alert.setAnimationOffsets("alertQUAD", 67, 20);
+		alert.setGraphicSize(Std.int(alert.width * 1.5));
+
+		alert.antialiasing = !FlxG.onMobile;
+		PlayState.instance.currentStage.addBopper(alert, "qt_alert");
+
+        alert.alpha = 0;
+        alert.zIndex = 1100;
+        alert.cameras = [PlayState.instance.camHUD];
+        alert.screenCenter();
+
+		if (!Preferences.flashingLights || !DpzGlobalsModule.qualityLevel(2)) return;
+
+		initQTCamera();
+		alertOverlay = new FunkinSprite().loadTexture('hazardStuff/inhuman-port/alert-vignette');
+		/*alertOverlay.x += (FlxG.width / 2) - 60; //Mmmmmm scuffed positioning, my favourite!
+		alertOverlay.y += (FlxG.height / 2) - 20;*/ // TF IS THIS HAZ-
+		alertOverlay.alpha = 0;
+		alertOverlay.cameras = [camQT];
+		alertOverlay.setGraphicSize(FlxG.width, FlxG.height);
+		alertOverlay.updateHitbox();
+		alertOverlay.screenCenter();
+		PlayState.instance.add(alertOverlay);
+    }
+
+    public function initAlarmAssets():Void {
+		if (!Preferences.flashingLights || !DpzGlobalsModule.qualityLevel(1)) return;
+		initQTCamera();
+
+		alarmLeft = new StageProp().loadTexture('hazardStuff/inhuman-port/back-Gradient');
+		alarmLeft.scrollFactor.set(0.5, 0.5);
+		alarmLeft.setGraphicSize(Std.int(alarmLeft.width * 1.1));
+		alarmLeft.updateHitbox();
+		alarmLeft.flipX = false;
+		alarmLeft.alpha = 0;
+		alarmLeft.setPosition(-600, -480);
+
+		alarmRight = new StageProp().loadTexture('hazardStuff/inhuman-port/back-Gradient');
+		alarmRight.scrollFactor.set(0.5, 0.5);
+		alarmRight.setGraphicSize(Std.int(alarmRight.width * 1.1));
+		alarmRight.updateHitbox();
+		alarmRight.flipX = true;
+		alarmRight.alpha = 0;
+		alarmRight.setPosition(-600, -480);
+
+		alarmLeft.antialiasing = alarmRight.antialiasing = !FlxG.onMobile;
+
+		PlayState.instance.currentStage.addProp(alarmLeft, "qt_alarmLeft");
+		PlayState.instance.currentStage.addProp(alarmRight, "qt_alarmRight");
+
+        alarmLeft.cameras = [camQT];
+        alarmLeft.x -= 85;
+        alarmRight.cameras = [camQT];
+        alarmRight.x -= 85;
+        alarmLeft.zIndex = 1000;
+        alarmRight.zIndex = 1001;
+        alarmLeft.color = FlxColor.RED;
+        alarmRight.color = FlxColor.RED;
+    }
+
+	private function getCessationDeathText(dum:Int):String {
+		switch (dum) {
+			case 1:
+				return "Mmmmmmm...";
+			case 2:
+				switch(DpzGlobalsModule.getLanguageKey()) {
+					case "es":
+						return "Para compensar esto, alguien te espera en la Pantalla de titulo!";
+					case "pt":
+						return "Para compensar isso, alguem esta esperando por voce na tela de titulo!";
+					default:
+						return "To make up for this, someone is waiting for you at the Title Screen!";
+				}
+			default: // 0
+				switch(DpzGlobalsModule.getLanguageKey()) {
+					case "es":
+						return "Oh cielos, e-eso no debia pasar!";
+					case "pt":
+						return "Oh ceus, i-isso nao devia ter acontecido!";
+					default:
+						return "Oh dear, t-that wasn't suppose to happen!";
+				}
+		}
+	}
+
+	public function initGameOverSaw() {
+		var dummyKiller:FlxSprite = new FlxSprite();
+		dummyKiller.frames = Paths.getSparrowAtlas('hazardStuff/qt-port/sawkillanimation2');
+		dummyKiller.animation.addByPrefix('animate', 'kb_attack_animation_kill_moving', 24, true);
+		dummyKiller.x = GameOverSubState.instance.boyfriend.x - 1175; //negative = left
+		dummyKiller.y = GameOverSubState.instance.boyfriend.y + 100; //positive = down
+		dummyKiller.animation.play("animate");
+		dummyKiller.antialiasing = DpzGlobalsModule.getAntialias();
+		GameOverSubState.instance.add(dummyKiller);
+
+		if (DpzGlobalsModule.curSongID() != "cessation") return;
+
+		var counter:Int = 0;
+		GameOverSubState.instance.mustNotExit = true;
+
+		var lilIcon:HealthIcon = new FunkinSprite().loadTexture("ui/qt-ded-1");
+		lilIcon?.visible = false;
+		var textDisplay:FunkinTypeText = new FunkinTypeText(0, 0, 300, '', 32);
+		textDisplay.fieldWidth = 600;
+		textDisplay.setFormat("Pixel Arial 11 Bold", 28, 0xFFff53dd, "left", FlxTextBorderStyle.SHADOW, 0xFF420e4f, false);
+		textDisplay.borderSize = 3;
+		textDisplay.sounds = [FunkinSound.load(Paths.sound('hazard/dialogue/qt'), 0.5)];
+
+		GameOverSubState.instance?.boyfriend?.animation?.onFinish.add(function(anim:String) {
+			if (anim == "firstDeath") {
+				new FlxTimer().start(0.6, function(s) {
+					if (GameOverSubState.instance?.gameOverMusic != null) {
+						GameOverSubState.instance?.gameOverMusic?.fadeOut(1.6, 0);
+					}
+				});
+				lilIcon?.visible = true;
+				textDisplay?.prefix = '';
+				textDisplay?.resetText(getCessationDeathText(0));
+				textDisplay?.start();
+				GameOverSubState.instance?.boyfriend?.animation?.onFinish.removeAll(); // I hope this doesn't make anything weird-
+			}
+		});
+
+		textDisplay?.completeCallback = () -> {
+			counter += 1;
+			if (counter < 3) {
+				new FlxTimer().start(2.8, function(s) {
+					lilIcon.loadTexture("ui/qt-ded-0");
+					textDisplay?.prefix = '';
+					textDisplay?.resetText(getCessationDeathText(counter));
+					textDisplay?.start();
+				});
+			}
+			else {
+				new FlxTimer().start(1.8, function(s) {
+					textDisplay?.completeCallback = null;
+					GameOverSubState.instance?.mustNotExit = false;
+				});
+			}
+		};
+		textDisplay.x = GameOverSubState.instance.boyfriend.x - 150; //negative = left
+		textDisplay.y = GameOverSubState.instance.boyfriend.y - 10; //positive = down
+		textDisplay.zIndex = 10000;
+		lilIcon.zIndex = 10001;
+		lilIcon.x = textDisplay?.x - 160;
+		lilIcon.y = textDisplay?.y - 10;
+		GameOverSubState.instance.add(textDisplay);
+		GameOverSubState.instance.add(lilIcon);
+	}
+
+	public function initTouchArea() {
+		var touchX = (FlxG.width - 480) / 2;
+        var touchY = (FlxG.height - 300) / 2 - 60;
+
+		touchSprite = FunkinSprite.create(touchX, touchY, "hazardStuff/dummySpace");
+        touchSprite.scrollFactor.set(0, 0);
+		touchSprite.alpha = 0.15;
+        touchSprite.cameras = [PlayState.instance.camHUD];
+		touchSprite.antialiasing = DpzGlobalsModule.getAntialias();
+        PlayState.instance.add(touchSprite);
+
+		//touchSprite.visible = !(qtBotplay || PlayState.instance.isBotPlayMode);
+	}
+
+// --- Handlers ---
+	public function handleSawblade(snd:Int) {
+		if (DpzGlobalsModule.curSongID() != "cessation") { // cessation MEGA troll
+			if (DpzQTModule.disabledSaws() || !dodgeSongs.contains(curSongID())) return;
+		}
+		if (PlayState.instance == null) return;
+
+		Conductor.instance.update();
+
+		sawblade?.playAnimation("fire", true);
+		sawblade?.alpha = 1;
+		attackSounds[snd - 1]?.play(true);
+		var isExtraSaw:Bool = (snd != 1);
+		if (DpzGlobalsModule.curSongID() != "cessation") { // U  C A N ' T  E S C A P E
+			if (PlayState.instance.isBotPlayMode || qtBotplay) {
+				dodge();
+				PlayState.instance.mayPauseGame = true;
+				return;
+			}
+		}
+
+        new FlxTimer().start(0.09, function(_) {
+            if (PlayState.instance != null && Conductor.instance != null) {
+                PlayState.instance.mayPauseGame = true;
+                var wulDai:Bool = evalDodge(Conductor.instance.songPosition);
+                if (DpzGlobalsModule.curSongID() == "cessation" || !(PlayState.instance.isBotPlayMode || qtBotplay) && wulDai) {
+					if (DpzGlobalsModule.curSongID() != "cessation" && (FlxG.onMobile && isExtraSaw && PlayState.instance.health >= 0.64)) {
+						if (!DpzGlobalsModule.isPico()) curBF()?.playAnimation("hit", true);
+						FunkinSound.playOnce(Paths.sound("hazard/bonk"), 0.85);
+						PlayState.instance.health -= 0.6; // Miracle! now die-
+						return;
+					}
+                    dedBySaw = true;
+                    PlayState.instance.health = -4040404; // funnyNumber
+					GameOverSubState.animationSuffix = '-qtSaw';
+                }
+            }
+        });
+	}
+
+	public function handleAlert(alertV:String, soundV:Int, prepareSaw:Bool) {
+		if (!alertSongs.contains(curSongID())) return;
+
+		Conductor.instance.update();
+
+		alert?.playAnimation("alert" + alertV);
+        alert?.alpha = 1;
+		alertSounds[soundV - 1]?.play(true);
+
+        if (prepareSaw) {
+			sawblade?.playAnimation("prepare", true);
+			sawblade?.alpha = 1;
+		}
+
+		if (alertOverlay == null) return;
+
+		var overlayAlpha:Float = 0;
+		switch(soundV) {
+			case 2:
+				overlayAlpha = 0.55;
+			case 3:
+				overlayAlpha = 0.5875;
+			case 4:
+				overlayAlpha = 0.6;
+			default: // 1 or whatever
+				overlayAlpha = 0.49;
+		}
+		alertOverlay.alpha = overlayAlpha;
+	}
+
+	public function handleAlarm(isAlarmLeft:Bool, targetAlpha:Float) {
+		if (!DpzGlobalsModule.qualityLevel(1)) return;
+		if (!alarmSongs.contains(curSongID())) return;
+
+		var targetAlarm = (isAlarmLeft ? alarmLeft : alarmRight);
+        if (targetAlarm == null) return;
+
+        DpzGlobalsModule.tween(targetAlarm, {alpha: targetAlpha}, 0.25, {
+            ease: FlxEase.quartOut,
+            onComplete: function(t) {DpzGlobalsModule.tween(targetAlarm, {alpha: 0}, 0.36, {ease: FlxEase.cubeOut});}
+        });
+	}
+
+	function curSongID():String {
+		return DpzGlobalsModule.curSongID();
+	}
+
+	function curBF():Dynamic {
+		return PlayState.instance.currentStage.getBoyfriend();
+	}
+
+	function restartValues() {
+		dodgeTime = null;
+		dedBySaw = false;
+		sawblade?.alpha = 0;
+	}
+
+	function destroyStuff() {
+		alarmLeft?.destroy();
+		alarmLeft = null;
+
+		alarmRight?.destroy();
+		alarmRight = null;
+
+		alert?.destroy();
+		alert = null;
+
+		alertOverlay?.destroy();
+		alertOverlay = null;
+
+		sawblade?.destroy();
+		sawblade = null;
+
+		camQT?.destroy();
+		camQT = null;
+
+		touchSprite?.destroy();
+		touchSprite = null;
+
+		for (s in alertSounds) {
+            s?.destroy();
+            s = null;
+        }
+
+		for (s in attackSounds) {
+            s?.destroy();
+            s = null;
+        }
+
+		alertSounds = [];
+		attackSounds = [];
+    }
+
+	function touchedMobile():Bool {
+		if (qtBotplay || touchSprite == null) return false;
+		return (TouchUtil.overlapsComplex(touchSprite) && TouchUtil.justPressed);
+	}
+}

@@ -1,0 +1,116 @@
+package dipazio.song;
+
+import funkin.play.PlayState;
+import funkin.play.PlayStatePlaylist;
+import funkin.play.song.Song;
+import flixel.FlxG;
+import funkin.data.dialogue.ConversationRegistry;
+
+import Date;
+import StringTools;
+
+class DpzSong extends Song {
+    public var config:Dynamic = {
+        startDialogue: false, // Boolean, needs explanation?
+        endDialogue: false, // Boolean
+        freeplayDialogue: false, // Boolean
+        discordRich: true, // Boolean
+        albumMod: null // String, the external site link getter for the songs album cover
+    }
+    var hasPlayedCutscene:Bool = false;
+    var hasPlayedEndCutscene:Bool = false;
+    public static final debugMode:Bool = false;
+
+    public function new(songID:String, ?params:Dynamic = {}, ?configuration:Dynamic = null) {
+        super(songID, params); // what's params-
+        DpzGlobalsModule.applyFields(configuration, config);
+    }
+
+    override function onCreate(event:ScriptEvent):Void {
+        super.onCreate(event);
+        discordRPC();
+        hasPlayedCutscene = hasPlayedEndCutscene = false;
+    }
+
+    override function onSongRetry(event:ScriptEvent):Void {
+        super.onSongRetry(event);
+        hasPlayedCutscene = true;
+        hasPlayedEndCutscene = false;
+    }
+
+    override function onCountdownStart(event:CountdownScriptEvent):Void {
+        super.onCountdownStart(event);
+        if (!validateDialogue(false)) return;
+
+        hasPlayedCutscene = true;
+        event.cancel();
+        startDialogue(false);
+    }
+
+    override function onSongEnd(event:CountdownScriptEvent):Void {
+        if (!validateDialogue(true)) {
+            PlayState.instance.disableKeys = true;
+            super.onSongEnd(event);
+            return;
+        }
+
+        if (!hasPlayedEndCutscene) {
+            hasPlayedEndCutscene = true;
+            PlayState.instance.disableKeys = false;
+            startDialogue(true);
+            event.cancel();
+        }
+    }
+
+    public function getDialogue(isEnd:Bool) {
+        return DpzGlobalsModule.getDialogueTranslation(id) + (isEnd ? "-end" : "");
+    }
+
+    public function validateDialogue(?isEnd:Bool = false):Bool {
+        if (PlayState.instance.isChartingMode) return false;
+        if (ConversationRegistry.instance.fetchEntry(getDialogue(isEnd)) == null) return false;
+        if (isEnd && (!config.endDialogue || hasPlayedEndCutscene)) return false;
+        if (!isEnd && (!config.startDialogue || hasPlayedCutscene)) return false;
+        if (DpzSong.debugMode) return true; // testing stuffy
+        if (!config.freeplayDialogue && !(PlayStatePlaylist.isStoryMode || DpzGlobalsModule.isPico())) return false;
+
+        return true;
+    }
+
+    public function startDialogue(?isEnd:Bool = false):Void {
+        PlayState.instance?.startConversation(getDialogue(isEnd));
+    }
+
+    public function onFinalDialogueEnd(event):Void {
+        PlayState.instance?.endSong();
+    }
+
+    override function onScriptEvent(event) {
+        super.onScriptEvent(event);
+        if (event.type != "DIALOGUE_END") return;
+
+        if (config.endDialogue && StringTools.endsWith(event.conversation.id, "-end")) {
+            onFinalDialogueEnd(event);
+        }
+    }
+
+    function discordRPC() {
+        if (!config.discordRich || (config?.albumMod == null)|| FlxG.onMobile || (PlayState.instance?.currentChart?.album == null)) return;
+
+        var daTime = Date.now().getTime();
+        var daAlbum:String = PlayState.instance.currentChart.album;
+        var daIcon:String = null;
+
+        var dummyDad = PlayState.instance.currentStage.getDad();
+        var modLink:String = DpzGlobalsModule.getDiscordRPC(config.albumMod);
+        if (modLink == null) {
+            trace("<DpzSong> Null discord link: " + config.albumMod);
+            return;
+        }
+
+        if (dummyDad != null) daIcon = dummyDad._data?.healthIcon?.id;
+
+        if (daAlbum != null && daAlbum != "") PlayState.instance.discordRPCAlbum = modLink + "albums/" + daAlbum + ".png?raw=true?t=" + daTime;
+        if (daIcon != null && daIcon != "") PlayState.instance.discordRPCIcon = modLink + "icons/" + daIcon + ".png?raw=true?t=" + daTime;
+    }
+}

@@ -1,128 +1,75 @@
 {
   "version": "1.0.0",
   "danceEvery": 1,
-  "startingAnimation": "idle",
-  "name": "KillerBot (vs. QT)",
-  "renderType": "multisparrow",
-  "assetPath": "characters/qt-port/robot",
-  "offsets": [
-    30,
-    60
-  ],
-  "cameraOffsets": [
-    -120,
-    -50
-  ],
+  "startingAnimation": "danceLeft",
+  "name": "KB [vs. QT]",
+  "renderType": "multianimateatlas",
+  "assetPath": "shared:characters/qt-port/kb",
+  "offsets": [0, 20],
+  "cameraOffsets": [0, 130],
   "scale": 1,
   "singTime": 6,
   "isPixel": false,
   "flipX": false,
   "healthIcon": {
-    "id": "qt_kb",
-    "isPixel": false,
-    "flipX": false,
-    "scale": 1,
-    "offsets": [
-      0,
-      0
-    ]
+    "id": "qt_kb"
   },
   "animations": [
     {
       "name": "singLEFT",
-      "prefix": "KB_Left",
-      "offsets": [
-        249,
-        244
-      ],
-      "frameRate": 24,
-      "looped": false,
-      "flipX": false,
-      "flipY": false
-    },
-    {
-      "name": "singRIGHT",
-      "prefix": "KB_Right",
-      "offsets": [
-        -114,
-        50
-      ],
-      "frameRate": 24,
-      "looped": false,
-      "flipX": false,
-      "flipY": false
+      "prefix": "Left"
     },
     {
       "name": "singDOWN",
-      "prefix": "KB_Down",
-      "offsets": [
-        186,
-        33
-      ],
-      "frameRate": 24,
-      "looped": false,
-      "flipX": false,
-      "flipY": false
-    },
-    {
-      "name": "danceLeft",
-      "prefix": "KB_DanceLeft",
-      "offsets": [
-        148,
-        103
-      ],
-      "frameRate": 24,
-      "looped": false,
-      "flipX": false,
-      "flipY": false
-    },
-    {
-      "name": "danceRight",
-      "prefix": "KB_DanceRight",
-      "offsets": [
-        107,
-        112
-      ],
-      "frameRate": 24,
-      "looped": false,
-      "flipX": false,
-      "flipY": false
+      "prefix": "Down"
     },
     {
       "name": "singUP",
-      "prefix": "KB_Up",
-      "offsets": [
-        160,
-        265
-      ],
-      "frameRate": 24,
-      "looped": false,
-      "flipX": false,
-      "flipY": false
+      "prefix": "Up"
+    },
+    {
+      "name": "singRIGHT",
+      "prefix": "Right"
+    },
+    {
+      "name": "singLEFT-hold",
+      "prefix": "Left",
+      "frameIndices": [4, 5, 6, 7],
+      "looped": true
+    },
+    {
+      "name": "singDOWN-hold",
+      "prefix": "Down",
+      "frameIndices": [4, 5, 6, 7],
+      "looped": true
+    },
+    {
+      "name": "singUP-hold",
+      "prefix": "Up",
+      "frameIndices": [4, 5, 6, 7],
+      "looped": true
+    },
+    {
+      "name": "singRIGHT-hold",
+      "prefix": "Right",
+      "frameIndices": [4, 5, 6, 7],
+      "looped": true
+    },
+    {
+      "name": "danceLeft",
+      "prefix": "Dance Left"
+    },
+    {
+      "name": "danceRight",
+      "prefix": "Dance Right"
     },
     {
       "name": "idle-alt",
-      "prefix": "KB_idleTired",
-      "offsets": [
-        76,
-        90
-      ],
-      "frameRate": 24,
-      "looped": false,
-      "flipX": false,
-      "flipY": false
+      "prefix": "Idle Tired"
     },
     {
       "name": "idle-angry",
-			"prefix": "KB_idleBabyRage",
-			"offsets": [
-				148,
-				74
-			],
-      "frameRate": 24,
-      "looped": true,
-      "flipX": false,
-      "flipY": false
+      "prefix": "Idle Angry"
     }
   ]
 }

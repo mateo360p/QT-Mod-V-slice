@@ -1,0 +1,224 @@
+import flixel.FlxG;
+import funkin.play.notes.Strumline;
+import flixel.math.FlxPoint;
+import funkin.play.notes.notestyle.NoteStyle;
+import funkin.play.notes.NoteSprite;
+import funkin.play.notes.SustainTrail;
+import funkin.Preferences;
+
+// Big thanks to my patience and some random AI who told me that doing this with offsets was a bad idea :D!
+// Note: no u can't use this for your mod :3
+// Note 2: what are you looking at? on the license says that u cant!
+class MovableStrumline extends Strumline {  
+    public var allowedMoving:Bool = false;  
+    public var laneXOffsets:Array<Float> = [0, 0, 0, 0];  
+    public var laneYOffsets:Array<Float> = [0, 0, 0, 0];  
+    public var angles:Array<Float> = [0, 0, 0, 0];  
+    var laneDirty:Array<Bool> = [false, false, false, false];  
+    var anyDirty:Bool = false;  
+    
+    public function new(noteStyle:NoteStyle, isPlayer:Bool, ?scrollSpeed:Float) {  
+        super(noteStyle, isPlayer, scrollSpeed);  
+    }  
+    
+    inline function markLane(dir:Int) { laneDirty[dir] = true; anyDirty = true; }  
+    
+    public function setXOffset(dir:NoteDirection, value:Float):Void { laneXOffsets[dir] = value; markLane(dir); }  
+    public function setYOffset(dir:NoteDirection, value:Float):Void { laneYOffsets[dir] = value; markLane(dir); }  
+    public function setAngle(dir:NoteDirection, value:Float):Void { angles[dir] = value; markLane(dir); }  
+    
+    override public function update(elapsed:Float):Void {  
+        super.update(elapsed);
+        if (FlxG.onMobile) return;
+        if (!allowedMoving) return;
+
+        recalculateNotes();  
+        recalculateHoldTrials(); 
+        if (!anyDirty) return;  
+        recalculateStrums(); 
+        recalculateHoldCovers();  
+        anyDirty = false;  
+        for (i in 0...Strumline.KEY_COUNT) laneDirty[i] = false;  
+    }  
+    
+    function recalculateStrums():Void {  
+        for (i in 0...Strumline.KEY_COUNT) {  
+        var dir = Strumline.DIRECTIONS[i];  
+        var receptor = getByDirection(dir);  
+        var baseX:Float = this.x + getXPos(dir) + Strumline.INITIAL_OFFSET + getXOffset(i);  
+        var baseY:Float = this.y + getYOffset(i);  
+        if (receptor.x != baseX) receptor.x = baseX;  
+        if (receptor.y != baseY) receptor.y = baseY;  
+        if (receptor.x != baseX || receptor.y != baseY) noteStyle.applyStrumlineOffsets(receptor);  
+        if (receptor.angle != angles[i]) receptor.angle = angles[i];  
+        }  
+    }  
+    
+    function recalculateNotes():Void {  
+        for (note in notes.members) {  
+            if (note == null || !note.alive) continue;  
+            var dir = note.noteData.getDirection() % Strumline.KEY_COUNT;
+            note.y += getYOffset(dir);
+            if (!anyDirty) continue;
+            var baseX = this.x + getXPos(Strumline.DIRECTIONS[dir]) - (note.width - Strumline.STRUMLINE_SIZE) / 2 - Strumline.NUDGE + getXOffset(dir);  
+            if (note.x != baseX) note.x = baseX;  
+            if (note.angle != angles[dir]) note.angle = angles[dir];  
+        }  
+    }  
+    
+    function recalculateHoldTrials():Void {  
+        for (hold in holdNotes.members) {  
+            if (hold == null || !hold.alive) continue;
+            var dir = hold.noteDirection % Strumline.KEY_COUNT;  
+            hold.y += getYOffset(dir);  
+            if (!anyDirty) continue;
+            var baseX = this.x + getXPos(Strumline.DIRECTIONS[dir]) + Strumline.STRUMLINE_SIZE / 2 - hold.width / 2 + getXOffset(dir);  
+            if (hold.x != baseX) hold.x = baseX;
+        }  
+    }  
+    
+    function recalculateHoldCovers():Void {  
+        for (cover in noteHoldCovers.members) {  
+            if (cover == null || !cover.alive || cover.holdNote == null || !cover.holdNote.alive) continue;  
+            var dir = cover.holdNote.noteDirection % Strumline.KEY_COUNT;
+
+            var baseX = this.x + getXPos(Strumline.DIRECTIONS[dir]) + Strumline.STRUMLINE_SIZE / 2 - cover.width / 2;  
+            baseX += (noteStyle.getHoldCoverOffsets()[0] * cover.scale.x) - 12 + getXOffset(dir);  
+            if (cover.x != baseX) cover.x = baseX;  
+
+            var baseY = this.y + Strumline.INITIAL_OFFSET + Strumline.STRUMLINE_SIZE / 2;  
+            baseY += (noteStyle.getHoldCoverOffsets()[1] * cover.scale.y) - 96 + getYOffset(dir);  
+            if (cover.y != baseY) cover.y = baseY;  
+        }  
+    }  
+    
+    // ANGLE STUFF  
+    public function resetAngles():Void { for (d in Strumline.DIRECTIONS) setAngle(d, 0); }  
+    public function tweenResetAngles(time:Float = 0, ?options:Dynamic):Void {  
+        if (time == null || time <= 0) { resetAngles(); return; }  
+        for (d in Strumline.DIRECTIONS) tweenAngle(d, 0, time, options);  
+    }  
+    public function tweenAngle(dir:NoteDirection, to:Float, time:Float, ?options:Dynamic):Void {  
+        if (to == null) { trace("ERROR: Buddy, the to arg on tweenAngle is NULL!"); return; }  
+        if (time == null) { trace("ERROR: Buddy, the time arg on tweenAngle is NULL!"); return; }  
+        var dummy:Int = dir;  
+        DpzGlobalsModule.num(angles[dummy], to, time, options, function(v) { setAngle(dummy, v); });  
+    }  
+    
+    // HELPERS  
+    public function resetOffsets():Void {  
+        for (d in Strumline.DIRECTIONS) {  
+        setXOffset(d, 0);  
+        setYOffset(d, 0);  
+        }  
+    }  
+    public function tweenResetOffsets(time:Float = 0, ?options:Dynamic):Void {  
+        if (time == null || time <= 0) { resetOffsets(); return; }  
+        for (d in Strumline.DIRECTIONS) {  
+        tweenXOffset(d, 0, time, options);  
+        tweenYOffset(d, 0, time, options);  
+        }  
+    }  
+    public function getStartPos(dir:NoteDirection):FlxPoint {  
+        if (dir == null) return FlxPoint.get();  
+        var baseX = this.x + getXPos(dir) + Strumline.INITIAL_OFFSET;  
+        var baseY = this.y;  
+        return FlxPoint.get(baseX, baseY);  
+    }  
+    public function getStrumNote(dir:NoteDirection):FlxPoint {  
+        var receptor = getByDirection(dir);  
+        return receptor;  
+    }  
+    public function getXOffset(dir:NoteDirection):Float { return laneXOffsets[dir]; }  
+    public function getYOffset(dir:NoteDirection):Float { return (laneYOffsets[dir]) * (Preferences.downscroll ? 1 : -1); }  
+    public function addXOffset(dir:NoteDirection, value:Float):Void { laneXOffsets[dir] += value; markLane(dir); }  
+    public function addYOffset(dir:NoteDirection, value:Float):Void { laneYOffsets[dir] += value; markLane(dir); }  
+    
+    // Basic tweens  
+    public function tweenXOffset(dir:NoteDirection, to:Float, time:Float, ?options:Dynamic):Void {  
+        if (to == null) { trace("ERROR: Buddy, the to arg on tweenXOffset is NULL!"); return; }  
+        if (time == null) { trace("ERROR: Buddy, the time arg on tweenXOffset is NULL!"); return; }  
+        var dummy:Int = dir;  
+        DpzGlobalsModule.num(laneXOffsets[dummy], to, time, options, function(v) { setXOffset(dummy, v); });  
+    }  
+    public function tweenYOffset(dir:NoteDirection, to:Float, time:Float, ?options:Dynamic):Void {  
+        if (to == null) { trace("ERROR: Buddy, the to arg on tweenYOffset is NULL!"); return; }  
+        if (time == null) { trace("ERROR: Buddy, the time arg on tweenYOffset is NULL!"); return; }  
+        var dummy:Int = dir;  
+        DpzGlobalsModule.num(laneYOffsets[dummy], to, time, options, function(v) { setYOffset(dummy, v); });  
+    }  
+    
+    // Add pos tweens  
+    public function addTweenXOffset(dir:NoteDirection, adding:Float, time:Float, ?options:Dynamic):Void {  
+        if (adding == null) { trace("ERROR: Buddy, the to arg on addTweenXOffset is NULL!"); return; }  
+        if (time == null) { trace("ERROR: Buddy, the time arg on addTweenXOffset is NULL!"); return; }  
+        var dummy:Int = dir;  
+        var dumfrom:Float = laneXOffsets[dummy];  
+        var dumto:Float = dumfrom + adding;  
+        DpzGlobalsModule.num(dumfrom, dumto, time, options, function(v) { setXOffset(dummy, v); });  
+    }  
+    public function addTweenYOffset(dir:NoteDirection, adding:Float, time:Float, ?options:Dynamic):Void {  
+        if (adding == null) { trace("ERROR: Buddy, the to arg on addTweenYOffset is NULL!"); return; }  
+        if (time == null) { trace("ERROR: Buddy, the time arg on addTweenYOffset is NULL!"); return; }  
+        var dummy:Int = dir;  
+        var dumfrom:Float = laneYOffsets[dummy];  
+        var dumto:Float = dumfrom + adding;  
+        DpzGlobalsModule.num(dumfrom, dumto, time, options, function(v) { setYOffset(dummy, v); });  
+    }  
+    
+    // Apply offsets at creation  
+    override public function buildNoteSprite(note):NoteSprite {  
+        var noteSprite = super.buildNoteSprite(note);  
+        if (noteSprite != null && allowedMoving) {  
+            var dir = note.getDirection() % Strumline.KEY_COUNT;  
+            noteSprite.x += getXOffset(dir);  
+            if (noteSprite.angle != angles[dir]) noteSprite.angle = angles[dir];  
+        }  
+        else if (noteSprite.angle != 0) noteSprite.angle = 0;  
+        return noteSprite;  
+    }  
+    
+    override public function buildHoldNoteSprite(note):SustainTrail {  
+        var holdNote = super.buildHoldNoteSprite(note);  
+        if (holdNote != null && allowedMoving) {  
+        var dir = note.getDirection() % Strumline.KEY_COUNT;  
+        holdNote.x += getXOffset(dir);  
+        }  
+        return holdNote;  
+    }  
+    
+    override public function playNoteSplash(direction:NoteDirection):Void
+    {
+        if (!showNotesplash) return;
+        if (!noteStyle.isNoteSplashEnabled()) return;
+
+        var splash:NoteSplash = this.constructNoteSplash();
+
+        if (splash != null)
+        {
+            splash.play(direction);
+
+            splash.x = this.x;
+            splash.x += getXPos(direction);
+            splash.x += Strumline.INITIAL_OFFSET;
+            splash.x += noteStyle.getSplashOffsets()[0] * splash.scale.x;
+
+            splash.y = this.y;
+            splash.y -= Strumline.INITIAL_OFFSET;
+            splash.y += noteStyle.getSplashOffsets()[1] * splash.scale.y;
+
+            if (!allowedMoving) return;
+            // The only fkin adittion
+            splash.x += getXOffset(direction);
+            splash.y += getYOffset(direction);
+        }
+    }
+
+    override public function playNoteHoldCover(holdNote:SustainTrail):Void {
+        super.playNoteHoldCover(holdNote);
+        if (!allowedMoving || holdNote.cover == null) return;
+        var dir = holdNote.noteDirection % Strumline.KEY_COUNT;
+        holdNote.cover.x += getXOffset(dir);
+        holdNote.cover.y += getYOffset(dir);
+    }  
+}

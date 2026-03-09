@@ -1,64 +1,46 @@
+package dipazio.song;
+
+import dipazio.song.DpzSong;
 import flixel.FlxG;
 import funkin.graphics.FunkinSprite;
-import flixel.tweens.FlxEase;
-import flixel.tweens.FlxTween;
 import flixel.util.FlxTimer;
 import funkin.audio.FunkinSound;
 import funkin.play.PlayState;
-import funkin.play.PlayStatePlaylist;
-import funkin.play.song.Song;
 import flixel.util.FlxColor;
 
-import Date;
-
-class QTCensoryOverloadSong extends Song {
-    var hasPlayedCutscene:Bool;
+class QTCensoryOverloadSong extends DpzSong {
     public function new() {
-        super('censory-overload');
+        super('censory-overload', null,
+        {
+            startDialogue: true, // Boolean, needs explanation?
+            endDialogue: false, // Boolean
+            freeplayDialogue: false, // Boolean
+            discordRich: true, // Boolean
+            albumMod: "QT" // String, the external site link getter for the songs album cover
+        });
     }
 
     function fetchAssetPaths():Array<String> 
 	{
 		var results:Array<String> = super.fetchAssetPaths();
-
         results.push(Paths.image("hazardStuff/inhuman-port/back-Gradient"));
-        results.push(Paths.getSparrowAtlas("hazardStuff/qt-port/stage/Gas_Release"));
+        // mikassette mikawork for fix the fkin iOS crash lol. Just change Paths.getSparrowAtlas() to Paths.image()
+        // Man I hate iOS so much-
+        results.push(Paths.image("hazardStuff/qt-port/stage/Gas_Release"));
 		return results;
 	}
 
-    override function onCreate(event:ScriptEvent):Void {
-        super.onCreate(event);
-
-        discordRPC();
-
-        hasPlayedCutscene = false;
-    }
-
     override function onSongRetry(event:ScriptEvent):Void {
         super.onSongRetry(event);
-        hasPlayedCutscene = true;
-        var kb = PlayState.instance.currentStage.getDad();
         changeIdle("");
     }
 
-    override function onCountdownStart(event:CountdownScriptEvent):Void {
-        super.onCountdownStart(event);
-        if (!(PlayStatePlaylist.isStoryMode) || PlayState.instance.isChartingMode || hasPlayedCutscene) return;
-
-        hasPlayedCutscene = true;
-        event.cancel();
-        kbWakesUp();
+    override function startDialogue(?isEnd:Bool = false):Void {
+        if (!isEnd) kbWakesUp();
+        //else super.startDialogue(false);
     }
 
-    function startDialogue() {
-        PlayState.instance.startConversation('censory-overload');
-    }
-
-    override function onDialogueEnd() {
-        Countdown.performCountdown();
-    }
-
-    function kbWakesUp() {
+    function kbWakesUp():Void {
         FlxG.camera.visible = true;
         PlayState.instance.disableKeys = true;
         PlayState.instance.camHUD.visible = false;
@@ -126,7 +108,7 @@ class QTCensoryOverloadSong extends Song {
                                 horrorStage.destroy();
                                 daQT.destroy();
                                 dummySound.fadeOut(1, 0, dummySound.destroy);
-                                startDialogue();
+                                super.startDialogue(false);
                             });
                         });
                         new FlxTimer().start(13, () -> PlayState.instance.camCutscene.fade(FlxColor.WHITE, 3, false));
@@ -141,39 +123,18 @@ class QTCensoryOverloadSong extends Song {
         super.onBeatHit(event);
 
         // Gas release Shit
-        if(event.beat >= 80 && event.beat <= 208) {// 1st drop
+        if(event.beat >= 80 && event.beat <= 208) { // 1st drop
             if (event.beat % 16 == 0) burstGas("");
         }
-        else if(event.beat >= 304 && event.beat <= 432) {// 2nd drop
-            /*if(camZooming && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms)
-            {
-                FlxG.camera.zoom += 0.0075;
-                camHUD.zoom += 0.015;
-            }*/
-
+        else if(event.beat >= 304 && event.beat <= 432) { // 2nd drop
             if (event.beat % 8 == 0) burstGas("ALT");
         }
         else if(event.beat >= 560 && event.beat <= 688) { // 3rd drop
-            /*if(camZooming && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms)
-            {
-                FlxG.camera.zoom += 0.0075;
-                camHUD.zoom += 0.015;
-            }*/
             if (event.beat % 4 == 0) burstGas("FAST");
         }
         else if(event.beat >= 832 && event.beat <= 960) { // Final drop
-            /*if(camZooming && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms)
-            {
-                FlxG.camera.zoom += 0.0075;
-                camHUD.zoom += 0.015;
-            }*/
-
             if (event.beat % 4 == 2) burstGas("FAST");
         }
-        /*else if((event.beat == 976 || event.beat == 992) && camZooming && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms){ //Extra zooms for distorted kicks at end
-            FlxG.camera.zoom += 0.031;
-            camHUD.zoom += 0.062;
-        }*/
         else if(event.beat == 702) {
             burstGas("");
         }
@@ -181,12 +142,12 @@ class QTCensoryOverloadSong extends Song {
         // Shakes, Alt Idles and Errors
         switch(event.beat) {
             case 558:
-                shakeCameras(0.0097, 0.0092);
+                DpzGlobalsModule.shakeCameras(0.0097, 0.0092, 0.63);
             case 688:
                 changeIdle("-alt");
             case 702:
                 PlayState.instance.currentStage.scriptCall("revealError", [2]);
-                shakeCameras(0.0123, 0.012);
+                DpzGlobalsModule.shakeCameras(0.0123, 0.012, 0.63);
                 changeIdle("");
             case 704:
                 PlayState.instance.currentStage.scriptCall("revealError", [1]);
@@ -202,8 +163,8 @@ class QTCensoryOverloadSong extends Song {
     }
 
     function burstGas(suffix:String) {
-        PlayState.instance.currentStage.getNamedProp('gas1').playAnimation('burst' + suffix);
-        PlayState.instance.currentStage.getNamedProp('gas2').playAnimation('burst' + suffix);
+        PlayState.instance.currentStage.getNamedProp('gas1')?.playAnimation('burst' + suffix);
+        PlayState.instance.currentStage.getNamedProp('gas2')?.playAnimation('burst' + suffix);
     }
 
     function setKBDrain(drain:Float, loss:Float = null) {
@@ -216,24 +177,5 @@ class QTCensoryOverloadSong extends Song {
         if (kb == null) return;
         kb.idleSuffix = suffix;
         kb.shouldAlternate = (suffix == "");
-    }
-
-    function shakeCameras(gameVal:Float, hudVal:Float, duration:Float = 0.63) {
-        PlayState.instance.camGame.shake(gameVal, duration);
-        PlayState.instance.camHUD.shake(hudVal, duration);
-    }
-
-    function discordRPC() {
-        if (FlxG.onMobile || PlayState.instance == null) return;
-
-        var daTime = Date.now().getTime();
-        var daAlbum:String = PlayState.instance.currentChart.album;
-        var daIcon:String = null;
-
-        var dummyDad = PlayState.instance.currentStage.getDad();
-        if (dummyDad != null) daIcon = dummyDad._data?.healthIcon?.id;
-
-        if (daAlbum != null && daAlbum != "") PlayState.instance.discordRPCAlbum = "https://raw.githubusercontent.com/mateo360p/QT-Mod-V-slice/refs/heads/Port-art/discord/albums/" + daAlbum + ".png?raw=true?t=" + daTime;
-        if (daIcon != null && daIcon != "") PlayState.instance.discordRPCIcon = "https://raw.githubusercontent.com/mateo360p/QT-Mod-V-slice/refs/heads/Port-art/discord/icons/" + daIcon + ".png?raw=true?t=" + daTime;
     }
 }

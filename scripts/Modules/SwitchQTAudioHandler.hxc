@@ -1,0 +1,158 @@
+import funkin.audio.FunkinSound;
+import funkin.modding.module.Module;
+import funkin.play.PlayState;
+import funkin.Paths;
+import funkin.Conductor;
+import openfl.utils.Assets;
+import Reflect;
+
+// Original credits of this to Mikassette!
+class SwitchQTAudioHandler extends Module
+{
+    final qtSongs:Array<String> = ["carefree", "careless", "censory-overload", "cessation", "termination"];
+
+    public function new() {
+        super("SwitchQTAudioHandler", 1000, {state: PlayState});
+    }
+
+    override public function onSongLoaded(event):Void
+    {
+        super.onSongLoaded(event);
+
+        if (!DpzQTModule.useOldVocals()) return; // Do we even use old vocals?
+
+        trace("[SwitchQTAudioHandler] MIKASSETTE WAS HERE BRO"); // lil bro makes a cameo
+        if (PlayState.instance?.currentSong == null) return;
+
+        var songID:String = DpzGlobalsModule.curSongID();
+        if (!qtSongs.contains(songID)) return;
+
+        trace("[SwitchQTAudioHandler] Checking your pico.");
+        if (DpzGlobalsModule.isPico()) return; // Is the variation pico related?
+
+        forceSwapAudio();
+        trace("[SwitchQTAudioHandler] Loaded Song: " + songID + " | Variation: " + PlayState.instance.currentVariation);
+    }
+
+    function forceSwapAudio():Void {
+        if (PlayState.instance.currentStage == null) {
+            trace("[SwitchQTAudioHandler] currentStage is null!");
+            return;
+        }
+
+        // Variables
+        var songID:String = DpzGlobalsModule.curSongID();
+
+        var opponentCharId:String = "qt_qt";
+        var dad = PlayState.instance.currentStage.getDad();
+        if (dad?.characterId != null) opponentCharId = dad.characterId;
+
+        var playerCharId:String = "bf";
+        var bf = PlayState.instance.currentStage.getBoyfriend();
+        if (bf?.characterId != null) playerCharId = bf.characterId;
+
+        var variationSuffix:String = "";
+        var isDefVariation:Bool = DpzGlobalsModule.isDefaultVar();
+
+        // Loading old player Vocals if they Exist
+        var vocals:Dynamic = Reflect.field(PlayState.instance, "vocals");
+        if (vocals == null) return;
+
+        if (DpzGlobalsModule.curSongVar() != "" && !isDefVariation) {
+            variationSuffix = "-" + DpzGlobalsModule.curSongVar();
+        }
+
+        var newSuffix = '-${playerCharId}${variationSuffix}_old';
+        trace(newSuffix);
+        var oldVoicesKey = Paths.voices(songID, newSuffix);
+
+        if (!Assets.exists(oldVoicesKey) && variationSuffix != "") {
+            trace("[SwitchQTAudioHandler] Variation file " + oldVoicesKey + " not found. Falling back to no-variation old voices.");
+            newSuffix = '-${playerCharId}_old';
+            oldVoicesKey = Paths.voices(songID, newSuffix);
+        }
+
+        trace("[SwitchQTAudioHandler] Attempting to load: " + oldVoicesKey);
+        if (!Assets.exists(oldVoicesKey)) {
+            trace("[SwitchQTAudioHandler] ERROR: Player audio file not found: " + oldVoicesKey);
+        } else {
+            var playerNewVoice = FunkinSound.load(oldVoicesKey);
+            var playerGroup:Dynamic = Reflect.field(vocals, "playerVoices");
+            if (playerNewVoice != null && playerGroup != null) {
+                // Setting up Player voices
+                playerNewVoice.persist = true;
+                playerNewVoice.active = true;
+                playerNewVoice.volume = 1.0;
+                playerNewVoice.time = Conductor.instance?.songPosition ?? 0;
+                // To the vocals groups
+                var playerMembers:Array<Dynamic> = playerGroup.members;
+                if (playerMembers?.length > 0) {
+                    var playerListCopy = playerMembers.copy();
+                    for (playerSnd in playerListCopy) {
+                        if (playerSnd != null) {
+                            vocals.remove(playerSnd);
+                            playerGroup.remove(playerSnd);
+                            playerSnd.stop();
+                            playerSnd.destroy();
+                        }
+                    }
+                }
+                playerGroup.clear();
+                playerGroup.add(playerNewVoice);
+                vocals.add(playerNewVoice);
+                vocals.playerVolume = 1.0; 
+                trace("[SwitchQTAudioHandler] Successfully loaded player's old voice! with suffix: " + newSuffix);
+            }
+        }
+
+        // Loading old opponent Vocals if they Exist
+        variationSuffix = "";
+
+        if (DpzGlobalsModule.curSongVar() != "" && !isDefVariation) {
+            variationSuffix = "-" + DpzGlobalsModule.curSongVar();
+        }
+
+        var opponentNewSuffix = '-${opponentCharId}${variationSuffix}_old';
+        trace(opponentNewSuffix);
+        var oldVoicesOpponentKey = Paths.voices(songID, opponentNewSuffix);
+
+        if (!Assets.exists(oldVoicesOpponentKey) && variationSuffix != "") {
+            trace("[SwitchQTAudioHandler] Variation file " + oldVoicesOpponentKey + " not found. Falling back to no-variation old voices.");
+            opponentNewSuffix = '-${opponentCharId}_old';
+            oldVoicesOpponentKey = Paths.voices(songID, opponentNewSuffix);
+        }
+
+        trace("[SwitchQTAudioHandler] Attempting to load: " + oldVoicesOpponentKey);
+        if (!Assets.exists(oldVoicesOpponentKey)) {
+            trace("[SwitchQTAudioHandler] ERROR: opponent audio file not found: " + oldVoicesOpponentKey);
+        } else {
+            var opponentNewVoice = FunkinSound.load(oldVoicesOpponentKey);
+            var opponentGroup:Dynamic = Reflect.field(vocals, "opponentVoices");
+            if (opponentNewVoice != null && opponentGroup != null) {
+                // Setting up Opp voices
+                opponentNewVoice.persist = true;
+                opponentNewVoice.active = true;
+                opponentNewVoice.volume = 1.0;
+                opponentNewVoice.time = Conductor.instance?.songPosition ?? 0;
+                // To the vocals groups
+                var opponentMembers:Array<Dynamic> = opponentGroup.members;
+                if (opponentMembers?.length > 0) {
+                    var opponentListCopy = opponentMembers.copy();
+                    for (opponentSnd in opponentListCopy) {
+                        if (opponentSnd != null) {
+                            vocals.remove(opponentSnd);
+                            opponentGroup.remove(opponentSnd);
+                            opponentSnd.stop();
+                            opponentSnd.destroy();
+                        }
+                    }
+                }
+                opponentGroup.clear();
+                opponentGroup.add(opponentNewVoice);
+                vocals.add(opponentNewVoice);
+                vocals.opponentVolume = 1.0; 
+                trace("[SwitchQTAudioHandler] Successfully loaded opponent's old voice! with suffix: " + opponentNewSuffix);
+            }
+        }
+    }
+}

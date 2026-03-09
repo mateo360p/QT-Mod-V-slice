@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "name": "Nene (vs. QT)",
+  "name": "Nene [vs. QT]",
+  "renderType": "animateatlas",
   "assetPath": "shared:characters/nene",
   "startingAnimation": "danceRight",
-  "renderType": "animateatlas",
   "offsets": [-44, -67],
   "cameraOffsets": [44, 56],
   "animations": [

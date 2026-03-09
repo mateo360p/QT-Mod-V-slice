@@ -1,72 +1,81 @@
-import funkin.graphics.adobeanimate.FlxAtlasSprite;
+package funkin.play.character;
+
 import flixel.FlxG;
-import funkin.audio.FunkinSound;
-import funkin.play.character.MultiSparrowCharacter;
-import funkin.play.GameOverSubState;
+import funkin.play.character.MultiAnimateAtlasCharacter;
 import funkin.play.PlayState;
-import funkin.Preferences;
 import funkin.util.Constants;
-import funkin.util.HapticUtil;
+import flixel.math.FlxPoint;
 
 using StringTools;
 
-class VsQTKillerBotCharacter extends MultiSparrowCharacter
+class VsQTKillerBotCharacter extends MultiAnimateAtlasCharacter
 {
   var qt_hpDrainMultiplier:Float = 0.5925;
   var qt_lossMultiplier:Float = 1.0;
-  function new()
-  {
-    super('qt_kb');
+
+  function getDefaultDrain():FlxPoint {
+    return FlxPoint.get(0.01185, 1.0);
   }
 
-  function onCreate(event:ScriptEvent)
-  {
-    super.onCreate(event);
-
-    setDrain(0.01185, 1.0);
-  }
-
-  override function onUpdate(event:UpdateScriptEvent):Void {
-    super.onUpdate(event);
-
-    drainHoldNote(event.elapsed);
-  }
-
-  function onSongRetry(event:ScriptEvent) {
-    super.onSongRetry(event);
-
-    setDrain(0.01185, 1.0);
+  function resetIdle():Void {
     this.idleSuffix = '';
     this.shouldAlternate = true;
   }
 
-  function onNoteHit(event:HitNoteScriptEvent) {
-		super.onNoteHit(event);
-
-		if (PlayState.instance == null) return;
-
-		if (!event.note.noteData.getMustHitNote() && canDrain(Constants.HEALTH_SICK_BONUS)) {
-        PlayState.instance.health -= (Constants.HEALTH_SICK_BONUS * qt_hpDrainMultiplier) / ((FlxG.onMobile) ? 2 : 1);
-		}
-	}
-
-  function onNoteMiss(event:NoteScriptEvent) {
-    super.onNoteMiss(event);
-
-    if (PlayState.instance == null || FlxG.onMobile) return;
-    var lossMult:Float = 1 - qt_lossMultiplier;
-    PlayState.instance.health += (Constants.HEALTH_MISS_PENALTY * lossMult);
+  public function new(characterId:String)
+  {
+    if (characterId == "UNKNOWN") {
+      characterId = "qt_kb";
+    }
+    super(characterId);
   }
 
-  function drainHoldNote(elapsed:Float) {
-    if (PlayState.instance == null || PlayState.instance.opponentStrumline == null) return;
+  override public function onCreate(event:ScriptEvent):Void
+  {
+    super.onCreate(event);
+    var defDrain:FlxPoint = getDefaultDrain();
+    setDrain(defDrain.x, defDrain.y);
+    resetIdle();
+  }
+
+  override function onUpdate(event:UpdateScriptEvent):Void {
+    super.onUpdate(event);
+    if (!DpzQTModule.disabledTricks()) drainHoldNote(event.elapsed);
+  }
+
+  function onSongRetry(event:ScriptEvent):Void {
+    super.onSongRetry(event);
+
+    var defDrain:FlxPoint = getDefaultDrain();
+    setDrain(defDrain.x, defDrain.y);
+    resetIdle();
+  }
+
+  function onNoteHit(event:HitNoteScriptEvent):Void {
+		super.onNoteHit(event);
+    if (DpzQTModule.disabledTricks() || PlayState.instance == null) return;
+		if (event.note.noteData.getMustHitNote() || !canDrain(Constants.HEALTH_SICK_BONUS)) return;
+
+    PlayState.instance.health -= (Constants.HEALTH_SICK_BONUS * qt_hpDrainMultiplier) / ((!DpzGlobalsModule.hasKeyboard()) ? 2 : 1);
+	}
+
+  function onNoteMiss(event:NoteScriptEvent):Void {
+    super.onNoteMiss(event);
+    if (DpzQTModule.disabledTricks() || PlayState.instance == null || !DpzGlobalsModule.hasKeyboard()) return;
+    if (!event.note.noteData.getMustHitNote()) return; // idk
+
+    PlayState.instance.health += (Constants.HEALTH_MISS_PENALTY * (1 - qt_lossMultiplier));
+  }
+
+  function drainHoldNote(elapsed:Float):Void {
+    if (PlayState.instance?.opponentStrumline?.holdNotes == null) return;
     for (holdNote in PlayState.instance.opponentStrumline.holdNotes.members)
     {
-      if (holdNote == null || !holdNote.alive || holdNote.noteData == null) continue;
+      if (!holdNote?.alive || holdNote?.noteData == null) continue;
 
       // While the hold note is being hit, and there is length on the hold note...
       if (holdNote.hitNote && !holdNote.missedNote && holdNote.sustainLength > 0 && canDrain(Constants.HEALTH_HOLD_BONUS_PER_SECOND)) {
-        PlayState.instance.health -= ((Constants.HEALTH_HOLD_BONUS_PER_SECOND * qt_hpDrainMultiplier) * elapsed) / ((FlxG.onMobile) ? 2 : 1);
+        PlayState.instance.health -= ((Constants.HEALTH_HOLD_BONUS_PER_SECOND * qt_hpDrainMultiplier) * elapsed) / ((!DpzGlobalsModule.hasKeyboard()) ? 2 : 1);
       }
     }
   }
@@ -80,9 +89,7 @@ class VsQTKillerBotCharacter extends MultiSparrowCharacter
   }
 
   function canDrain(drain:Float):Bool {
-    if (PlayState.instance == null) return false;
-    if (drain == null) return false;
-
+    if (PlayState.instance == null || drain == null) return false;
     return (PlayState.instance.health - qt_hpDrainMultiplier*drain - 0.1 > Constants.HEALTH_MIN);
   }
 }

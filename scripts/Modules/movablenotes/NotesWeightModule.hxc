@@ -1,0 +1,44 @@
+import funkin.modding.module.Module;
+import funkin.play.PlayState;
+import flixel.tweens.FlxEase;
+
+class NotesWeightModule extends Module
+{
+    var basePositions:Array<Float> = [null, null, null, null];
+    var moveAmount:Float = 0;
+    final allowedCharacters:Array<String> = ["qt_kb"];
+
+    public function new() {
+        super("NotesWeightModule", 1100, {state: PlayState});
+    }
+
+    override public function onSongStart(event:ScriptEvent) {
+        super.onSongStart(event);
+        basePositions = [null, null, null, null];
+        moveAmount = PlayState.instance.opponentStrumline.isDownscroll ? 22.0 : -22.0; 
+    }
+
+    function isCharacterAllowed():Bool {
+        if (PlayState.instance?.currentStage?.getDad() == null) return false;
+        var dad = PlayState.instance.currentStage.getDad();
+        var char:Bool = dad.characterId;
+        return (char == "qt_kb" && dad.idleSuffix != "-alt")
+                || (char == "qt_qt-kb" && dad.idleSuffix == "-alt");
+    }
+
+    override function onNoteHit(event:HitNoteScriptEvent) {
+        super.onNoteHit(event);
+        if (!isCharacterAllowed()) return;
+        if (!DpzGlobalsModule.qualityLevel(1)) return;
+        if (event?.note?.noteData?.getMustHitNote()) return;
+        if (PlayState.instance?.opponentStrumline == null) return;
+
+        var strumIndex:Int = event.note.direction;
+        var targetStrum = PlayState.instance.opponentStrumline.getByDirection(strumIndex);
+        if (basePositions[strumIndex] == null) basePositions[strumIndex] = targetStrum.y; // Here the note shouldn't be with changes so
+
+        DpzGlobalsModule.cancelTweensOf(targetStrum, ["y"]);
+        targetStrum.y = basePositions[strumIndex] + moveAmount;
+        DpzGlobalsModule.tween(targetStrum, {y: basePositions[strumIndex]}, 0.125, {ease: FlxEase.cubeOut});
+    }
+}

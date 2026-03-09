@@ -1,224 +1,131 @@
 {
   "version": "1.0.0",
   "danceEvery": 1,
-  "startingAnimation": "idle",
-  "name": "QT and KB (vs. QT)",
-  "renderType": "multisparrow",
-  "assetPath": "characters/qt-port/qt-kbV2",
-  "offsets": [
-    30,
-    60
-  ],
-  "cameraOffsets": [
-    -185,
-    -50
-  ],
+  "startingAnimation": "danceLeft",
+  "name": "QT and KB [vs. QT]",
+  "renderType": "multianimateatlas",
+  "assetPath": "shared:characters/qt-port/qt-kb",
+  "offsets": [0, 30],
+  "cameraOffsets": [0, 130],
   "scale": 1,
-  "singTime": 6,
+  "singTime": 5,
   "isPixel": false,
   "flipX": false,
   "healthIcon": {
-    "id": "qt_qtkb",
-    "isPixel": false,
-    "flipX": false,
-    "scale": 1,
-    "offsets": [
-      0,
-      0
-    ]
+    "id": "qt_qtkb"
   },
   "animations": [
     {
-      "name": "singLEFT-alt",
-      "prefix": "singLeftKB",
-      "offsets": [
-        224,
-        268
-      ],
-      "frameRate": 24,
-      "looped": false,
-      "flipX": false,
-      "flipY": false
-    },
-    {
       "name": "singLEFT",
-      "prefix": "singLeftQT",
-      "offsets": [
-        148,
-        172
-      ],
-      "frameRate": 24,
-      "looped": false,
-      "flipX": false,
-      "flipY": false
-    },
-    {
-      "name": "singUP",
-      "prefix": "singUpQT",
-      "offsets": [
-        181,
-        183
-      ],
-      "frameRate": 24,
-      "looped": false,
-      "flipX": false,
-      "flipY": false
-    },
-    {
-      "name": "danceLeft",
-      "prefix": "danceLeftNormal",
-      "offsets": [
-        171,
-        139
-      ],
-      "frameRate": 24,
-      "looped": false,
-      "flipX": false,
-      "flipY": false
-    },
-    {
-      "name": "danceRight",
-      "prefix": "danceRightNormal",
-      "offsets": [
-        130,
-        148
-      ],
-      "frameRate": 24,
-      "looped": false,
-      "flipX": false,
-      "flipY": false
+      "prefix": "QT Left"
     },
     {
       "name": "singDOWN",
-      "prefix": "singDownQT",
-      "offsets": [
-        104,
-        73
-      ],
-      "frameRate": 24,
-      "looped": false,
-      "flipX": false,
-      "flipY": false
+      "prefix": "QT Down"
+    },
+    {
+      "name": "singUP",
+      "prefix": "QT Up"
     },
     {
       "name": "singRIGHT",
-      "prefix": "singRightQT",
-      "offsets": [
-        22,
-        114
-      ],
-      "frameRate": 24,
-      "looped": false,
-      "flipX": false,
-      "flipY": false
+      "prefix": "QT Right"
     },
     {
-      "name": "danceLeft-alt",
-      "prefix": "danceLeftKB",
-      "offsets": [
-        121,
-        127
-      ],
-      "frameRate": 24,
-      "looped": false,
-      "flipX": false,
-      "flipY": false
-    },
-    {
-      "name": "danceRight-alt",
-      "prefix": "danceRightKB",
-      "offsets": [
-        80,
-        136
-      ],
-      "frameRate": 24,
-      "looped": false,
-      "flipX": false,
-      "flipY": false
-    },
-    {
-      "name": "singUP-alt",
-      "prefix": "singUpKB",
-      "offsets": [
-        138,
-        283
-      ],
-      "frameRate": 24,
-      "looped": false,
-      "flipX": false,
-      "flipY": false
-    },
-    {
-      "name": "singUP-together",
-      "prefix": "singUpTogether",
-      "offsets": [
-        166,
-        298
-      ],
-      "frameRate": 24,
-      "looped": false,
-      "flipX": false,
-      "flipY": false
-    },
-    {
-      "name": "singRIGHT-alt",
-      "prefix": "singRightKB",
-      "offsets": [
-        -151,
-        70
-      ],
-      "frameRate": 24,
-      "looped": false,
-      "flipX": false,
-      "flipY": false
-    },
-    {
-      "name": "singRIGHT-together",
-      "prefix": "singRightTogether",
-      "offsets": [
-        -153,
-        72
-      ],
-      "frameRate": 24,
-      "looped": false,
-      "flipX": false,
-      "flipY": false
-    },
-    {
-      "name": "singLEFT-together",
-      "prefix": "singLeftTogether",
-      "offsets": [
-        224,
-        268
-      ],
-      "frameRate": 24,
-      "looped": false,
-      "flipX": false,
-      "flipY": false
+      "name": "singLEFT-alt",
+      "prefix": "KB Left"
     },
     {
       "name": "singDOWN-alt",
-      "prefix": "singDownKB",
-      "offsets": [
-        149,
-        47
-      ],
-      "frameRate": 24,
-      "looped": false,
-      "flipX": false,
-      "flipY": false
+      "prefix": "KB Down"
+    },
+    {
+      "name": "singUP-alt",
+      "prefix": "KB Up"
+    },
+    {
+      "name": "singRIGHT-alt",
+      "prefix": "KB Right"
+    },
+    {
+      "name": "danceLeft-alt",
+      "prefix": "KB Dance Left"
+    },
+    {
+      "name": "danceRight-alt",
+      "prefix": "KB Dance Right"
+    },
+    {
+      "name": "singLEFT-together",
+      "prefix": "Together Left"
     },
     {
       "name": "singDOWN-together",
-      "prefix": "singDownTogether",
-      "offsets": [
-        149,
-        47
-      ],
-      "frameRate": 24,
-      "looped": false,
-      "flipX": false,
-      "flipY": false
+      "prefix": "Together Down"
+    },
+    {
+      "name": "singUP-together",
+      "prefix": "Together Up"
+    },
+    {
+      "name": "singRIGHT-together",
+      "prefix": "Together Right"
+    },
+    {
+      "name": "singLEFT-alt-hold",
+      "prefix": "KB Left",
+      "frameIndices": [4, 5, 6, 7],
+      "looped": true
+    },
+    {
+      "name": "singDOWN-alt-hold",
+      "prefix": "KB Down",
+      "frameIndices": [4, 5, 6, 7],
+      "looped": true
+    },
+    {
+      "name": "singUP-alt-hold",
+      "prefix": "KB Up",
+      "frameIndices": [4, 5, 6, 7],
+      "looped": true
+    },
+    {
+      "name": "singRIGHT-alt-hold",
+      "prefix": "KB Right",
+      "frameIndices": [4, 5, 6, 7],
+      "looped": true
+    },
+    {
+      "name": "singLEFT-together-hold",
+      "prefix": "Together Left",
+      "frameIndices": [4, 5, 6, 7],
+      "looped": true
+    },
+    {
+      "name": "singDOWN-together-hold",
+      "prefix": "Together Down",
+      "frameIndices": [4, 5, 6, 7],
+      "looped": true
+    },
+    {
+      "name": "singUP-together-hold",
+      "prefix": "Together Up",
+      "frameIndices": [4, 5, 6, 7],
+      "looped": true
+    },
+    {
+      "name": "singRIGHT-together-hold",
+      "prefix": "Together Right",
+      "frameIndices": [4, 5, 6, 7],
+      "looped": true
+    },
+    {
+      "name": "danceLeft",
+      "prefix": "Together Dance Left"
+    },
+    {
+      "name": "danceRight",
+      "prefix": "Together Dance Right"
     }
   ]
 }

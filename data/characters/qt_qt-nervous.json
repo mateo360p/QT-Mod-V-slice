@@ -1,139 +1,55 @@
 {
   "version": "1.0.0",
+  "danceEvery": 1,
   "startingAnimation": "idle",
-  "name": "QT nervous (vs. QT)",
-  "renderType": "multisparrow",
-  "assetPath": "characters/qt-port/qt_annoyed",
-  "offsets": [
-    0,
-    -40
-  ],
-  "cameraOffsets": [
-    -130,
-    10
-  ],
+  "name": "QT (Nervous) [vs. QT]",
+  "renderType": "multianimateatlas",
+  "assetPath": "shared:characters/qt-port/qt-nervous",
+  "offsets": [26, 30],
+  "cameraOffsets": [40, 54],
   "scale": 1,
-  "singTime": 6.0,
+  "singTime": 8,
   "isPixel": false,
   "flipX": false,
   "healthIcon": {
-    "id": "qt_qt",
-    "isPixel": false,
-    "flipX": false,
-    "scale": 1,
-    "offsets": [
-      0,
-      0
-    ]
+    "id": "qt_qt"
   },
   "animations": [
     {
       "name": "singLEFT",
-      "prefix": "Final_Left",
-      "offsets": [
-        -51,
-        -76
-      ],
-      "frameRate": 24,
-      "looped": false,
-      "flipX": false,
-      "flipY": false
-    },
-    {
-      "name": "singRIGHT",
-      "prefix": "Final_Right",
-      "offsets": [
-        14,
-        -56
-      ],
-      "frameRate": 24,
-      "looped": false,
-      "flipX": false,
-      "flipY": false
+      "prefix": "Left"
     },
     {
       "name": "singDOWN",
-      "prefix": "Final_Down",
-      "offsets": [
-        60,
-        -19
-      ],
-      "frameRate": 24,
-      "looped": false,
-      "flipX": false,
-      "flipY": false
-    },
-    {
-      "name": "idle",
-      "prefix": "Final_Idle",
-      "offsets": [
-        24,
-        -93
-      ],
-      "frameRate": 24,
-      "looped": false,
-      "flipX": false,
-      "flipY": false
+      "prefix": "Down"
     },
     {
       "name": "singUP",
-      "prefix": "Final_Up",
-      "offsets": [
-        41,
-        -56
-      ],
-      "frameRate": 24,
-      "looped": false,
-      "flipX": false,
-      "flipY": false
+      "prefix": "Up"
     },
     {
-      "name": "singDOWN-alt",
-      "prefix": "glitch_down",
-      "offsets": [
-        60,
-        -19
-      ],
-      "frameRate": 24,
-      "looped": false,
-      "flipX": false,
-      "flipY": false
-    },
-    {
-      "name": "singRIGHT-alt",
-      "prefix": "glitch_right",
-      "offsets": [
-        12,
-        -56
-      ],
-      "frameRate": 24,
-      "looped": false,
-      "flipX": false,
-      "flipY": false
+      "name": "singRIGHT",
+      "prefix": "Right"
     },
     {
       "name": "singLEFT-alt",
-      "prefix": "glitch_left",
-      "offsets": [
-        19,
-        -62
-      ],
-      "frameRate": 24,
-      "looped": false,
-      "flipX": false,
-      "flipY": false
+      "prefix": "Glitch Left"
+    },
+    {
+      "name": "singDOWN-alt",
+      "prefix": "Glitch Down"
     },
     {
       "name": "singUP-alt",
-      "prefix": "glitch_up",
-      "offsets": [
-        41,
-        -49
-      ],
-      "frameRate": 24,
-      "looped": false,
-      "flipX": false,
-      "flipY": false
+      "prefix": "Glitch Up"
+    },
+    {
+      "name": "singRIGHT-alt",
+      "prefix": "Glitch Right"
+    },
+    {
+      "name": "idle",
+      "prefix": "Idle"
     }
   ]
 }

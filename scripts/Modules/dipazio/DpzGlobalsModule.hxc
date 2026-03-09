@@ -1,0 +1,753 @@
+import flixel.FlxG;
+import funkin.save.Save;
+import funkin.ui.options.PreferencesMenu;
+import funkin.modding.module.Module;
+import funkin.ui.options.OptionsState;
+import flixel.text.FlxText;
+import flixel.text.FlxTextBorderStyle;
+import openfl.net.URLLoader;
+import openfl.net.URLRequest;
+import openfl.events.Event;
+import openfl.events.IOErrorEvent;
+import funkin.graphics.FunkinSprite;
+import funkin.util.SortUtil;
+import flixel.util.FlxSort;
+import funkin.modding.module.ModuleHandler;
+import funkin.play.PlayState;
+import funkin.util.HapticUtil;
+import funkin.util.TouchUtil;
+import funkin.modding.events.ScriptEvent;
+import funkin.modding.events.DialogueScriptEvent;
+import funkin.audio.FunkinSound;  
+import funkin.util.ReflectUtil;
+import flixel.tweens.FlxTweenManager;
+import flixel.tweens.misc.VarTween;
+import flixel.tweens.misc.NumTween;
+import flixel.tweens.FlxTween;
+import funkin.ui.ButtonStyle;
+import funkin.ui.AtlasText;
+import flixel.input.keyboard.FlxKeyboard;
+import openfl.ui.Keyboard;
+import funkin.ui.ButtonStyle;
+import funkin.ui.Prompt;
+import funkin.ui.TextMenuItem;
+import funkin.ui.options.ControlsMenu;
+import funkin.data.dialogue.ConversationRegistry;
+import funkin.util.InputUtil;
+import funkin.mobile.input.ControlsHandler;
+import StringTools;
+
+using StringTools;
+
+// My pretty system for dynamic options and shitty stuff!
+class DpzGlobalsModule extends Module {
+    final version:String = "1.0.0";
+    final optionsID:String = "dipazio-mod";
+    final optionsInfoURL:String = "https://raw.githubusercontent.com/mateo360p/FNF_General_Stuffy/refs/heads/main/available_mods";
+
+    public static var tweenManager:FlxTweenManager = null; // Stuffy to prevent tweens to not be paused
+    public var speakerDefSound:FunkinSound;
+    public var speakerSound:FunkinSound;
+
+    public var infoBG:FunkinSprite;
+    public var infoText:FlxText;
+    public var infoImage:FlxSprite;
+
+    public static var dpzOptionsArray:Array<OptionsState->Void> = []; // Array of functions that add options
+    public static var dpzSoundSpeakersArray:Dynamic = {}; // Basically works as a Map<String, String>
+    public static var dpzDiscordRPCArray:Dynamic = {}; // Works as a Map<String, String> for the rich presence links
+
+    public static final NO_BOUND_TEXT:String = "---"; // Text when a control doesn't have a key linked
+    public static final DPZ_SAVE_KEY_LANG:String = "dipazioLang"; // Language getter 
+    public static final DPZ_SAVE_KEY_QUALITY:String = "dipazioQuality"; // Quality getter
+    public static final DPZ_SAVE_KEY_COMBOPOS:String = "dipazioComboPos"; // Stupid thing getter
+
+	public function new() {
+		super('DpzGlobalsModule', 360);
+
+        DpzGlobalsModule.tweenManager = new FlxTweenManager();
+
+        dpzOptionsArray.push(addLanguageOption);
+        dpzOptionsArray.push(addQualityOption);
+        dpzOptionsArray.push(addComboPosOption);
+
+        DpzGlobalsModule.setDefaultSave(DpzGlobalsModule.DPZ_SAVE_KEY_LANG, "en");
+        DpzGlobalsModule.setDefaultSave(DpzGlobalsModule.DPZ_SAVE_KEY_QUALITY, "high");
+        DpzGlobalsModule.setDefaultSave(DpzGlobalsModule.DPZ_SAVE_KEY_COMBOPOS, false);
+    }
+
+    override public function onCreate(event):Void
+    {
+        super.onCreate();
+    }
+
+    public override function onPause(event:PauseScriptEvent):Void
+    {
+        super.onPause(event);
+        DpzGlobalsModule.tweenManager?.active = false;
+    }
+
+    public override function onResume(event:ScriptEvent):Void
+    {
+        super.onResume(event);
+        DpzGlobalsModule.tweenManager?.active = true;
+    }
+
+    override function onGameOver(event:ScriptEvent):Void
+    {
+        DpzGlobalsModule.destroyAllTweens();
+        DpzGlobalsModule.tweenManager?.active = false;
+        super.onGameOver(event);
+    }
+
+    override function onCountdownStart(event):Void
+    {
+        super.onCountdownStart(event);
+        DpzGlobalsModule.tweenManager?.active = true;
+        if (DpzGlobalsModule.getModOptions().get(DpzGlobalsModule.DPZ_SAVE_KEY_COMBOPOS)) PlayState.instance?.comboPopUps?.offsets = [12, 320];
+    }
+
+    override public function onUpdate(event:UpdateScriptEvent):Void
+    {
+        super.onUpdate(event);
+
+        if (DpzGlobalsModule.tweenManager != null && DpzGlobalsModule.tweenManager.active) DpzGlobalsModule.tweenManager.update(event.elapsed);
+
+        if (Std.isOfType(FlxG.state, OptionsState))
+        {
+            updateControlOptions();
+            if (OptionsState.instance.optionsCodex.currentName != optionsID) return;
+            if (FlxG.keys.justPressed.F1 || (FlxG.onMobile && touchedOptionsInfo())) // toggle info
+            {
+                loadOptionsInfo();
+                setExistOptionsInfo();
+            }
+        }
+	}
+
+    override public function onScriptEvent(event:ScriptEvent):Void
+    {  
+        super.onScriptEvent(event);
+        if (event.type == "DIALOGUE_START") {
+            preloadSpeakersSounds(event);
+        }
+    }
+
+    override public function onStateChangeEnd(event:StateChangeScriptEvent):Void
+    {
+        DpzGlobalsModule.destroyAllTweens();
+        if (!Std.isOfType(event.targetState, OptionsState)) return;
+
+        createRebindPrompt();
+        addCategory(event.targetState);
+        createOptionsInfo(event.targetState);
+        for (op in dpzOptionsArray) {
+            op(event.targetState);
+        }
+        addOptionsVersionText(event.targetState);  
+    }
+
+    override public function onDestroy(event):Void
+    {
+        DpzGlobalsModule.destroyAllTweens();
+        rebindPrompt?.destroy();
+        rebindPrompt = null;
+        super.onDestroy(event);
+    }
+
+////--- Global Tween Manager
+    // Creates a tween in the DpzManager
+    public static function tween(Object:Dynamic, Values:Dynamic, ?Duration:Float = 1.0, ?Options:Dynamic):VarTween {
+		return DpzGlobalsModule.tweens().tween(Object, Values, Duration, Options);
+	}
+
+    // Creates a numTween in the DpzManager
+    public static function num(FromValue:Float, ToValue:Float, ?Duration:Float = 1.0, ?Options:Dynamic, ?TweenFunction:Float->Void):NumTween
+	{
+		return DpzGlobalsModule.tweens().num(FromValue, ToValue, Duration, Options, TweenFunction);
+	}
+
+    // Cancels every tween related to the obj, the global or the DpzManager ones!
+    public static function cancelTweensOf(obj:Dynamic, ?fields:Array<String>):Void {
+        FlxTween.cancelTweensOf(obj, fields);
+        DpzGlobalsModule.tweenManager?.cancelTweensOf(obj, fields);
+    }
+
+    // Cancels and Destroys every tween of the DpzManager
+    public static function destroyAllTweens():Void {
+        DpzGlobalsModule.tweenManager?.forEach((t)-> {t.cancel(); t.destroy();});
+    }
+
+    // Returns the global manager, if it's null, then creates it!
+    public static function tweens():FlxTweenManager {
+        if (DpzGlobalsModule.tweenManager == null) {
+            DpzGlobalsModule.tweenManager = new FlxTweenManager();
+        }
+
+        return DpzGlobalsModule.tweenManager;
+    }
+
+////--- Options
+    private var rebindPrompt:Prompt;
+    private var promptKey:Null<Int> = null;
+    private var controlID:Int = -1;
+    private var controlKey:String = null;
+
+    // Returns my options page, or null-
+    public function getDpzPage(state:OptionsState):Dynamic {
+        return state?.optionsCodex?.pages?.get(optionsID);
+    }
+
+    // Returns the controls page, or null-
+    public function getControlsPage(state:OptionsState):Dynamic {
+        return state?.optionsCodex?.pages?.get("controls");
+    }
+
+    // Simple modOptions variable getter
+    public static function getModOptions():Dynamic {
+        return Save.instance?.modOptions ?? {}; // man idk alr?
+    }
+
+    // Sets a default save to prevent anything weird happening
+    public static function setDefaultSave(saveKey:String, value:Dynamic) {
+        if (saveKey == null || value == null) return;
+        if (!DpzGlobalsModule.getModOptions().exists(saveKey)) DpzGlobalsModule.getModOptions().set(saveKey, value);
+    }
+
+    // Adds the current Dipazio's Options version, not the mod one!
+    function addOptionsVersionText(state:OptionsState) {
+        if (getDpzPage(state) == null) return;
+
+        var versionText:FlxText = new FlxText(10, FlxG.height - 25, FlxG.width, "Dipazio's Options v" + version, 16);
+        versionText.zIndex = 10000;
+        versionText.scrollFactor.set(0, 0);
+        versionText.setFormat("VCR OSD Mono", 16, 0xFFffffff, "left", FlxTextBorderStyle.OUTLINE, 0xFF000000);
+        getDpzPage(state).add(versionText);
+    }
+
+    // Creates the info showed when pressing F1
+    function createOptionsInfo(state:OptionsState) {
+        infoBG = new FunkinSprite();
+        infoBG.makeSolidColor(FlxG.width - 20, FlxG.height - 20, 0xCDfafd6d);
+        infoBG.screenCenter(0x11);
+        infoBG.cameras = [getDpzPage(state).hudCamera];
+        getDpzPage(state).add(infoBG);
+
+        infoText = new FlxText(10, 10, FlxG.width - 40, "Couldn't load information from web\n:'(", 16);
+        infoText.scrollFactor.set(0, 0);
+        infoText.screenCenter(0x11);
+        infoText.setFormat("VCR OSD Mono", 48, 0xFFffffff, "center", FlxTextBorderStyle.SHADOW_XY(10, 5), 0xAD000000);
+        infoText.cameras = [getDpzPage(state).hudCamera];
+        getDpzPage(state).add(infoText);
+
+        infoImage = new FunkinSprite().loadTexture("dipazio/f1");
+        infoImage.scale.set(0.5, 0.5);
+        infoImage.updateHitbox();
+        infoImage.setPosition(FlxG.width - infoImage.width - 10, 10);
+        infoImage.cameras = [getDpzPage(state).hudCamera];
+        infoImage.alpha = 0.62;
+        getDpzPage(state).add(infoImage);
+
+        //getDpzPage(state).sort(SortUtil.byZIndex, FlxSort.ASCENDING);
+
+        setExistOptionsInfo(false);
+        loadOptionsInfo();
+    }
+
+    function setExistOptionsInfo(?value:Bool = null) {
+        var vis:Bool = value ?? !infoBG.exists;
+        infoBG.exists = vis;
+        infoText.exists = vis;
+    }
+
+    // Loads the informations about available Ports with support of this options
+    function loadOptionsInfo() {
+        getFromURL(optionsInfoURL,
+            function(text:String) {infoText.text = text;trace(text);},
+            function() {infoText.text = "Couldn't load from web\n:(";}
+        );
+    }
+
+    function touchedOptionsInfo():Bool {
+		if (infoImage == null) return false;
+		return (TouchUtil.overlapsComplex(infoImage) && TouchUtil.justPressed);
+	}
+
+    // Adds the Dipazio options category
+	public function addCategory(state:FlxState) {
+        var codex = state.optionsCodex;
+		var dpzPrefs = codex.addPage(optionsID, new PreferencesMenu());
+		dpzPrefs.onExit.add(() -> {
+			codex.switchPage('options');
+		});
+
+		dpzPrefs.preferenceDesc = [];
+		dpzPrefs.items.clear();	
+		dpzPrefs.preferenceItems.clear();
+
+		var options = codex.pages.get('options');
+        var items = options.items;
+		var targetOption = items.getItem("PREFERENCES") ?? null; // the option before the dpz options
+		var dpzOption = options.createItem("Dipazio's Options", () -> {setExistOptionsInfo(false); codex.switchPage(optionsID); dpzPrefs.itemDesc.text = dpzPrefs.preferenceDesc[dpzPrefs.items.selectedIndex];});
+
+		if (targetOption != null)
+        {
+			items.members.remove(dpzOption);
+			items.members.insert(items.members.indexOf(targetOption) + 1, dpzOption);
+		}
+
+		for (i in 0...items.length) {
+			var item = items.members[i];
+			item.y = 100 * (i + 1);
+		}
+	}
+
+    private function getLastControlsY():Float {
+        var controls:Page = getControlsPage(state);
+        if (controls == null) {
+            trace("NULL CONTROLS, RETURNING 0 AT getLastControlsY");
+            return 0;
+        }
+
+        var lastLabelY:Float = controls.labels.members[controls.labels.members.length - 1].y; // why tf isn't a "getLast" function bru
+        var lastHeaderY:Float = controls.members[1].members[controls.members[1].members.length - 1].y; // headers, probably
+        return (lastLabelY > lastHeaderY ? lastLabelY : lastHeaderY); // stupid
+    }
+
+    function createRebindPrompt():Void {
+        var controls:Page = getControlsPage(state);
+        if (controls == null) return;
+        //if (rebindPrompt != null) return; idk why it doesn't work with this but alr-
+
+        rebindPrompt = new Prompt("\nPress any key to rebind\n\n\nBackspace to unbind\n    Escape to cancel", ButtonStyle.None);
+        rebindPrompt.create();
+        rebindPrompt.createBgFromMargin(100, 0xFFfafd6d);
+        rebindPrompt.back.scrollFactor.set(0, 0);
+        rebindPrompt.exists = false;
+        controls.remove(rebindPrompt);
+        controls.add(rebindPrompt);
+    }
+
+    function addControlsHeader(state:OptionsState, title:String = "<Title>"):Void {
+		var controls:Page = getControlsPage(state);
+        if (controls == null) return;
+
+        var lastItemY:Float = getLastControlsY();
+        createRebindPrompt();
+        //controls.add(rebindPrompt);
+
+		lastItemY += 70;
+        controls.members[1].add(new AtlasText(0, lastItemY, title, "bold")).screenCenter(0x01); // this SHOULD be the headers
+    }
+
+    function addControlBind(state:OptionsState, title:String = "<CONTROL>", saveKey:String) {
+		var controls:Page = getControlsPage(state);
+        if (controls == null) return;
+
+        var labels:FlxTypedGroup = controls.labels;
+        var lastItemY:Float = getLastControlsY();
+        lastItemY += 70;
+        createRebindPrompt();
+
+        var label = labels.add(new AtlasText(ControlsMenu.CONTROL_BASE_X, lastItemY, title, "bold"));
+        label.alpha = 0.6;
+
+		var savedKeys:Array<Int> = DpzGlobalsModule.getModOptions().get(saveKey);
+        for (i in 0...savedKeys.length) {
+            var keyName:String = (DpzGlobalsModule.isNoneKey(savedKeys[i]) ? DpzGlobalsModule.NO_BOUND_TEXT : DpzGlobalsModule.getNameFromKey(savedKeys[i]));
+
+            var item:TextMenuItem = new TextMenuItem(label.x + ControlsMenu.CONTROL_MARGIN_X + i * ControlsMenu.CONTROL_SPACING_X,
+                lastItemY, keyName, "default", () -> openControlPrompt(i, saveKey)
+            );
+            item.fireInstantly = true;
+            controls.controlGrid.addItem(item.name, item);
+        }
+
+        controls.controlGrid.onChange.removeAll();
+        controls.controlGrid.onChange.add(
+            (selected:TextMenuItem) -> {
+                controls.camFollow.y = selected.y;
+                labels.forEach((label:FlxSprite) -> label.alpha = 0.6);
+                labels.members[Std.int(controls.controlGrid.selectedIndex / 2)].alpha = 1.0;
+            }
+        );
+	}
+
+    function openControlPrompt(controlIndex:Int, saveKey:String):Void {
+        var controls:Page = getControlsPage(FlxG.state); // hmmmm yeah it is in a options state, right?
+        if (controls == null) return;
+        controlID = controlIndex;
+        controlKey = saveKey;
+
+        controls.controlGrid.enabled = false;
+        controls.canExit = false;
+        rebindPrompt.exists = true;
+        trace(rebindPrompt.exists);
+        trace(rebindPrompt.visible);
+
+        promptKey = FlxG.keys.firstJustPressed();
+    }
+
+    function closeControlPrompt():Void {
+        var controls:Page = getControlsPage(FlxG.state);
+        if (controls == null) return;
+
+        rebindPrompt.exists = false;
+        controls.controlGrid.enabled = true;
+        controls.canExit = true;
+
+        promptKey = null;
+    }
+
+    function updateControlOptions():Void {
+        if (!rebindPrompt?.exists) return;
+
+        var key = FlxG.keys.firstJustReleased();
+        if (key == -1 || key == promptKey) return;
+
+        switch (key) {
+            case 27:
+            case 8: 
+                bindKey(0);
+            default:
+                bindKey(key);
+        }
+
+        closeControlPrompt();
+    }
+
+    function bindKey(bind:Int):Void {
+        var controls:Page = getControlsPage(FlxG.state);
+        if (controls == null || controlKey == null || controlID == null) return;
+
+        var newBind:Int = bind;
+        var savedKeys:Array<Int> = DpzGlobalsModule.getModOptions().get(controlKey);
+        var isNewNone:Bool = DpzGlobalsModule.isNoneKey(newBind);
+
+        savedKeys[controlID] = newBind;
+
+        var item:AtlasText = controls.controlGrid.selectedItem;
+        item.label.text = (isNewNone ? DpzGlobalsModule.NO_BOUND_TEXT : DpzGlobalsModule.getNameFromKey(newBind)); // Name of the key or ---
+
+        if ((!isNewNone && DpzGlobalsModule.isNoneKey(savedKeys[0])) || (isNewNone && !DpzGlobalsModule.isNoneKey(savedKeys[1])))
+        {
+            savedKeys.reverse();
+            var newName:String = (DpzGlobalsModule.isNoneKey(savedKeys[0]) ? DpzGlobalsModule.NO_BOUND_TEXT : DpzGlobalsModule.getNameFromKey(savedKeys[0]));
+            var selected:Int = controls.controlGrid.selectedIndex;
+            if (selected % 2 == 1) {
+                var leftItem:AtlasText = controls.controlGrid.members[selected - 1];
+                leftItem.label.text = newName;
+                item.label.text = DpzGlobalsModule.NO_BOUND_TEXT;
+            } else {
+                var rightItem:AtlasText = controls.controlGrid.members[selected + 1];
+                rightItem.label.text = DpzGlobalsModule.NO_BOUND_TEXT;
+                item.label.text = newName;
+            }
+        }
+        Save.instance.flush();
+    }
+
+	public function addLanguageOption(state:OptionsState) {
+        addEnumOption(state, 'Language', "Changes the language used in Dipazio's mods.",
+            ["English" => "en", "Spanish" => "es", "Portuguese" => "pt"], DpzGlobalsModule.DPZ_SAVE_KEY_LANG, DpzGlobalsModule.getLangByKey);
+	}
+
+    public function addQualityOption(state:OptionsState) {
+        addOrderedEnumOption(state, 'Visuals quality', 
+            "Changes the quality and extra details, Low it's literally no detail or shaders and High is the maximum quality.",
+            ["Low" => "low", "High" => "high","Medium" => "medium"], ["Low", "Medium", "High"],
+            DpzGlobalsModule.DPZ_SAVE_KEY_QUALITY, getQualityByKey);
+	}
+
+    public function addComboPosOption(state:OptionsState) {
+        addCheckBoxOption(state, "Reposition Combo",
+            "Repositions the pop-ups so they don't overlap the characters\nNOTE: It's global, it may interfere with another mods",
+            DpzGlobalsModule.DPZ_SAVE_KEY_COMBOPOS);
+	}
+
+    public function addEnumOption(state:OptionsState, title:String = "<Preset>", desc:String = "<Desc>", enumArray:Array<Dynamic> = [], saveKey:String, defValue:String->String) {
+		if (getDpzPage(state) == null) return;
+
+        getDpzPage(state).createPrefItemEnum(
+            title, desc, enumArray,
+            (value:String, value2:String) -> {
+                DpzGlobalsModule.getModOptions().set(saveKey, value2);
+                Save.instance.flush();
+            }, defValue(DpzGlobalsModule.getModOptions().get(saveKey))
+        );
+	}
+
+    public function addOrderedEnumOption(state:OptionsState, title:String = "<Preset>", desc:String = "<Desc>", enumArray:Array<Dynamic> = [], order:Array<String>, saveKey:String, defValue:String->String) {
+		if (getDpzPage(state) == null) return;
+
+        addEnumOption(state, title, desc, enumArray, saveKey, defValue);
+
+        // ALL THIS SHIT TO MAKE AN ORDERED ENUM WTH
+        var optionItem = getDpzPage(state).items.getItem(title);
+        optionItem.keys = order;
+        for (i in 0...optionItem.keys.length) {
+            if (optionItem.keys[i] == defValue(DpzGlobalsModule.getModOptions().get(saveKey))) optionItem.index = i;
+        }
+        optionItem.currentKey = optionItem.keys[optionItem.index];
+        optionItem.lefthandText.text = optionItem.currentKey;
+	}
+
+    public function addCheckBoxOption(state:OptionsState, title:String = "<Preset>", desc:String = "<Desc>", saveKey:String) {
+		if (getDpzPage(state) == null) return;
+
+        getDpzPage(state).createPrefItemCheckbox(
+            title, desc,
+            function(value:Bool) {
+                DpzGlobalsModule.getModOptions().set(saveKey, value);
+                Save.instance.flush();
+            },
+            DpzGlobalsModule.getModOptions().get(saveKey)
+        );
+	}
+
+	public static function getLangByKey(value:String = null):String {
+        var val:String = value;
+        if (val == null) val = DpzGlobalsModule.getLanguageKey();
+		return switch(val) {
+			case "en": "English";
+			case "es": "Spanish"; 
+            case "pt": "Portuguese"; 
+			default: "English"; // Fkin americ- oh wait english is the british lang too-
+		}
+	}
+
+	public function getQualityByKey(value:String):String {
+		return switch(value) {
+			case "low": "Low";
+			case "medium": "Medium";
+			default: "High"; // high and null-
+		}
+	}
+
+    public static function getQualityInt(?value:String = null):Int {
+        var q = value ?? DpzGlobalsModule.getModOptions().get(DpzGlobalsModule.DPZ_SAVE_KEY_QUALITY);
+        return switch(q) {
+			case "low": 0;
+			case "medium": 1;
+			default: 2; // high and null-
+		}
+    }
+
+    public static function getAntialias():Bool {
+        return DpzGlobalsModule.qualityLevel(1);
+    }
+
+    public static function qualityLevel(minimalLevel:Int):Bool {
+        return DpzGlobalsModule.getQualityInt() >= minimalLevel;
+    }
+
+    public static function getLanguageKey():String {
+        var saved:String = DpzGlobalsModule.getModOptions()?.get(DpzGlobalsModule.DPZ_SAVE_KEY_LANG);
+        if (saved == null || saved == "en") return ""; // Empty is english
+        return saved;
+    }
+
+    public static function getLanguageSuffix():String {
+        var langKey:String = DpzGlobalsModule.getLanguageKey();
+        return (langKey == "" ? langKey : '-$langKey');
+    }
+
+    // Returns the dialogue name with the translation included
+    // EXAMPLE: name = "carefree", lang = es, return "es/carefree"
+    public static function getDialogueTranslation(name:String, ?lang:String = null):String {
+        var langKey:String = lang ?? DpzGlobalsModule.getLanguageKey();
+        var dialogue:String = (langKey == "" ? name : '$langKey/$name');
+        if (ConversationRegistry.instance.fetchEntry(dialogue) == null) {
+            trace("<DpzGlobalsModule> WARNING Couldn't find " + DpzGlobalsModule.getLangByKey() + " dialogue translation: " + dialogue);
+            // dialogue = name; //There's a bug so-
+        } else trace("<DpzGlobalsModule> Found " + DpzGlobalsModule.getLangByKey() + " dialogue translation: " + dialogue);
+
+        return dialogue;
+    }
+
+////--- Dialogue Sounds
+    public function preloadSpeakersSounds(event):Void {
+        trace("Attempting to preload speakers sounds");
+        speakerDefSound = FunkinSound.load(Paths.sound('pixelText'), 0.6);
+        //if (ReflectUtil.fields(DpzGlobalsModule.dpzSoundSpeakersArray).length == 0 || event == null) return;
+        //trace(dpzSoundSpeakersArray);
+        var dialogueEvent:DialogueScriptEvent = event;
+        var conversation = dialogueEvent.conversation;
+        if (conversation?._data?.dialogue == null) return;  
+
+        var seen:Dynamic = {};
+
+        for (entry in conversation._data.dialogue) {
+            var speakerID:String = entry.speaker;
+            if (speakerID == null || ReflectUtil.hasField(seen, speakerID)) continue;
+
+            ReflectUtil.setField(seen, speakerID, true);
+
+            var soundKey:String = DpzGlobalsModule.getSpeakerAudio(speakerID);
+            if (soundKey == null) continue;
+
+            var path = Paths.sound(soundKey);
+
+            if (Assets.exists(path)) {
+                FlxG.sound.cache(path);
+                trace('<DpzSoundSpeaker:${speakerID}> Preloaded speaking sound for speaker "${speakerID}": ${path}');
+            } else {
+                trace('<DpzSoundSpeaker:${speakerID}> Speaking sound asset not found for speaker "${speakerID}": ${path}');
+            }
+        }
+    }
+
+    public function loadSpeakerAudio(?toDefaultSound:Bool = false):Void {
+        if (PlayState.instance?.currentConversation == null) return;
+
+        var curSpeaker:String = PlayState.instance.currentConversation.currentSpeaker.id;
+        if (curSpeaker == null) return; // idk just in case
+
+        var audio:String = DpzGlobalsModule.getSpeakerAudio(curSpeaker);
+
+        if (audio == null) {
+            trace('<DpzSoundSpeaker:${curSpeaker}> Current Speakers sound "$curSpeaker" is null');
+            if (speakerDefSound != null) PlayState.instance.currentConversation.currentDialogueBox.textDisplay.sounds = [speakerDefSound];
+            return;
+        }
+        else
+        {
+            loadSpeakerSound(audio, toDefaultSound);
+            if (speakerSound != null) PlayState.instance.currentConversation.currentDialogueBox.textDisplay.sounds = [speakerSound]; // has to be the full sound thing-
+        }
+    }
+
+    public function loadSpeakerSound(name:String, ?toDefaultSound:Bool = false):Void {
+        var failed:Bool = true;
+        if (name != null) {
+            if (toDefaultSound) {
+                speakerDefSound = FunkinSound.load(Paths.sound(name), 0.6);
+                if (speakerDefSound != null) failed = false;
+            } else {
+                speakerSound = FunkinSound.load(Paths.sound(name), 0.6);
+                if (speakerSound != null) failed = false;
+            }
+        }
+
+        if (failed) trace('<DpzSoundSpeaker> Could not load sound "$name"');
+    }
+
+    public static function setSpeakerAudio(objName:String, audioPath:String):Void
+    {
+        ReflectUtil.setField(dpzSoundSpeakersArray, objName, audioPath);
+    }
+
+    public static function getSpeakerAudio(objName:String):String
+    {
+        trace("<DpzGlobalsModule> getting audio: " + objName);
+        return ReflectUtil.getField(dpzSoundSpeakersArray, objName);
+    }
+
+    public static function setDiscordRPC(mod:String, link:String):Void
+    {
+        trace("<DpzGlobalsModule> setting Discord RPC link: " + mod + " --- " + link);
+        ReflectUtil.setField(dpzDiscordRPCArray, mod, link);
+    }
+
+    public static function getDiscordRPC(mod:String):String
+    {
+        trace("<DpzGlobalsModule> getting Discord RPC link: " + mod);
+        return ReflectUtil.getField(dpzDiscordRPCArray, mod);
+    }
+
+////--- Global Helpers
+    // Shakes cameras, yeah that's it-
+    public static function shakeCameras(gameVal:Float, hudVal:Float, duration:Float = 0.63) {
+        if (duration == null || duration <= 0) return;
+        if (gameVal != null) PlayState.instance?.camGame?.shake(gameVal, duration);
+        if (hudVal != null) PlayState.instance?.camHUD?.shake(hudVal, duration);
+    }
+
+    // Turns out you can have keys on mobile too so-
+    // MIGHT get it wrong on iOS tho (not confirmed)
+    public static function hasKeyboard():Bool {
+        if (!FlxG.onMobile) return true;
+        else return (ControlsHandler.usingExternalInputDevice);
+    }
+
+    // Validates if the current variation is related to pico
+    public static function isPico(?literal:Bool = false):Bool {
+        var lit:Bool = literal ?? false;
+		var varia:String = DpzGlobalsModule.curSongVar();
+        var pito:Bool = (lit ? varia == "pico" : StringTools.contains(varia, "pico"));
+		return pito;
+	}
+
+    // Validates if the current song is in his defualt variation (NOTE: CAN RETURN A FALSE NEGATIVE IF THE VARIATION IS NULL)
+    // SHOULD BE NULL SAFE
+    public static function isDefaultVar():Bool {
+        var isDef:Bool = (DpzGlobalsModule.curSongVar() == "default");
+		return isDef;
+	}
+
+    public static function curSongVar():Bool {
+        if (PlayState.instance?.currentVariation == null) {
+			trace("DpzGlobalsModule: <SongVar> PlayState or currentSong Null!");
+			return "";
+		}
+		return PlayState.instance.currentVariation.toLowerCase() ?? "";
+	}
+
+    // Gets the current song's ID
+    public static function curSongID():String {
+        if (PlayState.instance?.currentSong == null) {
+			trace("DpzGlobalsModule: <SongID> PlayState or currentSong Null!");
+			return "";
+		}
+		return PlayState.instance.currentSong.id?.toLowerCase() ?? "";
+	}
+
+    // Gets the current stage's ID
+    public static function curStageID():String {
+        if (PlayState.instance?.currentStage == null) {
+			trace("DpzGlobalsModule: <SongID> PlayState or currentSong Null!");
+			return "";
+		}
+		return PlayState.instance.currentStage.id?.toLowerCase() ?? "";
+	}
+
+    // Gets, uh, something? from an Url-
+    public function getFromURL(url:String, callback:String->Void, ?errorCallback:Void->Void = null):Void {
+        var loader = new URLLoader();
+        var _url:String = url;
+        var _callback = callback;
+        var _errorCallback = errorCallback;
+        trace("Attempting to get string from URL: " + _url);
+        loader.dataFormat = 1;
+        loader.addEventListener("complete", function(e:Event) {
+            if (_callback != null && loader.data != null) _callback(loader.data);
+            trace("Successfully loaded from url: " + _url);
+            if (loader.data == null || loader.data == "") trace("WARNING: Data from <" + _url + "> is null or empty!");
+        });
+        loader.addEventListener(IOErrorEvent.IO_ERROR, function(e) {
+            trace("IOError: " + e.text);
+            if (_errorCallback != null) _errorCallback();
+        });
+        loader.addEventListener("securityError", function(e) {
+            trace("Security Error: " + e.text);
+            if (_errorCallback != null) _errorCallback();
+        });
+        loader.load(new URLRequest(_url));
+    }
+
+    public static function isNoneKey(key:Int):Bool {
+        return (key == 0);
+    }
+
+    public static function getNameFromKey(key:Int):String {
+        return InputUtil.getKeyName(key);
+    }
+
+    public static function applyFields(source:Dynamic, target:Dynamic):Void {
+        if (source == null || target == null) return;
+        for (field in ReflectUtil.fields(source)) {
+            var value = ReflectUtil.field(source, field);
+            ReflectUtil.setField(target, field, value);
+        }
+    }
+}

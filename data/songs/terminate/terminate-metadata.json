@@ -11,6 +11,7 @@
 		"altVocals": {    }
 	},
 	"playData": {
+		"stickerPack": "kb-default",
 		"songVariations": [],
 		"difficulties": [
 			"easy",

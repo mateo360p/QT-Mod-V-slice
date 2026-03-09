@@ -1,0 +1,71 @@
+{
+    "version": "1.0.0",
+
+    "backdrop": {
+        "type": "solid",
+        "fadeTime": 2.0,
+        "color": "#BFB3DFD8"
+    },
+
+    "music": {
+        "asset": "",
+        "fadeTime": 0,
+        "looped": false
+    },
+
+    "outro": {
+        "type": "fade",
+        "fadeTime": 1.0
+    },
+
+    "dialogue": [
+        {
+            "speaker": "qt_qt",
+            "speakerAnimation": "excited",
+            "box": "qt",
+            "boxAnimation": "left",
+
+            "text": ["Bueno eso fue divertido!"]
+        },
+        {
+            "speaker": "qt_bf",
+            "speakerAnimation": "excited",
+            "box": "qt",
+            "boxAnimation": "right",
+
+            "text": ["Beep!"]
+        },
+        {
+            "speaker": "qt_kb",
+            "speakerAnimation": "bruh",
+            "box": "qt",
+            "boxAnimation": "left",
+
+            "text": ["..."]
+        },
+        {
+            "speaker": "qt_qt",
+            "speakerAnimation": "talk",
+            "box": "qt",
+            "boxAnimation": "left",
+
+            "text": ["Espero que podamos cantar de nuevo la proxima que nos veamos."]
+        },
+        {
+            "speaker": "qt_kb",
+            "speakerAnimation": "lookAway",
+            "box": "qt",
+            "boxAnimation": "left",
+
+            "text": ["(Espero que no)"]
+        },
+        {
+            "speaker": "qt_gf",
+            "speakerAnimation": "talk",
+            "box": "qt",
+            "boxAnimation": "middle",
+
+            "text": ["Hasta luego."]
+        }
+    ]
+}

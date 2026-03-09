@@ -13,6 +13,12 @@ class QTRealStreetStage extends Stage
         getTV().danceEvery = 0.0;
     }
 
+    override public function add(spr:FlxSprite):FlxSprite
+	{
+        if (spr != null && spr.antialiasing != false) spr.antialiasing = DpzGlobalsModule.getAntialias();
+        return super.add(spr);
+	}
+
     function onSongRetry(event:ScriptEvent):Void {
         super.onSongRetry(event);
 

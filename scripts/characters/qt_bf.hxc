@@ -1,7 +1,7 @@
 import funkin.graphics.adobeanimate.FlxAtlasSprite;
 import flixel.FlxG;
 import funkin.audio.FunkinSound;
-import funkin.play.character.MultiSparrowCharacter;
+import funkin.play.character.MultiAnimateAtlasCharacter;
 import funkin.play.GameOverSubState;
 import funkin.play.PlayState;
 import funkin.Preferences;
@@ -10,7 +10,7 @@ import funkin.util.HapticUtil;
 
 using StringTools;
 
-class VsQTBoyfriendCharacter extends MultiSparrowCharacter
+class VsQTBoyfriendCharacter extends MultiAnimateAtlasCharacter
 {
   var heySound:FunkinSound;
   var isDodging:Bool = false;
@@ -55,14 +55,14 @@ class VsQTBoyfriendCharacter extends MultiSparrowCharacter
     }
   }
 
-  override function playAnimation(name:String, restart:Bool, ignoreOther:Bool)
+  override function playAnimation(name:String, restart:Bool = false, ignoreOther:Bool = false, reversed:Bool = false):Void
   {
     if (isDodging && !name.startsWith("dodge")) {
       return;
     }
     else
     {
-      super.playAnimation(name, restart, ignoreOther);
+      super.playAnimation(name, restart, ignoreOther, reversed);
     }
   }
 
@@ -113,7 +113,7 @@ class VsQTBoyfriendCharacter extends MultiSparrowCharacter
 
     if (PlayState.instance == null) return;
 
-      if (FlxG.keys.justPressed.SHIFT && !isDodging && !PlayState.instance.disableKeys && !PlayState.instance.isInCutscene && PlayState.instance.subState == null && !this.isHoldingNote() && this.getCurrentAnimation() != "hey" && !this.getCurrentAnimation().endsWith("miss"))
+      if (DpzQTModule.tauntJustPressed() && !isDodging && !PlayState.instance.disableKeys && !PlayState.instance.isInCutscene && PlayState.instance.subState == null && !this.isHoldingNote() && this.getCurrentAnimation() != "hey" && !this.getCurrentAnimation().endsWith("miss"))
         doHey();
   }
 }

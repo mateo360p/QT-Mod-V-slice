@@ -47,14 +47,22 @@ class QTKBStreetStage extends Stage
         }
     }
 
+    override public function add(spr:FlxSprite):FlxSprite
+	{
+        if (spr != null && spr.antialiasing != false) spr.antialiasing = DpzGlobalsModule.getAntialias();
+        return super.add(spr);
+	}
+
     override function addCharacter(character:BaseCharacter, charType:CharacterType):Void {
         super.addCharacter(character, charType);
+        if (!DpzGlobalsModule.qualityLevel(2)) return;
+
         var rim = new DropShadowShader();
         rim.color = 0xFF338FD6;
         rim.attachedSprite = character;
         rim.angle = 90;
         rim.distance = 20;
-        if (FlxG.onMobile) rim.antialiasAmt = 0;
+        if (!DpzGlobalsModule.qualityLevel(3)) rim.antialiasAmt = 0;
 
         switch (charType) {
             case CharacterType.BF:
@@ -114,6 +122,11 @@ class QTKBStreetStage extends Stage
         }
     }
 
+    public function killGas() {
+        PlayState.instance.currentStage.getNamedProp('gas1')?.kill();
+        PlayState.instance.currentStage.getNamedProp('gas2')?.kill();
+    }
+
     function prepareGas() {
         var gas1 = PlayState.instance.currentStage.getNamedProp('gas1');
         var gas2 = PlayState.instance.currentStage.getNamedProp('gas2');
@@ -140,10 +153,12 @@ class QTKBStreetStage extends Stage
         PlayState.instance.currentStage.getNamedProp('gas2')?.antialiasing = !(FlxG.onMobile);
         PlayState.instance.currentStage.getNamedProp('TV')?.antialiasing = !(FlxG.onMobile);
         prepareGas();
+        if (!DpzGlobalsModule.qualityLevel(2)) killGas(); // gas only on high
         revealError(0);
     }
 
     function applyShaders(on:Bool) {
+        if (!DpzGlobalsModule.qualityLevel(2)) return;
         if (on) {
             getBoyfriend()?.shader = bfShader;
             getGirlfriend()?.shader = gfShader;

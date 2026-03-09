@@ -1,7 +1,6 @@
 import flixel.FlxG;
 import funkin.play.PlayState;
 import flixel.tweens.FlxEase;
-import flixel.tweens.FlxTween;
 import funkin.play.event.SongEvent;
 import funkin.graphics.FunkinSprite;
 import flixel.util.FlxColor;
@@ -23,7 +22,7 @@ class QTAlarmGradientEvent extends SongEvent {
         else if(alarmSide.toLowerCase() == "right") alarmLeft = false;
         else return;
 
-        ModuleHandler.getModule("DodgeModuleQT").scriptCall("handleAlarm", [alarmLeft, targetAlpha]);
+        ModuleHandler.getModule("QTdodgeModule").scriptCall("handleAlarm", [alarmLeft, targetAlpha]);
     }
 
     public override function getTitle():String {

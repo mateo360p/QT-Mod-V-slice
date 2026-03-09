@@ -1,15 +1,20 @@
 {
-  "title": "vs. QT - V-Slice Port [4.0.0]",
-  "description": "",
+  "title": "vs. QT - V-Slice Port [5.0.0]",
+  "description": "An accurate port of the QT Mod created by Hazard24 for V-Slice/ Base Game!",
   "author": "Dipazio",
   "contributors": [
     {
       "name": "Dipazio",
       "role": "Mod porter, coder, composer, etc",
       "url": "https://github.com/mateo360p"
+    },
+    {
+      "name": "Mikassette",
+      "role": "Voices Switch Coder + Atlas Helper for the characters",
+      "url": "https://gamebanana.com/members/1798061"
     }
   ],
-  "api_version": "0.8.1",
-  "mod_version": "4.0.0",
+  "api_version": "0.8.3",
+  "mod_version": "5.0.0",
   "license": "Apache-2.0"
 }

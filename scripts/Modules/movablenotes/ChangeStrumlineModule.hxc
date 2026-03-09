@@ -1,0 +1,107 @@
+import flixel.FlxG;
+import funkin.play.PlayState;
+import funkin.modding.module.Module;
+import funkin.play.notes.ScriptedStrumline;
+import funkin.Preferences;
+import flixel.math.FlxPoint;
+
+using StringTools;
+
+class ChangeStrumlineModule extends Module {
+	var movableNotes:Bool = false;
+	public function new() {
+		super('ChangeStrumlineModule', 1050, {state: PlayState});
+	}
+
+	public function getStrums():Strumline {
+		return PlayState.instance.playerStrumline;
+	}
+
+	public function canMove():Bool {
+		return (movableNotes && PlayState.instance != null && getStrums() != null);
+	}
+
+	// Helper that allows safe fast calling the movable strums
+	public function callStrums(func:String, args:Array<Dynamic>) {
+		if (canMove() && func != null) getStrums().scriptCall(func, args);
+	}
+
+	override function onSongRetry(event:ScriptEvent):Void {
+		super.onSongRetry(event);
+		resetOffsets();
+		resetAngles();
+	}
+
+    override function onDestroy(event):Void {
+        super.onDestroy(event);
+        restartValues();
+    }
+
+	public function restartValues() {
+		movableNotes = false;
+	}
+
+	var day:Int = 0;
+	var daMov:Int = 0;
+	// NEEDS TO BE CALLED FIRST
+	function startMovableNotes():Void {
+		if (FlxG.onMobile) return;
+		var Playstate = PlayState.instance;
+
+		if (Playstate == null) return;
+
+		var oldStrum = Playstate.playerStrumline;
+		var newStrum = ScriptedStrumline.init('MovableStrumline', Playstate.noteStyle, !Playstate.isBotPlayMode, oldStrum.scrollSpeed);
+		newStrum.x = oldStrum.x;
+		newStrum.y = oldStrum.y;
+		newStrum.zIndex = oldStrum.zIndex;
+		newStrum.cameras = oldStrum.cameras;
+		newStrum.applyNoteData(oldStrum.noteData);
+
+		Playstate.remove(oldStrum);
+		Playstate.playerStrumline = newStrum;
+		Playstate.add(newStrum);
+		Playstate.refresh();
+
+		day = 0;
+		daMov = 0;
+		trace("INITIALIZED MOVABLE STRUMLINE");
+
+		// aqui marca dondeinicia los botones táctiles si no hay teclado externo
+		if (!DpzGlobalsModule.hasKeyboard() && Preferences.controlsScheme == 'Arrows')
+		{
+			Playstate.initNoteHitbox();
+		}
+		Playstate.regenNoteData(Playstate.startTimestamp);
+		Playstate.playerStrumline.fadeInArrows();
+		movableNotes = true;
+		trace("LOADED DATA ON MOVABLE STRUMLINE"); // idk just in case
+	}
+
+	// Big Helpers
+	public function setAllowedMoving(value:Bool):Void {
+		if (FlxG.onMobile) return;
+		if (canMove() && value != null) getStrums().scriptSet("allowedMoving", value);
+	}
+	public function resetAngles():Void {callStrums("resetAngles", []);}
+	public function tweenResetAngles(time:Float = 0, ?options:Dynamic):Void {callStrums("tweenResetAngles", [time, options]);}
+	public function setAngle(dir:NoteDirection, value:Float):Void {callStrums("setAngle", [dir, value]);}
+	public function tweenAngle(dir:NoteDirection, to:Float, time:Float, ?options:Dynamic):Void {callStrums("tweenAngle", [dir, to, time, options]);}
+
+	public function resetOffsets():Void {callStrums("resetOffsets", []);}
+	public function tweenResetOffsets(time:Float = 0, ?options:Dynamic):Void {callStrums("tweenResetOffsets", [time, options]);}
+	public function getStartPos(dir:NoteDirection):FlxPoint {
+		if (FlxG.onMobile) return FlxPoint.get(0, 0); 
+		callStrums("getStartPos", [dir]);
+	}
+
+	public function setXOffset(dir:NoteDirection, value:Float):Void {callStrums("setXOffset", [dir, value]);}
+    public function setYOffset(dir:NoteDirection, value:Float):Void {callStrums("setYOffset", [dir, value]);}
+    public function addXOffset(dir:NoteDirection, value:Float):Void {callStrums("addXOffset", [dir, value]);}
+    public function addYOffset(dir:NoteDirection, value:Float):Void {callStrums("addYOffset", [dir, value]);}
+
+    public function tweenXOffset(dir:NoteDirection, to:Float, time:Float, ?options:Dynamic):Void {callStrums("tweenXOffset", [dir, to, time, options]);}
+    public function tweenYOffset(dir:NoteDirection, to:Float, time:Float, ?options:Dynamic):Void {callStrums("tweenYOffset", [dir, to, time, options]);}
+	public function addTweenXOffset(dir:NoteDirection, adding:Float, time:Float, ?options:Dynamic):Void {callStrums("addTweenXOffset", [dir, adding, time, options]);}
+	public function addTweenYOffset(dir:NoteDirection, adding:Float, time:Float, ?options:Dynamic):Void {callStrums("addTweenYOffset", [dir, adding, time, options]);}
+}

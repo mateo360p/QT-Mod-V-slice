@@ -1,0 +1,55 @@
+{
+    "version": "1.0.0",
+
+    "backdrop": {
+        "type": "solid",
+        "fadeTime": 2.0,
+        "color": "#BFB3DFD8"
+    },
+
+    "music": {
+        "asset": "",
+        "fadeTime": 0,
+        "looped": false
+    },
+
+    "outro": {
+        "type": "fade",
+        "fadeTime": 1.0
+    },
+
+    "dialogue": [
+        {
+            "speaker": "qt_kb",
+            "speakerAnimation": "talk",
+            "box": "qt",
+            "boxAnimation": "left",
+
+            "text": ["..."]
+        },
+        {
+            "speaker": "qt_kb",
+            "speakerAnimation": "talk",
+            "box": "qt",
+            "boxAnimation": "left",
+
+            "text": ["Voce e teimoso demais para o seu proprio bem garoto."]
+        },
+        {
+            "speaker": "qt_kb",
+            "speakerAnimation": "talk",
+            "box": "qt",
+            "boxAnimation": "left",
+
+            "text": ["Ja cansei de voce e da sua voz irritante de esquilo."]
+        },
+        {
+            "speaker": "qt_kb",
+            "speakerAnimation": "talk",
+            "box": "qt",
+            "boxAnimation": "left",
+
+            "text": ["Prepare-se, porque nao vou mostrar nenhuma piedade por voce..."]
+        }
+    ]
+}
